@@ -41,6 +41,7 @@ This course has several submodules.
 | OS Basics    | 3            | [Shell: Working with Files and Directories](03-filework.qmd) |  [The Software Carpentry Project](https://software-carpentry.org/) + Florian Oswald |
 |              |              | [Homework 1](https://github.com/floswald/scpoproghw1): complete and run a bash script on gh-actions |  Florian Oswald |
 | Python       | 4-12         | [Python Intro](https://floswald.github.io/2025-09-30-PythonIntro/) |  [The Software Carpentry Project](https://software-carpentry.org/) + Florian Oswald |
+| R + python          | 13            | [`R` and python](06-cencepts.qmd) |  Florian Oswald|
 | R            | 13            | [`R` Intro](https://raw.githack.com/ScPoEcon/ScPoEconometrics-Slides/master/chapter_intro_programming/chapter_intro.html) |  Florian Oswald|
 | R            | 14           | [`R {tidyverse}`](https://raw.githack.com/ScPoEcon/ScPoEconometrics-Slides/master/chapter_tidy_programming/chapter_tidy.html) | [Grant McDermott](https://grantmcdermott.| R            com/)  + Florian Oswald|
 | R            | 15            | [`R` and `python` generics](06-concepts.qmd) | Florian Oswald|
@@ -58,6 +59,7 @@ Optional Material
 | julia            | 19            | [`julia` intro 1](https://floswald.github.io/julia-bootcamp/01-variables.html) |  Florian Oswald|
 | julia            | 20            | [`julia` intro 2](https://floswald.github.io/julia-bootcamp/02-functions.html) |  Florian Oswald|
 | R            | 21            | [Quick Intro to NLP with R](11-NLP-R.qmd) |  Florian Oswald|
+| R+julia+python            | 22            | [Databases]([11-NLP-R.qmd](https://floswald.github.io/duckdb-polars/)) |  Florian Oswald|
 
 
 

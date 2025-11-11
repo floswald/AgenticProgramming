@@ -20,7 +20,9 @@ website:
             text: 3. Working with Files
           - href: https://floswald.github.io/2025-09-30-PythonIntro/
             text: 4. Python Workshop
-          - href: https://raw.githack.com/ScPoEcon/ScPoEconometrics-Slides/master/chapter_intro_programming/chapter_intro.html
+          - href: 06-concepts.qmd
+            text: 13. `R` and python
+          - href: https://raw.githack.com/ScPoEcon/ScPoEconometrics-Slides/master/chapter_tidy_programming/chapter_tidy.html          
             text: 13. `R` intro
           - href: https://raw.githack.com/ScPoEcon/ScPoEconometrics-Slides/master/chapter_tidy_programming/chapter_tidy.html
             text: 14. `R Tidyverse`
