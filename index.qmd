@@ -41,10 +41,9 @@ This course has several submodules.
 | OS Basics    | 3            | [Shell: Working with Files and Directories](03-filework.qmd) |  [The Software Carpentry Project](https://software-carpentry.org/) + Florian Oswald |
 |              |              | [Homework 1](https://github.com/floswald/scpoproghw1): complete and run a bash script on gh-actions |  Florian Oswald |
 | Python       | 4-12         | [Python Intro](https://floswald.github.io/2025-09-30-PythonIntro/) |  [The Software Carpentry Project](https://software-carpentry.org/) + Florian Oswald |
-| R + python          | 13            | [`R` and python](06-cencepts.qmd) |  Florian Oswald|
+| R + python          | 13            | [`R` and python](06-concepts.qmd) |  Florian Oswald|
 | R            | 13            | [`R` Intro](https://raw.githack.com/ScPoEcon/ScPoEconometrics-Slides/master/chapter_intro_programming/chapter_intro.html) |  Florian Oswald|
 | R            | 14           | [`R {tidyverse}`](https://raw.githack.com/ScPoEcon/ScPoEconometrics-Slides/master/chapter_tidy_programming/chapter_tidy.html) | [Grant McDermott](https://grantmcdermott.| R            com/)  + Florian Oswald|
-| R            | 15            | [`R` and `python` generics](06-concepts.qmd) | Florian Oswald|
 | R            | 16            | [`R {data.table}`](https://raw.githack.com/floswald/lectures/master/05-datatable/05-datatable.html) | [Grant McDermott](https://grantmcdermott.com/)  + Florian Oswald|
 | R            | 17            | [Building `R` packages](09-R-packages.qmd) |  Florian Oswald|
 | R            | 18            | [Spatial Data with `R`](10-spatial-R.qmd) |  Florian Oswald|
