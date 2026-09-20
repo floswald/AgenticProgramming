@@ -130,7 +130,13 @@ $ touch script.py            # create an empty file
 $ mv old-name.py new-name.py # rename (or move) a file
 $ cp script.py backup.py     # copy a file
 $ rm backup.py               # delete — no trash bin, this is permanent
+$ nano script.py             # edit the file's contents (Ctrl+X to exit, saving)
 ```
+
+::: {.callout-note}
+# Editing files
+`touch` creates an empty file; it does not let you type into it. `nano` is a simple terminal text editor — good enough for today. You'll likely move to a fuller editor (e.g. VS Code) later, but the shell/agent workflow doesn't require one.
+:::
 
 ::: {.callout-warning}
 # `rm` has no undo
@@ -183,6 +189,16 @@ $ git init
 
 * `git init` turns the current folder into a git repository — a `.git/` folder now tracks history here.
 * We are not doing a git deep-dive today (that's S3) — just enough to commit something.
+
+::: {.callout-warning}
+# First time using git on this machine?
+Git refuses to commit until it knows who you are. If `git commit` later complains "Please tell me who you are," run this once (only needed the first time ever):
+
+```bash
+$ git config --global user.name "Your Name"
+$ git config --global user.email "you@example.com"
+```
+:::
 
 ## Step 2 — write a trivial script, commit it
 
