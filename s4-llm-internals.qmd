@@ -1,0 +1,153 @@
+---
+title: "S4 — How Do LLMs Actually Work?"
+format: clean-revealjs
+author: Florian Oswald
+subtitle: "[Agentic Programming](https://floswald.github.io/AgenticProgramming/)"
+date: today
+date-format: "D MMMM, YYYY"
+---
+
+## Where we are
+
+- S1–S3: you've been *using* an agent — shell, git, project config.
+- Before we go deeper into *how agents operate* (S5: context windows, tool calls, harnesses), we need to understand the thing underneath the agent.
+- Today: **no code**. Just enough of the machinery to reason correctly about what an LLM can and cannot do.
+
+::: {.callout-tip}
+## Goal for today
+By the end, you can explain — at a dinner party, without hand-waving — **why an LLM can state a wrong number with total confidence.**
+:::
+
+## The claim we're testing
+
+> "The model said the paper was published in 2019. It's actually 2017. Why would it just *make that up*?"
+
+- This is the single most common failure mode you'll hit using agents in this course.
+- It is **not** a bug that a future model version will "fix."
+- It is a direct, structural consequence of what these models are and how they're trained.
+- Today's lecture is entirely in service of justifying that last sentence.
+
+# Part 1 — Tokenization
+
+## Text isn't the input
+
+- You type words. The model never sees words.
+- Text is first chopped into **tokens** — sub-word chunks from a fixed vocabulary (tens of thousands of entries), typically learned from a large text corpus so common chunks (like `ing`, `tion`, whole common words) each get their own token.
+- Example, roughly how a tokenizer might split a sentence:
+
+```
+"Unbelievable coincidences happen."
+→ ["Un", "believ", "able", " coincid", "ences", " happen", "."]
+```
+
+- Rare words get split into several tokens; common words often are one token. Numbers are frequently split in unintuitive ways.
+
+## Why this matters already
+
+- A model doesn't "see" the number `47293` as one thing. It might see it as tokens `["472", "93"]` or `["47", "293"]` depending on the tokenizer.
+- Arithmetic, character counts ("how many r's in strawberry?"), and precise quoting are all harder than they look *because of tokenization*, before we've even gotten to prediction or training.
+- Everything downstream operates on tokens, not characters, not words, not "meaning" in any human sense — yet.
+
+# Part 2 — Next-token prediction
+
+## The one task
+
+- An LLM is trained to do exactly one thing: given a sequence of tokens, **predict a probability distribution over the next token**.
+
+$$
+P(\text{next token} \mid \text{all tokens so far})
+$$
+
+- That's it. Not "understand," not "reason," not "know facts." Predict what token comes next, given everything that came before.
+- Generating a whole response is just: predict one token, append it, predict the next one, repeat — over and over, one token at a time.
+
+## From distribution to text
+
+- At each step the model outputs a probability over the *entire vocabulary* — not a single answer.
+- A **sampling strategy** picks the actual next token:
+  - *Greedy*: always pick the single most likely token.
+  - *Sampling with temperature*: pick randomly, weighted by probability; higher temperature → more randomness/variety, lower → more deterministic and repetitive.
+- This is why asking the same question twice can give you different (but both fluent) answers — you're sampling from a distribution, not looking up a stored fact.
+
+## A key consequence, stated plainly
+
+- The model is not consulting a database and reporting what it finds.
+- It is producing **the most statistically plausible continuation of the text so far**, token by token.
+- Plausible-sounding and true are correlated (because true things are usually written down more, and in more consistent ways) — but they are not the same property, and nothing in the mechanism *guarantees* they coincide.
+
+# Part 3 — Transformer architecture (conceptually)
+
+## The problem it solves
+
+- To predict the next token well, the model needs to weigh *which earlier tokens matter* for this particular prediction.
+- In "The trophy didn't fit in the suitcase because **it** was too big" — what does "it" refer to? You need to relate a token to other tokens far away in the sentence, and the relevant one changes depending on context.
+
+## Attention, the conceptual version
+
+- Every token, at every layer, gets to "look at" every other token in the context and ask: *how relevant are you to me, right now?*
+- This produces a weighted blend: each token's representation gets updated using information pulled from the tokens most relevant to it.
+- Stack many of these attention layers on top of each other (this is the "transformer" — dozens of layers is typical), each one refining the representation a bit further, mixing local grammar-level patterns in early layers with more abstract, longer-range relationships in later ones.
+- **No memory, no lookup table, no symbolic reasoning module.** Just repeated rounds of "which other tokens should influence how I update this one," turned into more predictive representations for the final next-token-probability step.
+
+## Why "conceptual level" is the right level
+
+- You do not need the matrix algebra to reason correctly about LLM behavior in this course.
+- You do need to internalize: the model is a very large, learned function that transforms a sequence of tokens into a probability distribution over the next token, by repeatedly mixing information across positions.
+- There is no separate "fact-checking module," no "I don't know this" circuit, no built-in notion of source or citation. Whatever behavior looks like those things is *emergent from* next-token prediction, not a distinct mechanism bolted on.
+
+# Part 4 — Training and RLHF
+
+## Stage 1: pretraining
+
+- Train the next-token-prediction task on an enormous corpus of text (a large fraction of the public internet, books, code, etc.).
+- The model has no notion of "this document is reliable" and "this one is not" — it's fitting probability to *co-occurrence patterns in text*, at massive scale.
+- Result: a model that is very good at producing fluent, plausible continuations of almost any text — but has no built-in preference for "true" over "plausible," and no mechanism forcing it to say "I don't know."
+
+## Stage 2: instruction tuning + RLHF
+
+- Raw pretrained models complete text; they don't naturally "answer a question" or "follow an instruction" the way a chat assistant does.
+- **Instruction tuning**: further training on examples of (instruction → good response) pairs, so the model learns the *chat assistant* behavior pattern.
+- **RLHF** (Reinforcement Learning from Human Feedback): humans (or another model trained to imitate human preferences) rank candidate responses; the model is further nudged to produce outputs that raters *prefer*.
+
+## What RLHF optimizes for — and what it doesn't
+
+- Raters tend to prefer answers that are confident, complete, well-formatted, and decisive over answers that hedge, refuse, or say "I'm not sure."
+- This creates real pressure toward **fluent, confident-sounding output**, independent of the pressure toward *correct* output.
+- Nothing in this pipeline directly optimizes for "calibrated uncertainty" unless it is specifically and carefully trained for — and even then, imperfectly.
+- Put bluntly: the training process rewards sounding right at least as much as being right.
+
+# Part 5 — Why hallucination is structural
+
+## Putting the pieces together
+
+1. The model's only job, at the mechanical level, is next-token prediction — a plausibility judgment, not a truth judgment.
+2. It has no lookup table or citation mechanism; "knowledge" is encoded implicitly as statistical patterns compressed across billions of parameters, not stored as retrievable facts with sources attached.
+3. RLHF further rewards confident, fluent, complete-sounding answers.
+4. Sampling introduces genuine randomness into which plausible continuation gets picked.
+
+## The structural conclusion
+
+- When the true answer and a plausible-sounding wrong answer are both consistent with the patterns the model has seen, **the model has no internal mechanism that reliably tells the difference** — because "look up whether this is true" was never the task it was trained on.
+- A model producing a wrong number with total confidence is not "malfunctioning." It is doing exactly what it was built and trained to do: emit the most probable-sounding continuation, phrased the way confident answers are usually phrased.
+- This is why "wait for the next model version to fix hallucination" is the wrong mental model. Bigger and better-trained models hallucinate *less often*, and about narrower categories of things — but the mechanism guaranteeing it can't happen doesn't exist and can't be patched in without changing what the model fundamentally is.
+
+## What actually reduces hallucination (preview)
+
+- These are compensating strategies bolted on around the model, not fixes to the model itself:
+  - Giving the model the actual source in context, so it can "quote" rather than "recall" (retrieval-augmented generation) — this is one reason context windows matter, which we pick up in S5.
+  - Tool use: letting the model call a calculator, a search engine, or code execution instead of predicting the answer token-by-token (also S5).
+  - Verification: the student/researcher checks claims rather than trusting fluency — this is the whole point of S7/S8 in this course.
+- None of these make the underlying mechanism "know" things. They change what information is available to condition the next-token prediction on, or add an external check the model itself doesn't have.
+
+## Take-home (the dinner-party version)
+
+::: {.callout-important}
+## The one paragraph you should be able to say out loud
+An LLM doesn't look anything up — it predicts, one chunk of text at a time, whatever continuation is statistically most plausible given everything written before it, based on patterns learned from huge amounts of text. Its training additionally rewards sounding confident and complete. So when it doesn't actually "know" a fact, nothing stops it from generating a wrong one that's phrased exactly like a right one — because from the model's point of view, both are just "plausible next tokens." That's why you always verify, especially numbers, dates, and citations.
+:::
+
+## Where this leads next
+
+- **S5**: given this picture of the model, how does an *agent* built on top of it work — context windows, tool calling, system prompts?
+- **S7/S8**: given that hallucination is structural, how do you build habits and tests that catch it, systematically, rather than by luck?
+- **S11**: a running catalogue, across the whole course, of every place this bit you — and what caught it.
