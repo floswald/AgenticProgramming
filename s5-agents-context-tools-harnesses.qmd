@@ -217,7 +217,7 @@ Keep this page — you'll want it again in Session 11 when we catalogue where ag
 
 ::: {.callout-important}
 # The task
-Starting fixture: `scripts/s5-winsorize/winsorize.R`. It contains a small R script `winsorize.R` containing an untested function `winsorize(x, p = 0.05)` that is supposed to cap the bottom `p` fraction of a numeric vector at the `p`-quantile and the top `p` fraction at the `1 - p`-quantile, but currently has a bug (the upper cutoff is computed as `quantile(x, p)` instead of `quantile(x, 1 - p)`, so it caps far too many high values instead of just the top `p` fraction), run the **identical prompt** in both harnesses, in a fresh copy of the same starting directory:
+Starting fixture: `scripts/s5-winsorize/winsorize.R`. It contains a small, untested function `winsorize(x, p = 0.05)` that is supposed to cap the bottom `p` fraction of a numeric vector at the `p`-quantile and the top `p` fraction at the `1 - p`-quantile, but currently has a bug (the upper cutoff is computed as `quantile(x, p)` instead of `quantile(x, 1 - p)`, so it caps far too many high values instead of just the top `p` fraction). Run the **identical prompt** in both harnesses, in a fresh copy of the same starting directory:
 
 > "Look at `winsorize.R`. Write a `testthat` test file for `winsorize()` that checks it correctly caps values at the p and 1-p quantiles, including edge cases. Run the test, and if it fails, find and fix the bug in `winsorize()`. Show me the diff."
 :::
