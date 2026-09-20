@@ -32,7 +32,9 @@ def test_check_shares_flags_rows_that_sum_to_one(polls):
     # Act
     out = check_shares(polls)
     # Assert
-    assert list(out["share_total"]) == [1.00, 0.98, 1.00, 1.00]
+    # Note: floats need pytest.approx, not `==` -- exact equality on a
+    # computed sum only passes "by luck" of binary representation.
+    assert out["share_total"].tolist() == pytest.approx([1.00, 0.98, 1.00, 1.00])
     assert list(out["valid"]) == [True, False, True, True]
 
 
