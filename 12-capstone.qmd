@@ -1,0 +1,85 @@
+---
+title: "S12 — Capstone: An End-to-End Agentic Research Project"
+format: html
+author: Florian Oswald
+date: today
+date-format: "D MMMM, YYYY"
+---
+
+## Why this session exists
+
+Every prior session taught one piece of the workflow in isolation: a shell and a git repo (S1), the core language constructs (S2), a project layout an agent (and a stranger) can pick up cold (S3), how the model underneath your agent actually works (S4), how the agent itself operates — context, tools, harness (S5), a real data pipeline (S6), a test suite for that pipeline (S7, S8), an awareness of what it costs to run (S9), spatial data as a second worked example (S10), and a catalogue of every way an agent quietly produced something wrong, and how you caught it (S11).
+
+The capstone is not a new technique. It is the session where you run the whole loop yourself, on a question you chose, with nobody telling you which step you're on.
+
+::: {.callout-tip}
+## Objective
+Complete an end-to-end agentic research project on a question of your own choosing, using everything from S1–S11: version control and project config, data wrangling, tests, and cost awareness.
+:::
+
+::: {.callout-tip}
+## Outcome
+A short presentation, a peer review of a classmate's project, and a project repository that meets the reproducibility bar set in S3 and S11.
+:::
+
+**Prereq:** all prior sessions (S1–S11).
+
+## What "using everything from S1–S11" means, concretely
+
+This is not a checklist to satisfy for its own sake — it's the minimum standard for a repo you'd hand to a stranger (or an agent, or a JPE replication reviewer) and expect it to just work.
+
+| From session | What your capstone repo must show |
+|---|---|
+| S1 | A git repository, initialized properly, with a sensible `.gitignore` (no data dumps, no credentials, no OS junk files). |
+| S2 | Code that does something nontrivial in at least one of R or Python — variables, loops, conditionals, functions, used because they're the right tool, not because the rubric demands them. |
+| S3 | Standard project layout, no hardcoded absolute paths, a project-level agent config file (e.g. `AGENTS.md`/`opencode.json` or equivalent), and a README a stranger could follow cold: what the project answers, how to reproduce it, what depends on what. |
+| S4 | Nothing to demonstrate directly — but if your project uses an LLM as a *component* (e.g. classifying text, extracting structured data), you should be able to say why you don't fully trust its raw output and what you did about that. |
+| S5 | A visible record of how you worked with your agent: prompts that mattered, at minimum one place where you had to intervene because the agent had gone off track. |
+| S6 | A real data wrangling step — SQL, dplyr, or Ibis over DuckDB (or an equivalent tool if your data genuinely doesn't fit that model — ask before assuming). |
+| S7 | A unit test suite covering your pipeline's core transformations. |
+| S8 | At least one verification pattern beyond a plain unit test: an invariant check, a golden-output comparison, or an assertion embedded in the pipeline itself. |
+| S9 | A short cost note: what it cost (tokens, dollars, time) to run this project, and what it would cost at 10x the data. |
+| S11 | An entry in your reproducibility checklist for at least one moment where the agent produced a plausible-but-wrong result in *this* project, and what caught it. |
+
+If your project doesn't naturally touch one of these (e.g. no spatial component, so S10 is silent) that's fine — S10 is not in the required list above for exactly that reason. But S1, S3, S6–S9, and S11 should all leave a visible trace in your final repo. If one is missing, say so explicitly in your README rather than hoping nobody notices — an honest "we didn't get to X, here's why" is worth more than a silently absent test suite.
+
+## Timeline
+
+This session runs across the scheduled capstone block(s) plus your own time outside class. A reasonable split:
+
+1. **Propose (before the in-person block).** One paragraph: the research question, the data source, why it's answerable in the time you have. Bring it to class — we'll sanity-check scope together. A capstone that's too ambitious to finish honestly is a worse outcome than a small one that's actually reproducible.
+2. **Build (in-person + independent work).** Set up the repo (S1/S3 bar) before writing analysis code. Use your agent the way you've practiced all course: draft, verify, catch what it gets wrong, write it down.
+3. **Verify.** Run your own S7/S8-style test suite against your own pipeline. If you can, ask a classmate to try to break it — a bug someone else finds before the presentation is much cheaper than one found live.
+4. **Present.** A short presentation (roughly 5–8 minutes, format confirmed in class) covering: the question, the pipeline, one thing the agent got wrong and how you caught it, and the cost note.
+5. **Peer review.** Each project gets reviewed by at least one classmate using the checklist below. This is not a grade — it's a second pair of eyes doing exactly what S11 practiced: trying to find where a plausible-looking result might actually be wrong.
+
+## The reproducibility bar (S3 / S11 standard)
+
+This is deliberately close to the standard used for replication packages submitted to an academic journal — the point of S11 was to make that standard feel normal, not exotic, by the time you get here.
+
+A repo that clears the bar:
+
+- [ ] Clones and runs on a machine that isn't yours, with no manual path-editing.
+- [ ] Has a README stating: the question, how to reproduce the full pipeline from raw data to final output, and any external dependencies (API keys, packages, data downloads) with instructions for obtaining them.
+- [ ] Has a project-level agent config file, consistent with what you set up in S3.
+- [ ] Separates raw data (or documents how to obtain it, if it can't be committed) from generated output.
+- [ ] Has a passing test suite that runs as part of, or immediately after, reproducing the pipeline.
+- [ ] Documents, in one place, every point where an agent produced something wrong and what caught it — your S11 checklist, applied to this specific project rather than kept as a general habit.
+- [ ] States the cost of reproducing the full pipeline (S9 note).
+
+## Peer review guidelines
+
+When reviewing a classmate's repo, you are standing in for the JPE Data Editor lens introduced in S11: not "is this interesting," but "can I actually verify this works, and did they tell me the truth about where it might not."
+
+For each project you review, answer:
+
+1. Did it actually reproduce for you, following only the README?
+2. Did the test suite pass? Did you try to break anything it didn't cover?
+3. Is there at least one honestly-reported case of the agent being wrong? Does the fix look right to you, or does it look like the bug is still there?
+4. Is the cost note plausible given what the pipeline does?
+
+Bring written notes (a few sentences per question is enough) to share with the presenter after their talk.
+
+## A note on scope
+
+The capstone question is yours to choose — this course does not prescribe a dataset or a domain. The bar is on *process* (does the repo meet the reproducibility standard, does the pipeline have tests, is the agent's role in the work visible and verified), not on the sophistication of the underlying research question. A simple, fully verified project clears the bar; an ambitious, unverified one does not.
