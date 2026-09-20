@@ -314,14 +314,20 @@ We now build a real spatial-join example: French administrative regions, joined 
 
 ```{r}
 #| echo: true
-#| eval: false
+sf::sf_use_s2(FALSE)
+```
+
+* This specific polygon data (a `maps`-package outline) has a ring that the default spherical (`s2`) geometry engine considers invalid; switching to the older planar GEOS engine tolerates it. This is itself an "ask your agent why" moment — checklist item 5 below.
+
+```{r}
+#| echo: true
 # install.packages(c("maps","spData"))
 france = st_as_sf(maps::map('france', plot = FALSE, fill = TRUE))
 data("seine", package = "spData")
 ```
 
 ::: {.callout-important}
-**This is exactly the moment to prompt-check your agent.** Ask it: "before you join `france` and `seine`, print `st_crs(france)` and `st_crs(seine)` — are they the same?" If the agent skips this and jumps straight to `st_join()`, push back — that's the step that produces silent bugs.
+**This is exactly the moment to prompt-check your agent.** Ask it: "before you join `france` and `seine`, print `st_crs(france)` and `st_crs(seine)` — are they the same?" If the agent skips this and jumps straight to `st_join()`, push back — that's the step worth double-checking.
 :::
 
 ---
@@ -367,54 +373,65 @@ pl4 = st_join(france, seine) |>
 
 ---
 
-## The Seeded Bug {.inverse background-color="#3d0303"}
+## The Seeded Bug: Not Every Operation Protects You {.inverse background-color="#3d0303"}
 
-Here is a version of this exact join, as an agent might first hand it back to you — with the CRS-fix step silently dropped:
+Here is a version of this exact join, as an agent might first hand it back to you — with the CRS-fix step dropped:
 
 ```{r}
 #| echo: true
-#| eval: false
+#| error: true
 ## BUG: no st_transform() before the join — seine is still in its
 ## original CRS, france is in whatever maps::map() returns.
 pl_bug = st_join(france, seine) |>
   dplyr::filter(!is.na(name))
-
-nrow(pl_bug)     # looks plausible: a small positive integer
-plot(pl_bug["ID"])  # renders a map. shape looks like France. nothing crashes.
 ```
 
 ::: {.fragment}
-**Why this is dangerous**: `st_join()` doesn't error when CRS differs by only a small offset or when one CRS lacks a defined EPSG code — it just joins on whatever coordinates it has, silently matching the wrong (or no) rivers to regions. The plot still looks like a map of France. Only checking `st_crs(france) == st_crs(seine)` *before* the join, or comparing the joined row count / region names against what you'd expect from a real map of the Seine basin, catches it.
+**Good news, this time**: `st_join()` checks that both inputs share a CRS and refuses to run rather than silently matching on whatever coordinates it has — you get `st_crs(x) == st_crs(y) is not TRUE` immediately, not a plausible-looking-but-wrong map. That's `sf` protecting you. Not every spatial computation is this well-behaved — the next section shows one that isn't.
 :::
 
 ---
 
-## Task: Reproduce and Catch the Bug {.inverse}
-
-1. Ask your agent to write the `france`/`seine` join **without** telling it about the CRS pitfall.
-2. Check whether it added a `st_transform()` step unprompted. If it did — good, note that. If it didn't, you've just reproduced the seeded bug above.
-3. Verify using **both**: (a) a plot, and (b) `st_crs(france) == st_crs(seine)` plus the row count / distinct region names after the join.
-4. Write down, in your own words: what did the wrong version look like, and what specific check caught it? This is the "one case you had to correct" for this session's outcome.
-
----
-
-## Distances: A Second Silent Bug
+## A Genuinely Silent Bug: Distance Without Projecting
 
 * A typical question: **what's the straight-line distance between the centroids of the Seine-Maritime and Nièvre départements?**
-* If your `sf` object is still in a **geographic** CRS (lon/lat, degrees), `st_distance()` on unprojected coordinates gives you an answer in units that are *not* meaningful straight-line km — `sf` will warn or compute great-circle distances depending on the backend, which is a different (and easy to misinterpret) number than a projected planar distance.
+* `st_distance()` itself is CRS-aware — it does the sensible thing even on unprojected lon/lat input. But nothing stops an agent (or you) from reaching past it: pulling raw coordinates with `st_coordinates()` and hand-computing a Euclidean distance directly. That version has no error, no warning, and just returns a number — in **degrees**, silently mistaken for kilometers.
 
 ```{r}
 #| echo: true
-#| eval: false
-d5 = st_join(france, seine) |>
+pl = st_join(france, st_transform(seine, crs = st_crs(france))) |>
   dplyr::filter(!is.na(name)) |>
   dplyr::distinct(ID, .keep_all = TRUE)
 
-subdeps = d5 |> dplyr::filter(ID %in% c("Seine-Maritime","Nievre"))
-dists = st_distance(subdeps) |> units::set_units("km")
+subdeps = pl |> dplyr::filter(ID %in% c("Seine-Maritime", "Nievre"))
+cents = st_centroid(subdeps)
+
+## BUG: hand-rolled Euclidean distance on raw lon/lat coordinates,
+## silently treated as if it were kilometers.
+xy = st_coordinates(cents)
+naive_dist = sqrt(sum(diff(xy)^2))
+
+## Correct: project to a metric CRS first, then use st_distance().
+correct_dist = subdeps |>
+  st_transform(2154) |>
+  st_centroid() |>
+  st_distance() |>
+  units::set_units("km")
+
+naive_dist
+correct_dist
 ```
 
-**Verification check**: the real straight-line distance between these two départements is roughly 250 km. If your agent's number is off by an order of magnitude, or is suspiciously close to a "distance in degrees mistaken for km," that's your silent bug.
+**Verification check**: the real straight-line distance between these two départements' centroids is roughly 335–340 km — two independent routes (a projected planar distance and a great-circle distance on the unprojected coordinates) agree within a couple of km of each other. `naive_dist` above comes out around 3.5 — two orders of magnitude off, because it's a difference measured in *degrees*, not km. Nothing in that computation errors or warns; you only catch it by checking against an outside number.
+
+---
+
+## Task: Catch the Silent One {.inverse}
+
+1. Ask your agent for the straight-line distance between two départements' centroids, **without** mentioning the projection pitfall.
+2. Check whether it routed the computation through a projected CRS and `st_distance()`, or hand-computed coordinates directly. Either can *look* like a normal, plausible number — that's the point of a silent bug.
+3. Verify the result against an outside source (a map-ruler estimate, a second computation route) before trusting it.
+4. Write down, in your own words: what did the wrong version's number look like, and what specific check caught it? This is the "one case you had to correct" for this session's outcome.
 
 ---
 
