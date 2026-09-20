@@ -8,9 +8,17 @@ seeded bug in `weighted_remain_share_by_poll_type` on its own:
 
 1. Property-based / invariant checks (Hypothesis)   -> test_invariant_*
 2. Golden-output comparison (hand-computed expected) -> test_golden_*
-3. Embedded assertions inside the pipeline itself    -> see s8-pipeline.py
-   note below; here we test that such an assertion *would* fire.
+3. Embedded assertions inside the pipeline itself    -> test_embedded_assertion_*
+   (the assertions live in s8-pipeline.py; here we confirm they fire on
+   bad input and stay silent on good input)
 4. Systematic check for a "silent data decision"     -> test_weighting_*
+
+Note on (3): the embedded assertions guard against bad *inputs*
+(non-positive samplesize, missing poll_type) and implausible *outputs*
+(a share outside [0, 1]). They do NOT catch today's seeded bug -- the
+buggy output is still a valid share in [0, 1], computed from valid
+inputs. That's deliberate: it shows assertions and golden/recomputation
+checks answer different questions (see the Recap table in the slides).
 
 Run:
     pytest scripts/test_s8_pipeline.py -v
@@ -74,6 +82,37 @@ def test_property_group_of_identical_polls_average_equals_that_value(remain, n):
     })
     result = pipeline.weighted_remain_share_by_poll_type(df)
     assert math.isclose(result.loc[0, "weighted_remain_share"], remain, abs_tol=1e-9)
+
+
+# --- 3. Embedded assertions (defined in s8-pipeline.py) -----------------
+#
+# These aren't a separate check written in the test file -- they run
+# inside the pipeline itself, every time it's called, including when an
+# agent calls it unattended. Here we verify they actually fire.
+
+def test_embedded_assertion_rejects_non_positive_samplesize():
+    bad = pd.DataFrame({
+        "poll_type": ["Online"],
+        "remain": [0.5],
+        "samplesize": [0],
+    })
+    with pytest.raises(AssertionError, match="samplesize"):
+        pipeline.weighted_remain_share_by_poll_type(bad)
+
+
+def test_embedded_assertion_rejects_missing_poll_type():
+    bad = pd.DataFrame({
+        "poll_type": [None],
+        "remain": [0.5],
+        "samplesize": [1000],
+    })
+    with pytest.raises(AssertionError, match="poll_type"):
+        pipeline.weighted_remain_share_by_poll_type(bad)
+
+
+def test_embedded_assertion_stays_silent_on_valid_data(polls):
+    # Should not raise.
+    pipeline.weighted_remain_share_by_poll_type(polls)
 
 
 # --- 2. Golden-output comparison ---------------------------------------

@@ -8,9 +8,10 @@
 #   Rscript -e 'testthat::test_file("scripts/test-s8-pipeline.R")'
 #
 # Expected result against the buggy pipeline as shipped: the invariant
-# tests pass (they don't need to know the bug exists); the golden-output
-# test and the "weighting is actually used" test FAIL. That failure is the
-# demonstration -- those two patterns are the ones that catch this bug.
+# tests and embedded-assertion tests pass (they don't need to know the bug
+# exists); the golden-output test and the "weighting is actually used"
+# test FAIL. That failure is the demonstration -- those two patterns are
+# the ones that catch this bug.
 
 suppressPackageStartupMessages({
   library(testthat)
@@ -45,6 +46,27 @@ test_that("a group of identical polls averages to that value regardless of weigh
   )
   result <- weighted_remain_share_by_poll_type(df)
   expect_equal(result$weighted_remain_share[1], 0.37, tolerance = 1e-9)
+})
+
+# --- 3. Embedded assertions (defined in s8-pipeline.R) -------------------
+#
+# These run inside the pipeline itself via stopifnot(), every time it's
+# called. Here we verify they actually fire on bad input and stay silent
+# on good input. Note: they do NOT catch the seeded bug -- the buggy
+# output is still a valid share in [0, 1], from valid inputs.
+
+test_that("embedded assertion rejects non-positive samplesize", {
+  bad <- data.frame(poll_type = "Online", remain = 0.5, samplesize = 0)
+  expect_error(weighted_remain_share_by_poll_type(bad), "samplesize")
+})
+
+test_that("embedded assertion rejects missing poll_type", {
+  bad <- data.frame(poll_type = NA, remain = 0.5, samplesize = 1000)
+  expect_error(weighted_remain_share_by_poll_type(bad), "poll_type")
+})
+
+test_that("embedded assertion stays silent on valid data", {
+  expect_no_error(weighted_remain_share_by_poll_type(polls))
 })
 
 # --- 2. Golden-output comparison -----------------------------------------

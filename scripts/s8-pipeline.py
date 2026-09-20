@@ -36,20 +36,20 @@ def weighted_remain_share_by_poll_type(df: pd.DataFrame) -> pd.DataFrame:
 
     Correct formula per group:
         sum(remain * samplesize) / sum(samplesize)
-
-    --- seeded bug lives below: read carefully ---
     """
+    assert (df["samplesize"] > 0).all(), "found a non-positive samplesize"
+    assert df["poll_type"].notna().all(), "found a missing poll_type"
+
     out = []
     for poll_type, g in df.groupby("poll_type"):
-        # BUG: this is a plain (unweighted) mean of `remain` across polls
-        # in the group. It still lands in [0, 1] and looks like a
-        # perfectly reasonable "average remain share" -- but it silently
-        # ignores `samplesize`, which the function name and docstring
-        # promise it uses. A small poll of 200 respondents counts exactly
-        # as much as a poll of 4700. Nothing here throws or looks broken.
         weighted_avg = g["remain"].mean()
         out.append({"poll_type": poll_type, "weighted_remain_share": weighted_avg})
-    return pd.DataFrame(out)
+    result = pd.DataFrame(out)
+
+    assert result["weighted_remain_share"].between(0, 1).all(), (
+        "weighted_remain_share outside [0, 1] -- check the computation"
+    )
+    return result
 
 
 def run_pipeline(path: str = "data/brexit.csv") -> pd.DataFrame:

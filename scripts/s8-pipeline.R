@@ -36,22 +36,24 @@ add_days_before_vote <- function(df, referendum_date = "2016-06-23") {
 #
 # Correct formula per group:
 #   sum(remain * samplesize) / sum(samplesize)
-#
-# --- seeded bug lives below: read carefully ---
 weighted_remain_share_by_poll_type <- function(df) {
+  stopifnot(
+    "found a non-positive samplesize" = all(df$samplesize > 0),
+    "found a missing poll_type" = all(!is.na(df$poll_type))
+  )
+
   groups <- split(df, df$poll_type)
   out <- do.call(rbind, lapply(names(groups), function(pt) {
     g <- groups[[pt]]
-    # BUG: this is a plain (unweighted) mean of `remain` across polls in
-    # the group. It still lands in [0, 1] and looks like a perfectly
-    # reasonable "average remain share" -- but it silently ignores
-    # `samplesize`, which the function name promises it uses. A poll of
-    # 200 respondents counts exactly as much as a poll of 4700. Nothing
-    # here throws or looks broken.
     weighted_avg <- mean(g$remain)
     data.frame(poll_type = pt, weighted_remain_share = weighted_avg)
   }))
   rownames(out) <- NULL
+
+  stopifnot(
+    "weighted_remain_share outside [0, 1] -- check the computation" =
+      all(out$weighted_remain_share >= 0 & out$weighted_remain_share <= 1)
+  )
   out
 }
 
