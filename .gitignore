@@ -9,3 +9,5 @@
 .quarto
 .RData
 *_cache/
+
+**/*.quarto_ipynb

@@ -1,0 +1,236 @@
+---
+title: "How Agents Work: Context, Tools, Harnesses"
+subtitle: "Session 5 — [Agentic Programming](https://floswald.github.io/AgenticProgramming/)"
+format:
+  clean-revealjs: default
+author: Florian Oswald
+date: today
+date-format: "D MMMM, YYYY"
+---
+
+## Where we left off
+
+::: {.callout-note}
+# Recap from Session 4
+
+- An LLM is a next-token predictor, trained on huge amounts of text, then fine-tuned with human feedback.
+- It has no memory between calls, no access to your files, no ability to run code — on its own.
+- Hallucination is structural: the model always produces *some* plausible next token, correct or not.
+:::
+
+. . .
+
+So how does typing a prompt into OpenCode turn into a diff on your screen, touching real files on your disk?
+
+That gap is what today is about: **the harness** — everything wrapped around the model to make it useful.
+
+---
+
+## Objectives
+
+::: {.callout-tip}
+# By the end of this session you can explain
+
+- What a context window is, and why it is finite and expensive.
+- Conceptually, what "attention" does — no math required.
+- What a system prompt is and what it's doing behind the scenes.
+- What "tool calling" means and why it's the mechanism that lets a model *act*.
+- The full loop: prompt → context assembly → model call → tool call → result → repeat → diff.
+- Why the same task can cost very differently depending on model + harness choice.
+:::
+
+---
+
+## The layered model, again
+
+::: {.columns}
+::: {.column width="50%"}
+**From Session 1:**
+
+- **Model** — the LLM itself (GPT, Claude, Llama, ...)
+- **Harness** — the program that talks to the model (OpenCode, Claude Code, Cursor, ...)
+- **Tool** — a capability the harness exposes to the model (read file, run shell command, edit file, search web)
+- **Skill** — a packaged, reusable procedure built on top of tools
+:::
+::: {.column width="50%"}
+::: {.callout-important}
+# Today's focus
+The **harness** layer. The model is a black box that takes text in and produces text out. Everything else — memory, files, actions in the world — is the harness's job.
+:::
+:::
+:::
+
+---
+
+## What actually gets sent to the model
+
+. . .
+
+An LLM API call is just: **a block of text in, a block of text out.**
+
+Every time you send a message in OpenCode, the harness doesn't just send *your message*. It assembles a whole package:
+
+::: {.incremental}
+- A **system prompt**: instructions about how to behave, what tools exist, how to format tool calls.
+- The **conversation history** so far (your previous messages, the model's previous replies).
+- Any **tool results** from earlier in the session (file contents, command output).
+- Your **new message**.
+:::
+
+. . .
+
+All of that, concatenated into one text blob, is the *actual* input to the model. The model has no separate "memory" — the entire past of the conversation is re-sent, every single turn.
+
+---
+
+## The context window
+
+::: {.callout-note}
+# Definition
+The context window is the maximum amount of text (measured in **tokens**, not characters or words) the model can process in a single call — both what goes in and what comes out.
+:::
+
+. . .
+
+- A token is roughly 3/4 of a word (recall Session 4: a chunk of a word, not a whole word).
+- Typical modern context windows: 128k–1M+ tokens (this changes fast, and providers advertise it as a selling point).
+- If the assembled input (system prompt + history + tool results + your message) exceeds the window, something has to give: the harness truncates, summarizes, or drops old turns.
+
+. . .
+
+::: {.callout-warning}
+# Why this matters practically
+A long agent session — lots of files read, lots of back-and-forth — can silently fill the context window. The agent starts "forgetting" things you told it 20 turns ago, not because it's being careless, but because that text is no longer in the window.
+:::
+
+---
+
+## Attention, conceptually
+
+You don't need the math. You need the idea.
+
+. . .
+
+::: {.callout-tip}
+# The idea
+For every token the model is about to generate, it doesn't treat every earlier token in the context equally. It computes, on the fly, "how relevant is each earlier piece of text to what I'm producing right now?" — and weighs accordingly.
+:::
+
+. . .
+
+- This is why putting the important instruction at the *end* of a long prompt often works better than burying it in the middle — the mechanism doesn't guarantee uniform "reading."
+- It is also why irrelevant context isn't free: every token in the window is a candidate for attention, and more candidates means more room for the model to attend to the wrong thing.
+- Nothing here is guaranteed or hand-tunable by you — you interact with it indirectly, by controlling *what's in the context* and *where*.
+
+---
+
+## System prompts: the harness's instructions to the model
+
+::: {.callout-note}
+# Definition
+A system prompt is a block of text the harness prepends to every conversation, invisible to you by default, that tells the model: who it is, what it can do, and — critically — the exact syntax for calling tools.
+:::
+
+. . .
+
+A real agent system prompt typically says things like:
+
+- "You are a coding assistant operating inside a project directory."
+- "You have access to the following tools: `read_file`, `write_file`, `run_command`, `edit`. To use one, output <exact format>."
+- "Always explain your plan before making changes." / "Prefer minimal diffs." / project-specific rules (recall S3's agent-rules file).
+
+. . .
+
+This is *why* project-level config files (`AGENTS.md`, `CLAUDE.md`, OpenCode's config) matter: they get folded into the system prompt on every single call in that project, shaping every response without you retyping anything.
+
+---
+
+## Tool calling: how a model "does" something
+
+The model itself cannot read a file, run `git commit`, or edit code. It can only produce text.
+
+. . .
+
+::: {.callout-important}
+# The trick
+The harness tells the model, in the system prompt: "if you want to read a file, output text in this exact format." The model, being a good next-token predictor trained on this pattern, does exactly that when it decides a file read would help. The harness watches for that pattern, intercepts it, actually runs the file read, and feeds the result back in as a new turn.
+:::
+
+. . .
+
+So a "tool call" from the model's point of view is just: producing a specific string of text that *looks like* a function call. The intelligence is in the harness recognizing and executing it — the model is never touching your filesystem directly.
+
+---
+
+## The full loop
+
+::: {.callout-tip}
+# From prompt to diff — the actual sequence
+1. You type a prompt in OpenCode.
+2. Harness assembles context: system prompt + history + your message.
+3. Harness sends this to the model API.
+4. Model returns text — either a normal reply, or a tool-call pattern (e.g. "read file `x.R`").
+5. If it's a tool call: harness executes it for real (reads the file), appends the result to the context, and goes back to step 3 — **without you doing anything**.
+6. This repeats — read, edit, run tests, read output, edit again — until the model produces a final reply with no more tool calls.
+7. Harness renders any file edits as a **diff** on your screen.
+:::
+
+. . .
+
+What looks like one prompt → one answer is often **many** model calls chained by the harness, each one re-sending the whole growing context.
+
+---
+
+## Why this explains agent behavior you've seen
+
+::: {.incremental}
+- **Why agents sometimes "forget" earlier instructions** → context window pressure, or the instruction got attended to weakly.
+- **Why agents can get expensive fast** → every tool-call round-trip re-sends the *entire* context so far, and cost scales with tokens in *and* out.
+- **Why a good system prompt / config file makes a noticeable difference** → it's re-injected on every call, unlike something you said once ten turns ago.
+- **Why two harnesses on the same model can behave differently** → different system prompts, different tool sets, different strategies for compacting old context when it fills up.
+:::
+
+---
+
+## Live demo: same task, two harnesses
+
+::: {.callout-important}
+# Setup
+Same task, run twice:
+
+- **OpenCode + free-tier model** (what you use day to day in this course)
+- **Claude Code + a paid frontier model** (one-off comparison — not what we teach)
+:::
+
+. . .
+
+Watch for, and be ready to discuss:
+
+- Does the harness narrate its plan before acting, or act silently?
+- How many tool calls / rounds does each take to finish?
+- Quality and correctness of the final diff.
+- Rough cost: free vs metered-per-token (concrete numbers come in Session 9).
+
+. . .
+
+::: {.callout-note}
+# The point of this demo
+The **model** and the **harness** are separate axes of choice. A better/pricier model does not automatically mean a better harness experience, and vice versa — you are always choosing both.
+:::
+
+---
+
+## Wrap-up
+
+::: {.callout-tip}
+# You should now be able to explain
+- What happens, mechanically, between typing a prompt and seeing a diff.
+- Why context windows are finite and why that has practical consequences.
+- What a system prompt is doing and why project config files matter.
+- What a "tool call" actually is (text pattern recognized by the harness, not the model reaching into your computer).
+- Why model choice and harness choice are two separate cost/quality decisions.
+:::
+
+. . .
+
+Next: Session 6 puts this to work on a real data-wrangling pipeline with DuckDB — where you'll watch the agent draft SQL/dplyr queries and have to verify them yourself.
