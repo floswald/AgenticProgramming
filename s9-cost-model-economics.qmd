@@ -26,7 +26,7 @@ If your S6 pipeline took 30 seconds and a few cents of API calls on a toy datase
 
 - Agent-driven work has a *marginal cost per run*, unlike a script you write once and run for free forever.
 - Grant budgets, RA time, and compute credits are finite — "just ask the agent again" is not free.
-- As Data Editor of a journal, Florian sees replication packages that quietly assume unlimited API budget. That assumption doesn't survive contact with a reviewer re-running your pipeline on their own key.
+- As Data Editor of a journal, I see replication packages that quietly assume unlimited API budget. That assumption doesn't survive contact with a reviewer re-running your pipeline on their own key.
 - The skill here isn't memorizing prices (they change monthly) — it's building the *habit of estimating before running*.
 
 # Part 1 — How LLM pricing actually works
@@ -72,6 +72,8 @@ Pricing and capability move fast — don't memorize numbers, memorize the *shape
 | Cheap / fast | small open-weight models, "mini"/"flash" tiers | fractions of a cent per 1K tokens | high-volume, simple, well-specified tasks |
 | Frontier / expensive | top-tier proprietary models | 10-50x the cheap tier | hard reasoning, ambiguous specs, high-stakes code |
 | Local / self-hosted | Llama, Qwen, DeepSeek run on your own GPU | \$0 marginal, but hardware + electricity + your time | privacy-sensitive data, offline, high-volume repeated tasks |
+
+## Free tier vs paying: a question
 
 ::: {.callout-note}
 # Question
@@ -122,6 +124,8 @@ A good test suite doesn't just catch bugs — it changes the economics of which 
 - Local open-weight models currently lag frontier proprietary models on hard reasoning tasks
 - You maintain the stack (drivers, quantization, serving software)
 - Your own electricity and setup time are real costs, just not itemized on an invoice
+
+## Local vs API: a question
 
 ::: {.callout-note}
 # Question
@@ -182,13 +186,16 @@ When budgeting a pipeline for a real deadline, estimate *time* separately from *
 
 # Exercise: cost estimate for your own pipeline
 
-## What you'll produce
+## What you'll produce (1/2)
 
 Using **your own S6 pipeline** (the DuckDB pipeline you built, tested in S7/S8), produce a short written cost estimate covering:
 
 1. **Baseline run**: at your current (toy) data scale, how many agent calls did it take to get the pipeline working? Pull actual token counts from your OpenCode session logs/transcript if available, or estimate from prompt/response lengths.
 2. **10x scale estimate**: would you need to re-run the agent at all, or does your existing code just process more rows? If more agent involvement is needed (e.g. new edge cases), estimate how much.
 3. **100x scale estimate**: same question. At what point (if any) would you switch model tier, or consider a local model?
+
+## What you'll produce (2/2)
+
 4. **Dollar and time figures**: give an actual \$ estimate (using a real, current price for the model tier you'd use) and a rough wall-clock time estimate, for both the 10x and 100x scenarios.
 5. **One paragraph**: would you use the same model for all three scales, or would your choice change? Why?
 
@@ -196,6 +203,8 @@ Using **your own S6 pipeline** (the DuckDB pipeline you built, tested in S7/S8),
 ## Where to find real prices
 Check the current pricing page for whichever provider you used in S6/S7/S8 (OpenRouter, Google AI Studio, Anthropic, etc.) — prices change often, always use the number as of the day you write the estimate, and cite the date.
 :::
+
+## Submission
 
 ::: {.callout-note}
 ## Submission
