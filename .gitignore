@@ -9,3 +9,7 @@
 .quarto
 .RData
 *_cache/
+__pycache__/
+.pytest_cache/
+
+**/*.quarto_ipynb
