@@ -9,7 +9,7 @@ date-format: "D MMMM, YYYY"
 
 ## Intro
 
-In this session we cover geospatial data and how to handle it with `R` — but the point is not "learn `sf` syntax by hand." The point is: **spatial bugs are silent**. A map with the wrong projection, a join that silently drops rows, a distance computed in degrees instead of meters — all of these still *look like a map*. Nothing crashes. Nothing looks obviously wrong. You have to know what to check.
+In this session we cover geospatial data and how to handle it with `R` — but the point is not "learn `sf` syntax by hand." The point is: **spatial bugs are often silent**. A map with the wrong projection, a distance computed by hand on raw lon/lat coordinates instead of a projected one — these still *look like a map* or a plausible number. Nothing crashes. Nothing looks obviously wrong. You have to know what to check — and, just as importantly, which operations already check for you and which don't.
 
 ::: {.callout-note}
 
@@ -36,10 +36,13 @@ Today: you'll ask your agent (OpenCode) to propose CRS transforms and spatial jo
 * Most bugs you've met so far (S2, S7, S8) announce themselves: wrong number, failed test, crashed script.
 :::
 ::: {.fragment}
-* Spatial bugs often don't. A `st_join()` with mismatched CRS can silently return `NA` geometries or wrong matches — the plot still renders, still has the right *shape*.
+* Some don't: hand-computing a distance from raw lon/lat coordinates instead of routing through a projected CRS gives you a plausible-looking number in the wrong units, with no error and no warning.
 :::
 ::: {.fragment}
 * A projection mistake changes areas and distances by a scale factor, but the map still looks like a recognizable outline of the country.
+:::
+::: {.fragment}
+* Others do announce themselves — `st_join()` on mismatched CRS refuses to run rather than silently mis-joining. Knowing *which* operations protect you and which don't is itself part of the skill.
 :::
 ::: {.fragment .callout-warning}
 **Rule for today**: never accept an agent's spatial code because "the plot looks right." Always check it against something you can independently compute or already know (a real distance, a known area, an expected row count).
@@ -380,6 +383,10 @@ Here is a version of this exact join, as an agent might first hand it back to yo
 ```{r}
 #| echo: true
 #| error: true
+## Reload a fresh, untransformed copy — this demo shouldn't depend on
+## whether you ran the (eval:false) fix chunk above in your own session.
+data("seine", package = "spData")
+
 ## BUG: no st_transform() before the join — seine is still in its
 ## original CRS, france is in whatever maps::map() returns.
 pl_bug = st_join(france, seine) |>
@@ -430,7 +437,7 @@ correct_dist
 
 1. Ask your agent for the straight-line distance between two départements' centroids, **without** mentioning the projection pitfall.
 2. Check whether it routed the computation through a projected CRS and `st_distance()`, or hand-computed coordinates directly. Either can *look* like a normal, plausible number — that's the point of a silent bug.
-3. Verify the result against an outside source (a map-ruler estimate, a second computation route) before trusting it.
+3. Verify the result **both** ways: (a) plot the two centroids and a connecting line — does it look right on the map? — and (b) check the number against an outside source (a map-ruler estimate, a second computation route).
 4. Write down, in your own words: what did the wrong version's number look like, and what specific check caught it? This is the "one case you had to correct" for this session's outcome.
 
 ---
