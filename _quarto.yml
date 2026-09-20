@@ -1,5 +1,9 @@
 project:
   type: website
+  render:
+    - "*.qmd"
+    - "*.md"
+    - "!course-redesign-plan.md"
 
 website:
   title: "Intro To Programming"
