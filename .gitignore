@@ -7,3 +7,5 @@
 .DS_Store
 /data/shapefiles/
 .quarto
+.RData
+*_cache/
