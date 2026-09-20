@@ -1,13 +1,8 @@
 ---
 title: "The Unix Shell"
-format: 
-  revealjs:
+format:
+  clean-revealjs:
     chalkboard: false
-    logo: /images/ScPo-logo.png
-    footer: "[SciencesPo Intro To Programming 2024](https://floswald.github.io/ScPoProgramming/)"
-    incremental: false
-    code-line-numbers: false
-    highlight-style: github
 author: Florian Oswald and Software Carpentry
 subtitle: "[SciencesPo Intro To Programming 2024](https://floswald.github.io/ScPoProgramming/)"
 date: today

@@ -1,14 +1,6 @@
 ---
 title: "Working with Files and Directories"
-format: 
-  revealjs:
-    theme: _extensions/metropolis-theme/metropolis.scss
-    chalkboard: true
-    logo: /images/ScPo-logo.png
-    footer: "[SciencesPo Intro To Programming 2024](https://floswald.github.io/ScPoProgramming/)"
-    incremental: false
-    code-line-numbers: false
-    highlight-style: github
+format: clean-revealjs
 author: Florian Oswald and The Software Carpentry
 subtitle: "[SciencesPo Intro To Programming 2024](https://floswald.github.io/ScPoProgramming/)"
 date: today

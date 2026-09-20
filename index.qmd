@@ -3,6 +3,7 @@ title: Intro To Programming
 author: "[Florian Oswald](https://floswald.github.io)"
 subtitle: "UniTo Master in Economics"
 number-sections: true
+format: html
 ---
 
 # Welcome to *Introduction to Programming*

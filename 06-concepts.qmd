@@ -1,5 +1,6 @@
 ---
 title: "Intro to Generic Programming"
+format: html
 ---
 
 ```{r reticulate_config}
