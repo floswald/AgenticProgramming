@@ -84,7 +84,8 @@ $$
 
 ## Attention, the conceptual version
 
-- Every token, at every layer, gets to "look at" every other token in the context and ask: *how relevant are you to me, right now?*
+- Every token, at every layer, gets to "look back" at every token that came *before* it (never ahead — this is a one-directional, left-to-right model) and ask: *how relevant are you to me, right now?*
+- That one-directional constraint is exactly why generation happens left-to-right, one token at a time: the model was built and trained to only ever condition on what's already there.
 - This produces a weighted blend: each token's representation gets updated using information pulled from the tokens most relevant to it.
 - Stack many of these attention layers on top of each other (this is the "transformer" — dozens of layers is typical), each one refining the representation a bit further, mixing local grammar-level patterns in early layers with more abstract, longer-range relationships in later ones.
 - **No memory, no lookup table, no symbolic reasoning module.** Just repeated rounds of "which other tokens should influence how I update this one," turned into more predictive representations for the final next-token-probability step.
@@ -116,6 +117,17 @@ $$
 - Nothing in this pipeline directly optimizes for "calibrated uncertainty" unless it is specifically and carefully trained for — and even then, imperfectly.
 - Put bluntly: the training process rewards sounding right at least as much as being right.
 
+## Live demo — watch it happen
+
+::: {.callout-note}
+## Instructor demo, no student setup needed
+Open OpenCode with the free-tier model and ask it a question with a precise, checkable answer in an area we know cold — e.g. "give me the exact page number and DOI for [a specific paper]," or "what was the exact closing value of [some index] on [a specific past date]."
+:::
+
+- Watch it answer *immediately*, *confidently*, and *specifically* — a real-looking DOI, a real-looking page number.
+- Then check it. It's very likely wrong, but phrased exactly like a right answer would be phrased.
+- Keep this moment in mind — Part 5 is the explanation for what you just watched.
+
 # Part 5 — Why hallucination is structural
 
 ## Putting the pieces together
@@ -145,6 +157,16 @@ $$
 ## The one paragraph you should be able to say out loud
 An LLM doesn't look anything up — it predicts, one chunk of text at a time, whatever continuation is statistically most plausible given everything written before it, based on patterns learned from huge amounts of text. Its training additionally rewards sounding confident and complete. So when it doesn't actually "know" a fact, nothing stops it from generating a wrong one that's phrased exactly like a right one — because from the model's point of view, both are just "plausible next tokens." That's why you always verify, especially numbers, dates, and citations.
 :::
+
+## Your turn
+
+::: {.callout-tip}
+## 60 seconds, then say it out loud
+Turn to your neighbour. Using the demo you just watched, explain in your own words why the model gave a confident, specific, wrong answer. Don't read the callout above — try it cold.
+:::
+
+- Two volunteers explain it to the room.
+- If your explanation mentions "the model looked it up and got it wrong," that's the misconception this lecture exists to correct — try again using "predict" instead of "look up."
 
 ## Where this leads next
 
