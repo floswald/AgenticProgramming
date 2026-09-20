@@ -1,0 +1,133 @@
+---
+title: "S0 — Before Session 1: Accounts & Install"
+format:
+  html:
+    toc: true
+    code-line-numbers: false
+    highlight-style: github
+author: Florian Oswald
+date: today
+date-format: "D MMMM, YYYY"
+---
+
+## Why this page exists
+
+Session 1 is in-person and short. If we spend it watching 20 people sign up for accounts, we lose the lesson. Do everything on this page **before** Session 1. Bring your laptop with all of it working — we will spot-check at the start of Session 1 and troubleshoot only what's still broken.
+
+Budget 30–45 minutes. If something doesn't work, don't spend hours on it — note where you got stuck and bring that to Session 1.
+
+::: {.callout-tip}
+## Objectives
+- Have a working terminal (shell) on your machine.
+- Have `git` installed.
+- Have an API key for an LLM provider (free tier is fine).
+- Have `opencode` installed and successfully talking to that provider.
+:::
+
+## 1. Get a terminal
+
+- **macOS**: open the built-in `Terminal` app (Spotlight → "Terminal").
+- **Windows**: install **WSL2** (Windows Subsystem for Linux) — this gives you a real Linux shell, which is what everything else in this course assumes. Follow: [Microsoft's WSL install guide](https://learn.microsoft.com/en-us/windows/wsl/install). One command in PowerShell (as administrator) usually does it:
+
+```powershell
+wsl --install
+```
+
+Restart when prompted, then open the "Ubuntu" app that got installed — that's your terminal from now on.
+
+- **Linux**: you already have one.
+
+Check it works:
+
+```bash
+echo "hello from my shell"
+```
+
+## 2. Install git
+
+- **macOS**: `git` usually comes with Xcode Command Line Tools. Run `git --version`; if missing, it will prompt you to install.
+- **WSL2 / Linux**: `sudo apt update && sudo apt install git -y`
+
+Check:
+
+```bash
+git --version
+```
+
+## 3. Get a free LLM API key
+
+You do **not** need a paid subscription for this course. Pick **one** of these:
+
+::: {.panel-tabset}
+
+### OpenRouter (recommended)
+
+1. Go to [openrouter.ai](https://openrouter.ai) and sign up.
+2. Go to *Keys* → *Create Key*. Copy it somewhere safe (you won't see it again).
+3. OpenRouter gives access to several free-tier models (look for `:free` suffixed models, e.g. some Gemini, GLM, Qwen, DeepSeek variants). Availability changes — check [openrouter.ai/models](https://openrouter.ai/models) and filter by price = free.
+
+### Google Gemini
+
+1. Go to [aistudio.google.com](https://aistudio.google.com) and sign in with a Google account.
+2. *Get API key* → create a new key. Copy it.
+3. Gemini has a genuinely free tier (rate-limited), no card required.
+
+:::
+
+Either way, **do not commit this key to git or paste it in a public chat**. Treat it like a password.
+
+## 4. Install OpenCode
+
+OpenCode is the agent harness we'll use in class — it's free and open source, and works with whichever provider/key you picked above (unlike Claude Code, which is tied to Anthropic billing).
+
+```bash
+curl -fsSL https://opencode.ai/install | bash
+```
+
+(macOS with Homebrew also works: `brew install sst/tap/opencode`)
+
+Check:
+
+```bash
+opencode --version
+```
+
+## 5. Connect OpenCode to your provider
+
+Run:
+
+```bash
+opencode auth login
+```
+
+Pick your provider (OpenRouter or Gemini) and paste the API key from step 3 when asked. OpenCode stores it locally, not in your project files.
+
+## 6. Smoke test
+
+In an empty folder:
+
+```bash
+mkdir opencode-test && cd opencode-test
+opencode
+```
+
+At the prompt, type:
+
+```
+say hello and tell me what model you are
+```
+
+If you get a sensible reply, you're done. Exit with `Ctrl+D` or `/exit`.
+
+## Checklist
+
+- [ ] Terminal opens (macOS Terminal or WSL2 Ubuntu)
+- [ ] `git --version` works
+- [ ] API key obtained from OpenRouter or Gemini, saved somewhere safe
+- [ ] `opencode --version` works
+- [ ] `opencode auth login` completed
+- [ ] Smoke test in step 6 returned a real answer
+
+## Stuck?
+
+Bring the exact error message (screenshot or copy-paste) to Session 1. "It didn't work" is hard to debug — the error text is not.
