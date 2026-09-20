@@ -105,6 +105,31 @@ Move your S2 scripts and tests into this layout. Ask your agent to propose the m
 
 ---
 
+## README discipline
+
+A README is the first (and sometimes only) context an agent — or a stranger, or you in eight months — gets before touching your code. A good README for this course answers, in order:
+
+1. **What is this?** One or two sentences.
+2. **How do I run it?** The literal commands, in order, from a clean checkout.
+3. **What should I see?** Expected output — so a wrong result is recognizable as wrong.
+4. **What are the parts?** A one-line map of the folders, if not obvious.
+5. **What does this depend on?** R/Python version, packages, any external data.
+
+What a README is **not**: a changelog, a diary of what you tried, or a copy of your code comments. Keep it short enough that an agent's context window doesn't have to spend most of its budget reading prose to find the one command it needs.
+
+---
+
+## Test your README like an agent would
+
+::: {.callout-important}
+# Try it
+Ask your agent — in a **fresh session**, with no prior context of this project — to read only your README and try to run your pipeline.
+:::
+
+If it gets stuck, your README has a gap, not the agent. This is the only reliable way to check "could a stranger pick this up cold" — you already know how your own project works, so you can't self-assess this one.
+
+---
+
 ## `.gitignore` discipline
 
 Not everything belongs in version control. Three categories that must **never** be committed:
