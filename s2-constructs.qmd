@@ -164,12 +164,17 @@ for (i in 2:4) {
 
 :::
 
-Look closely at what actually printed. If you intended to cover the numbers **2, 3, 4, 5**, did you get all four? `range(2, 5)` in Python and `2:4` in R both stop *before* 5 is reached in the way you might expect from the English description "the numbers 2 through 5." This is a classic off-by-one — the exact kind of thing an agent-written loop will get wrong without a second glance, because the code *runs* and *looks* plausible. There's no error, no warning — just one fewer element than you meant.
+Look closely at what actually printed. If you intended to cover the numbers **2, 3, 4, 5**, did you get all four — and are the two bugs even the same bug? They're not, and that's the point:
+
+- **Python's `range(2, 5)` is half-open by design**: it stops *before* its second argument, so it yields 2, 3, 4 and silently drops 5. This isn't a typo, it's how `range` always works — the bug is forgetting that convention when translating "2 through 5" into code.
+- **R's `2:4` is not truncated by `:` at all** — R's `:` operator is inclusive on both ends, so `2:5` would correctly give 2, 3, 4, 5. The bug here is a plain wrong literal: whoever (or whatever agent) wrote `2:4` mistyped the upper bound, full stop.
+
+Same visible symptom — one element missing — but two different root causes, in two different places (a language convention vs. a transcription slip). An agent draft can produce either kind, and "it printed one fewer number than expected" doesn't tell you which one you're looking at until you read the code.
 
 ::: {.callout-important}
-## Exercise 1 — find the off-by-one, then check for it
+## Exercise 1 — find the bug in each language, then check for it
 1. Before reading further, predict what the two loops above print. Then run them.
-2. Fix both so they print 2, 3, 4, **and** 5.
+2. Fix both so they print 2, 3, 4, **and** 5 — but explain in one sentence, per language, *why* the original was wrong (half-open range convention vs. wrong literal). If your explanation is the same for both, look again.
 3. Write a check — `stopifnot()` in R, `assert` in Python — that captures the intended output (e.g. "the loop should touch exactly 4 numbers: 2,3,4,5") and would fail on the *original*, unfixed version. Save it; you'll use the same pattern below.
 :::
 
@@ -308,7 +313,7 @@ By the end of today you should have, in your S1 git repo (or a new folder within
 
 Commit them. We'll build directly on this repo structure in S3.
 
-A worked reference solution (one way to fix both bugs, plus the checks that catch them) lives in [`scripts/s2-constructs/`](scripts/s2-constructs/) in this course repo — don't look until you've written your own; the point is the exercise, not the answer key.
+A worked reference solution (one way to fix both bugs, plus the checks that catch them) lives in [`scripts/s2-constructs/`](https://github.com/floswald/AgenticProgramming/tree/agentic-redesign/scripts/s2-constructs) in this course repo — don't look until you've written your own; the point is the exercise, not the answer key.
 
 ::: {.callout-note}
 ## A note on the tests above
