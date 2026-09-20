@@ -1,37 +1,34 @@
 ---
-title: "S3 — Git + Project Config"
-format: html
+title: "Git + Project Config"
+format: clean-revealjs
 author: Florian Oswald
+subtitle: "[Agentic Programming](https://floswald.github.io/AgenticProgramming/)"
 date: today
 date-format: "D MMMM, YYYY"
 ---
 
 ## Where we are
 
-This is a **remote** session — work through it at your own pace, submit the outcome by the deadline announced in class.
-
 By S1 you already have:
 
-- a git repo with a trivial script, committed
-- one completed OpenCode session
+* a git repo with a trivial script, committed
+* one completed OpenCode session
 
 By S2 you have:
 
-- a small set of R/Python scripts (same task, both languages)
-- a hand-written test for each, catching a bug the agent introduced
-
-This session does **not** re-teach `git init` / `add` / `commit` / `diff` / `log` — you already did that in S1. Instead it asks a different question:
+* a small set of R/Python scripts (same task, both languages)
+* a hand-written test for each, catching a bug the agent introduced
 
 ::: {.callout-tip}
-## Objective
+# Objective
 Your repo currently works for *you*, on *your* machine, today. Make it work for an agent, a stranger, and future-you — on a different machine, next year.
 :::
 
-That reframing is the point of S3: **version control and project layout are agent-compatibility infrastructure**, not just a personal undo button. An agent that opens your repo cold has no memory of the conversation where you explained what `analysis.R` does, where the data lives, or which model you were using when it worked. The repo itself has to carry that information.
+We won't re-teach `git init` / `add` / `commit` — you did that in S1. This session is about the parts of git and project structure that make a repo **portable and legible to an agent**, not just to you.
+
+---
 
 ## Why hardcoded paths break agent workflows
-
-Open your S2 repo and look for lines like these:
 
 ```r
 # R
@@ -45,20 +42,27 @@ df = pd.read_csv("/home/yourname/Desktop/econ-course/data/houses.csv")
 
 This works exactly once: on your machine, in that exact location. It breaks the moment:
 
-- you move the folder
-- a classmate clones your repo
-- an agent is asked to "run this project" from a fresh checkout — it will `cd` into the repo root and has no reason to know your home directory even exists
-- you run it from CI (a server that has never seen your filesystem)
+* you move the folder
+* a classmate clones your repo
+* an agent is asked to "run this project" from a fresh checkout
+* you run it from a server that has never seen your filesystem
+
+---
+
+## The agent angle specifically
 
 ::: {.callout-warning}
-## The agent angle specifically
-When you hand a repo to an agent and say "run the pipeline," the agent infers structure from what it can see: file names, relative paths, a README. A hardcoded absolute path is not just non-portable — it's a piece of context the agent cannot reconstruct from the repo alone. It has to fail, notice the failure, and ask you where the data really is. That's a wasted round trip you can eliminate for free.
+# Why this matters more with agents
+When you hand a repo to an agent and say "run the pipeline," it infers structure from what it can see: file names, relative paths, a README. A hardcoded absolute path isn't just non-portable — it's context the agent cannot reconstruct from the repo alone. It has to fail, notice the failure, and ask where the data really is. That's a wasted round trip you can eliminate for free.
 :::
 
-**The fix — always resolve paths relative to the project root:**
+---
+
+## The fix: resolve paths relative to project root
 
 ```r
-# R: use `here::here()` — finds project root via .Rproj / .git, no matter your working directory
+# R: `here::here()` finds project root via .Rproj / .git,
+# regardless of your working directory
 library(here)
 df <- read.csv(here("data", "houses.csv"))
 ```
@@ -70,57 +74,106 @@ DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 df = pd.read_csv(DATA_DIR / "houses.csv")
 ```
 
-Ask your agent to grep your repo for absolute paths (`/Users`, `/home`, `C:\`) and fix every hit using one of the patterns above. Verify by running the scripts from a **different working directory** than usual — if they still work, you've actually fixed it.
+::: {.callout-note}
+# Exercise 1
+Ask your agent to grep your repo for absolute paths (`/Users`, `/home`, `C:\`) and fix every hit using one of the patterns above. Verify by running the scripts from a **different working directory** than usual.
+:::
+
+---
 
 ## Standard project layout
-
-There is no single "correct" layout, but there is a well-understood default that both humans and agents recognize on sight — because it's the same shape as thousands of repos in their training data:
 
 ```
 your-project/
 ├── README.md          # what this is, how to run it, what to expect
-├── AGENTS.md           # rules file for coding agents (see below)
+├── AGENTS.md           # rules file for coding agents
 ├── .gitignore
-├── data/               # raw + intermediate data (often partially gitignored)
+├── data/               # raw + intermediate data
 ├── R/  or  src/         # source code — functions, not just scripts
 ├── scripts/            # top-level "run this" entry points
 ├── tests/              # your S2 tests live here now
 ├── output/             # figures, tables — generated, not hand-edited
-└── prompts/            # archived prompts/sessions (see below)
+└── prompts/            # archived prompts/sessions
 ```
 
-Why this matters for agent compatibility: an agent that sees a `tests/` folder will *look there first* before writing new tests, and is more likely to run the existing suite before declaring success. An agent that sees everything dumped flat in the repo root has no such signal and will guess — badly.
+An agent that sees a `tests/` folder looks there first, and is more likely to run the existing suite before declaring success. An agent that sees everything dumped flat in the repo root has no such signal — and will guess.
 
 ::: {.callout-note}
-## Exercise 1 — restructure your S2 repo
-Move your S2 scripts and tests into this layout. Ask your agent to propose the move, then check its work:
-- Do the scripts still run from the new locations?
-- Do the tests still pass?
-- Did any path silently break? (This is exactly the "where is this wrong, how do I check?" habit from S2 — apply it here.)
+# Exercise 2 — restructure your S2 repo
+Move your S2 scripts and tests into this layout. Ask your agent to propose the move, then check its work: do scripts still run? Do tests still pass? Did any path silently break?
 :::
 
-## README discipline
+---
 
-A README is the first (and sometimes only) context an agent — or a stranger, or you in eight months — gets before touching your code. A good README for this course answers, in order:
+## `.gitignore` discipline
 
-1. **What is this?** One or two sentences.
-2. **How do I run it?** The literal commands, in order, from a clean checkout.
-3. **What should I see?** Expected output — so a wrong result is recognizable as wrong.
-4. **What are the parts?** A one-line map of the folders above, if not obvious.
-5. **What does this depend on?** R/Python version, packages, any external data.
+Not everything belongs in version control. Three categories that must **never** be committed:
 
-What a README is **not**: a changelog, a diary of what you tried, or a copy of your code comments. Keep it short enough that an agent's context window doesn't have to spend most of its budget reading prose to find the one command it needs.
+* **Secrets** — your S0 LLM API key, any credential. Committing it once means it's in history forever, even after you delete it.
+* **Large/regenerable data** — raw downloads, caches — bloat the repo and aren't the point of tracking.
+* **Machine-local junk** — `.DS_Store`, `.Rproj.user`, `__pycache__/`.
+
+```gitignore
+# secrets
+.env
+*.key
+
+# data (if large / regenerable — document how to get it in README instead)
+data/raw/
+
+# machine/tooling junk
+.DS_Store
+.Rproj.user/
+__pycache__/
+*.pyc
+```
 
 ::: {.callout-important}
-## Test it like an agent would
-Ask your agent — in a **fresh session**, with no prior context of this project — to read only your README and try to run your pipeline. If it gets stuck, your README has a gap, not the agent.
+# Check now
+Run `git log --all --full-history -- "*.env"` (or search for any key-shaped string) on your S2 repo. If anything comes back, treat that key as compromised — rotate it.
 :::
+
+---
+
+## Git remotes: connecting to GitHub
+
+```bash
+$ ls -la ~/.ssh          # do you already have a keypair?
+$ ssh-keygen -t ed25519 -C "your@email.com"   # if not
+```
+
+Copy the public key to GitHub → *Settings → SSH keys*:
+
+```bash
+$ cat ~/.ssh/id_ed25519.pub
+```
+
+Add the remote and push:
+
+```bash
+$ git remote add origin git@github.com:YOUR_USER/YOUR_REPO.git
+$ git push -u origin main
+```
+
+`origin` is just a name (convention); `-u` sets `main` as the tracked upstream so future `git push` needs no arguments.
+
+---
+
+## Branching, briefly
+
+```bash
+$ git checkout -b restructure   # new branch for the S3 rework
+# ... move files, edit AGENTS.md, fix paths ...
+$ git push origin restructure
+```
+
+Why bother for a solo course project? Because agent-assisted changes can be large and wrong in ways that are hard to spot mid-edit. A branch lets you review the whole diff before merging into `main` — the same discipline this course's own repo uses (`agentic-redesign` → feature branches → review → merge).
+
+---
 
 ## Project-level agent config: the rules file
 
-OpenCode (and most harnesses) look for a project-level instructions file — conventionally `AGENTS.md` at the repo root (some tools also read `CLAUDE.md`; check your harness's docs, but the pattern is the same). This is where you put standing instructions that would otherwise be re-typed into every prompt: conventions, things not to touch, how to run tests before declaring success.
-
-A minimal `AGENTS.md` for a course project:
+OpenCode (and most harnesses) read a project-level instructions file at the repo root — conventionally `AGENTS.md`. Standing instructions go here instead of being re-typed into every prompt.
 
 ```markdown
 # Agent instructions for this repo
@@ -142,26 +195,26 @@ A minimal `AGENTS.md` for a course project:
 - `data/raw/` is read-only — never overwrite raw source data.
 ```
 
-This is not decoration. It's the difference between re-explaining your conventions in every single prompt and stating them once, durably, in a place every session of every harness will read automatically.
-
 ::: {.callout-note}
-## Exercise 2 — write your AGENTS.md
-Write one for your S2 repo. Keep it short — a few bullet points, not a manifesto. Then start a fresh agent session and ask it to make some trivial change (e.g. add a comment). Check whether it actually followed a rule you set (e.g. did it run the tests before saying it was done?).
+# Exercise 3 — write your AGENTS.md
+Write one for your S2 repo. Keep it short. Then start a **fresh** agent session and ask for a trivial change. Check whether it actually followed a rule you set (e.g. did it run the tests before saying it was done?).
 :::
+
+---
 
 ## Model pinning
 
-"It worked when I tried it" is not reproducible if you don't know *which model* you tried it with. Models get updated, deprecated, or silently change behavior between provider-side versions. For a research pipeline, treat the model as a dependency, exactly like a package version.
+"It worked when I tried it" is not reproducible if you don't know *which model* you tried it with. Models get updated, deprecated, or silently change behavior server-side.
 
-- Record, in your README or `AGENTS.md`, which model + provider you used to develop/validate the pipeline (e.g. `openrouter/deepseek-v3.2:free`, checked on 2026-09-20).
-- If your harness supports pinning a specific model version in its config (rather than "whatever is default today"), do that for anything you intend to reproduce later.
-- This matters most for S9 (cost) and S11 (reproducibility) — you're planting the flag now that will let you answer "did the pipeline change, or did the model change?" later in the course.
+* Record which model + provider you used to build/validate the pipeline (e.g. `openrouter/deepseek-v3.2:free`, checked 2026-09-20) in your README or `AGENTS.md`.
+* If your harness supports pinning a specific model version, do that for anything you intend to reproduce later.
+* This matters most for S9 (cost) and S11 (reproducibility) — you're planting the flag now that lets you later answer "did the pipeline change, or did the model change?"
+
+---
 
 ## Prompt archiving
 
-Your git history records what your *code* looked like at each commit. It does not record what you *asked the agent* to get there. For a reproducibility-minded workflow, that's a gap: two researchers with the same repo but different prompts can get different code.
-
-Adopt a simple habit: save the prompts that produced non-trivial changes.
+`git log` records what your **code** looked like at each commit. It does not record what you **asked the agent** to get there.
 
 ```
 prompts/
@@ -169,33 +222,37 @@ prompts/
 └── 2026-09-20-add-agents-md.md
 ```
 
-Each file: the prompt you gave, and optionally a one-line note on what you had to correct afterward (this doubles as material for your S11 checklist later). This does not need to be exhaustive — archive the prompts that mattered, not every "fix this typo."
+Each file: the prompt you gave, plus optionally a one-line note on what you had to correct afterward — material you'll reuse for your S11 checklist.
 
 ::: {.callout-tip}
-## Why bother
-If your Data Editor (or your future self) asks "how did this script come to look like this?", `git log` answers "what changed." A prompt archive answers "why," in the agent-assisted world where "why" often means "what did I ask for."
+# Why bother
+`git log` answers "what changed." A prompt archive answers "why" — in an agent-assisted world, "why" often means "what did I ask for."
 :::
+
+---
 
 ## Package structure as a reproducibility unit
 
-*(This section absorbs the old standalone `09-R-packages.qmd` — package structure, not turned into its own session, because for this course the point isn't "how to publish to CRAN," it's "structure is what makes a project reproducible.")*
+*(absorbs old `09-R-packages.qmd` — not "how to publish to CRAN," but "structure is what makes a project reproducible")*
 
-A package (R) or an installable module (Python) is the strict, tooling-enforced version of everything above: a declared list of dependencies, a fixed internal layout, and a built-in place for tests. You don't need to publish to CRAN or PyPI to benefit from the structure.
+A package (R) or installable module (Python) is the strict, tooling-enforced version of everything above: declared dependencies, fixed internal layout, a built-in place for tests.
 
-**R — minimal package skeleton:**
+**R — minimal skeleton:**
 
 ```r
 library(devtools)
 create_package("~/myproject")
-use_git()          # already done in S1, but this is how a package wires it up
-use_r("clean_data")     # creates R/clean_data.R
+use_git()
+use_r("clean_data")       # creates R/clean_data.R
 use_testthat()
-use_test("clean_data")  # creates tests/testthat/test-clean_data.R
-document()          # builds documentation from roxygen comments
-check()              # runs R's own structural + test checks
+use_test("clean_data")    # creates tests/testthat/test-clean_data.R
+document()
+check()
 ```
 
-**Python — minimal installable-module skeleton:**
+---
+
+## Package structure — Python side
 
 ```
 myproject/
@@ -208,32 +265,40 @@ myproject/
 ```
 
 ```bash
-pip install -e .     # editable install — code changes are picked up immediately
+pip install -e .     # editable install
 pytest
 ```
 
-The common thread in both: dependencies are **declared** (`DESCRIPTION` / `pyproject.toml`), not just "whatever happened to be installed on my machine," and tests live in a place both a human and an agent will look for them by convention. This is what makes a project a *unit* someone else (or an agent, or CI) can pick up and run — which is exactly this session's outcome.
+Common thread: dependencies are **declared**, not just "whatever happened to be installed," and tests live where a human *and an agent* will look for them by convention.
 
 ::: {.callout-note}
-## Exercise 3 (optional, if time allows)
-Turn one small function from your S2 scripts into a minimal package/module using the skeleton above, with one test. This is a preview of the discipline, not a full package-publishing exercise — that depth (vignettes, `pkgdown`, GitHub Actions CI) is available in the [`r-pkgs`](https://r-pkgs.org) book if you want to go further on your own.
+# Exercise 4 (optional)
+Turn one small function from your S2 scripts into a minimal package/module using the skeleton above, with one test. Full package-publishing depth (vignettes, `pkgdown`, GitHub Actions CI) is in the [`r-pkgs`](https://r-pkgs.org) book if you want to go further.
 :::
+
+---
 
 ## Deliverable
 
 By the end of this session your S2 repo should have:
 
-- [ ] no hardcoded absolute paths (checked by running from a different working directory)
-- [ ] the standard layout (`README.md`, `AGENTS.md`, `data/`, source folder, `tests/`)
-- [ ] a README a stranger (or a fresh agent session) could follow cold
-- [ ] an `AGENTS.md` with at least the conventions you actually want enforced
-- [ ] a note (in README or `AGENTS.md`) of which model you used to build/validate it
-- [ ] a `prompts/` folder with at least one archived prompt from this session
+* no hardcoded absolute paths (verify by running from a different working directory)
+* the standard layout (`README.md`, `AGENTS.md`, `data/`, source folder, `tests/`)
+* a `.gitignore` that keeps secrets and junk out of history
+* a README a stranger — or a fresh agent session — could follow cold
+* an `AGENTS.md` with the conventions you actually want enforced
+* a note of which model you used to build/validate it
+* a `prompts/` folder with at least one archived prompt from this session
+
+---
+
+## Key points
 
 ::: {.callout-tip}
-## Key points
-- Version control only delivers on reproducibility if the *project*, not just the *code*, is portable — no hardcoded paths, declared dependencies, discoverable structure.
-- A rules file (`AGENTS.md`) is durable context: write conventions once, have every agent session read them automatically.
-- Model identity and prompts are part of your provenance record now — you'll need them in S9 and S11.
-- Package structure is the strict version of "clean project layout" — useful even if you never publish anything.
+# Key points
+* Version control only delivers on reproducibility if the *project*, not just the *code*, is portable — no hardcoded paths, declared dependencies, discoverable structure.
+* `.gitignore` discipline keeps secrets and junk out of a history you can't rewrite.
+* A rules file (`AGENTS.md`) is durable context: write conventions once, have every agent session read them automatically.
+* Model identity and prompts are part of your provenance record — you'll need them in S9 and S11.
+* Package structure is the strict version of "clean project layout," useful even if you never publish anything.
 :::
