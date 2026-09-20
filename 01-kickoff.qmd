@@ -1,0 +1,254 @@
+---
+title: "S1 — Kickoff"
+format: clean-revealjs
+author: Florian Oswald
+subtitle: "[Agentic Programming](https://floswald.github.io/AgenticProgramming/)"
+date: today
+date-format: "D MMMM, YYYY"
+---
+
+## Before we start
+
+::: {.callout-note}
+# Assumption
+You've done `00-prework.qmd`: terminal works, `git` installed, an API key for a free-tier LLM provider, `opencode` installed and talking to that provider.
+:::
+
+If any of that is broken, say so now — we fix it in the first five minutes, not during the lab.
+
+::: {.callout-tip}
+# Today's objectives
+- Understand four words that get used loosely: **model**, **harness**, **tool**, **skill** — and why "programming" increasingly means *supervising* one of these systems rather than typing every line by hand.
+- Get comfortable enough in a shell to move around, make/edit/delete files, and chain commands.
+- Initialize a git repo, commit a trivial script, and run one full OpenCode session end to end — reviewing what it did before accepting it.
+:::
+
+# Part 1 — What are you actually talking to?
+
+## Why bother with definitions
+
+* "AI" and "the model" and "ChatGPT" and "Copilot" get used interchangeably in casual conversation.
+* That's fine at a dinner party. It is not fine when you're debugging why an agent did something weird, or deciding what to pay for.
+* Four layers, each doing a different job:
+
+::: {.callout-tip}
+# The stack
+**model** → **harness** → **tool** → **skill**
+:::
+
+We'll meet each one today at a "what is it" level. *How* each one works internally is later sessions (S4: models, S5: harnesses/tools).
+
+## 1. The model
+
+* A large language model: weights trained to predict the next token, given everything before it.
+* That's it — a model, on its own, is a function: text in, text out. It has no memory between calls, can't read your disk, can't run anything.
+* Examples you're using right now: Gemini, GLM, Qwen, DeepSeek (whichever free-tier one you picked in S0).
+* Different models = different quality/speed/cost tradeoffs, same basic job.
+
+. . .
+
+::: {.callout-warning}
+# Not yet
+*Why* next-token prediction produces coherent answers — and why it sometimes confidently produces wrong ones — is S4.
+:::
+
+## 2. The harness
+
+* A model alone can't do anything to your computer. Something has to:
+  - collect context (your prompt, files, previous turns) and send it to the model,
+  - parse the model's reply,
+  - actually execute what the model asked for (read a file, run a command, edit code),
+  - show you the result, ask permission where configured to.
+* That "something" is the **harness**. In this course: **OpenCode**.
+* Claude Code, Cursor, GitHub Copilot Chat, Cline — all harnesses, wrapping different (or the same) models.
+
+::: {.callout-tip}
+# Rule of thumb
+Same model, different harness → different experience, different capability, sometimes different price.
+:::
+
+## 3. The tool
+
+* A **tool** is a specific action the harness lets the model invoke: "read this file," "write this file," "run this shell command," "search the web."
+* The model doesn't do these things itself — it emits a structured request ("call `read_file` with path X"), and the harness executes it and returns the result.
+* This is why an agent can "see" your repo and "run" your tests: not magic, just tool calls the harness carries out on request.
+
+## 4. The skill
+
+* A **skill** is a packaged, reusable set of instructions you (or someone else) hand to the agent so it doesn't have to reinvent a procedure every time — e.g. "here's how our team writes commit messages," "here's how to structure a test file in this repo."
+* Concretely, in OpenCode/Claude-Code-style harnesses: a rules/instructions file the harness reads automatically (`AGENTS.md`, `CLAUDE.md`), or a short standalone procedure you point the agent at.
+* We'll write one of these for real in S3 (project config). Today, just recognize the concept: **skills are how you encode your own judgment so the agent doesn't have to guess it fresh each time.**
+
+## Putting it together
+
+::: {.callout-note}
+# One sentence
+You type a prompt → the **harness** builds context and sends it to the **model** → the model replies, possibly asking to invoke a **tool** → the harness runs the tool and loops back → optionally, a **skill** shaped how the model approached the whole thing.
+:::
+
+* "Programming with AI" in 2026 mostly means: **you supervise this loop.** You still need judgment about what's correct — you just spend less time typing syntax and more time reviewing diffs.
+* That's the whole course, really: build the habit of checking what the agent did before you trust it.
+
+# Part 2 — The Shell, Fast
+
+## Why a shell at all
+
+* Agents run in a terminal. If you can't navigate a filesystem or read a command's output yourself, you can't tell whether the agent did the right thing.
+* We're not doing a full Software Carpentry pass today — a condensed version. Full reference material (if you want more drills) is linked at the end.
+
+## Where am I, what's here
+
+```bash
+$ pwd          # print working directory — where am I?
+$ ls           # list what's in the current directory
+$ ls -l        # long form: sizes, dates
+$ ls -a        # show hidden files too (dotfiles)
+```
+
+* `pwd` and `ls` are your two most-used commands. Use them constantly, especially right before you let an agent touch anything.
+
+## Moving around
+
+```bash
+$ cd some-directory     # go into a subdirectory
+$ cd ..                 # go up one level
+$ cd ~                  # go home
+$ cd -                  # go back to wherever you just were
+```
+
+::: {.callout-note}
+# Absolute vs relative paths
+`data/raw.csv` is *relative* to where you are. `/Users/you/project/data/raw.csv` is *absolute* — works from anywhere. Agents often produce absolute paths; know the difference so a "file not found" makes sense.
+:::
+
+## Making and removing things
+
+```bash
+$ mkdir my-project          # make a directory
+$ mkdir -p a/b/c             # make nested directories at once
+$ touch script.py            # create an empty file
+$ mv old-name.py new-name.py # rename (or move) a file
+$ cp script.py backup.py     # copy a file
+$ rm backup.py               # delete — no trash bin, this is permanent
+```
+
+::: {.callout-warning}
+# `rm` has no undo
+There is no recycle bin in the shell. Double-check the path before you hit enter — and definitely before you let an agent run `rm` on your behalf.
+:::
+
+## Looking inside files
+
+```bash
+$ cat script.py       # print the whole file to screen
+$ head -n 5 file.csv  # first 5 lines
+$ tail -n 5 file.csv  # last 5 lines
+$ less file.csv       # scroll interactively (q to quit)
+```
+
+## Combining commands: redirection and pipes
+
+```bash
+$ ls > filelist.txt      # redirect output into a file (overwrite)
+$ ls >> filelist.txt     # append instead of overwrite
+$ ls -l | head -n 3      # pipe: feed one command's output into the next
+```
+
+::: {.callout-tip}
+# Why this matters for agents
+Agents live and die by chaining exactly these primitives — reading a file, filtering it, writing a result. If a diff an agent proposes runs a pipeline that looks like line noise, you should now be able to read it left to right.
+:::
+
+::: {.callout-note}
+# Want more?
+The old, longer walk-throughs — `01-shell-intro.qmd`, `02-filedir.qmd`, `03-filework.qmd`, `04-pipes.qmd` — are still in the repo as optional reference material with more worked examples and challenges.
+:::
+
+# Part 3 — Lab: repo, script, one agent session
+
+## The goal
+
+By the end of this lab you will have:
+
+1. A git repository on your machine.
+2. A trivial script inside it, committed.
+3. One complete OpenCode session where you asked the agent to do something, **reviewed what it changed**, and then committed that too.
+
+## Step 1 — make a repo
+
+```bash
+$ mkdir s1-kickoff && cd s1-kickoff
+$ git init
+```
+
+* `git init` turns the current folder into a git repository — a `.git/` folder now tracks history here.
+* We are not doing a git deep-dive today (that's S3) — just enough to commit something.
+
+## Step 2 — write a trivial script, commit it
+
+Pick one language — today, use whichever you're most comfortable reading, Python is a reasonable default.
+
+```bash
+$ cat > hello.py << 'EOF'
+print("hello from s1-kickoff")
+EOF
+$ python3 hello.py
+```
+
+Then commit it:
+
+```bash
+$ git add hello.py
+$ git commit -m "initial commit: trivial hello script"
+```
+
+## Step 3 — one full OpenCode session
+
+```bash
+$ opencode
+```
+
+Give it a small, checkable task, for example:
+
+```
+add a function `greet(name)` to hello.py that prints
+"hello, <name>, from s1-kickoff" and call it once with your own name
+```
+
+Let it work. **Do not accept blindly.**
+
+## Step 4 — review before you trust it
+
+Before committing what the agent produced:
+
+```bash
+$ git diff
+```
+
+::: {.callout-tip}
+# Ask yourself
+- Does the diff do only what I asked, nothing more?
+- Would this code actually run? (run it: `python3 hello.py`)
+- Is there anything here I don't understand? If so, ask the agent to explain the specific line — don't just accept it.
+:::
+
+If it looks right:
+
+```bash
+$ git add hello.py
+$ git commit -m "agent: add greet() via opencode, reviewed"
+```
+
+If it doesn't look right, tell the agent what's wrong and iterate — that back-and-forth *is* the skill this course is teaching.
+
+## Checklist — you're done when
+
+- [ ] `git init` repo exists locally, `git log` shows at least two commits.
+- [ ] `hello.py` (or equivalent) runs without error.
+- [ ] You ran one OpenCode session that changed a file, and you can point to the exact diff line you checked before accepting it.
+- [ ] You can say, in your own words, what a model, a harness, a tool, and a skill each are — and give one concrete example of each from today.
+
+::: {.callout-note}
+# Next
+S2: the same "agent drafts, student verifies" habit, applied to loops/conditionals/functions in both R and Python.
+:::
