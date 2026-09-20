@@ -181,6 +181,27 @@ What looks like one prompt → one answer is often **many** model calls chained 
 
 ---
 
+## Activity: write the loop from memory
+
+::: {.callout-tip}
+# 5 minutes, pairs
+Close this deck. On paper or in a text file, write the prompt-to-diff loop in your own words, in 5 steps or fewer. Then turn to your neighbor and explain it to them out loud — no notes.
+:::
+
+. . .
+
+Trade papers. Check each other's version against the slide before this one:
+
+- Did they mention the system prompt getting re-sent every turn?
+- Did they capture that a tool call is text the harness intercepts, not the model directly acting?
+- Did they show at least one loop-back (tool result feeding into another model call)?
+
+. . .
+
+Keep this page — you'll want it again in Session 11 when we catalogue where agents went wrong across the course.
+
+---
+
 ## Why this explains agent behavior you've seen
 
 ::: {.incremental}
@@ -195,27 +216,33 @@ What looks like one prompt → one answer is often **many** model calls chained 
 ## Live demo: same task, two harnesses
 
 ::: {.callout-important}
-# Setup
-Same task, run twice:
+# The task
+Starting from a small R script `winsorize.R` containing an untested function `winsorize(x, p = 0.05)` that is supposed to cap the top/bottom `p` fraction of a numeric vector but currently has a boundary bug (it uses `<` instead of `<=`, so the exact quantile value doesn't get capped), run the **identical prompt** in both harnesses, in a fresh copy of the same starting directory:
 
-- **OpenCode + free-tier model** (what you use day to day in this course)
-- **Claude Code + a paid frontier model** (one-off comparison — not what we teach)
+> "Look at `winsorize.R`. Write a `testthat` test file for `winsorize()` that checks it correctly caps values at the p and 1-p quantiles, including edge cases. Run the test, and if it fails, find and fix the bug in `winsorize()`. Show me the diff."
 :::
+
+- **Run 1:** OpenCode + free-tier model (what you use day to day in this course).
+- **Run 2:** Claude Code + a paid frontier model (one-off comparison — not what we teach).
 
 . . .
 
-Watch for, and be ready to discuss:
-
-- Does the harness narrate its plan before acting, or act silently?
-- How many tool calls / rounds does each take to finish?
-- Quality and correctness of the final diff.
-- Rough cost: free vs metered-per-token (concrete numbers come in Session 9).
+::: {.callout-tip}
+# Fill this in live, one column per harness
+| Observation | OpenCode (free) | Claude Code (paid) |
+|---|---|---|
+| Read `winsorize.R` before writing the test? | | |
+| Number of tool-call rounds to finish | | |
+| Did the test fail on first run, as expected? | | |
+| Found and fixed the actual bug (not a different one)? | | |
+| Diff quality (minimal / noisy) | | |
+:::
 
 . . .
 
 ::: {.callout-note}
 # The point of this demo
-The **model** and the **harness** are separate axes of choice. A better/pricier model does not automatically mean a better harness experience, and vice versa — you are always choosing both.
+The **model** and the **harness** are separate axes of choice. A better/pricier model does not automatically mean a better harness experience, and vice versa — you are always choosing both. Cost numbers get precise in Session 9; today, just notice that one of these runs was free and the other wasn't.
 :::
 
 ---
