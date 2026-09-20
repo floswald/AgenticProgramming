@@ -1,6 +1,6 @@
 ---
 title: "S7 — Testing & Verification, Part 1: Unit Tests"
-format: html
+format: clean-revealjs
 author: Florian Oswald
 date: today
 date-format: "D MMMM, YYYY"
@@ -13,9 +13,15 @@ library(reticulate)
 
 ## Why this session exists
 
-Since S2 you've been asking one question over and over: *"where is this wrong, and how do I check?"* So far the answer has mostly been "read the code, run it, look at the output." That doesn't scale, and it definitely doesn't scale once an agent is generating most of the code and you're reviewing rather than typing.
+Since S2: *"where is this wrong, and how do I check?"*
 
-A **unit test** is a way of writing down "here is what I checked" so that it gets checked again automatically, every time the code changes — including every time an agent touches the code. This session runs remotely (over video call rather than in person) but is still hands-on: work through it at your own computer, running everything as you go. S8 builds directly on this with property-based tests and golden-output checks; S7 is the foundation.
+- So far: read the code, run it, look at the output — doesn't scale
+- Scales even less once an agent writes most of the code and you review it
+- A **unit test** writes down "here is what I checked" so it's checked again automatically, every time the code changes — including every agent edit
+
+::: {.notes}
+This session runs remotely (over video call rather than in person) but is still hands-on: work through it at your own computer, running everything as you go. S8 builds directly on this with property-based tests and golden-output checks; S7 is the foundation.
+:::
 
 ::: {.callout-tip}
 ## Objectives
@@ -27,12 +33,16 @@ A **unit test** is a way of writing down "here is what I checked" so that it get
 
 ## A stand-in for the S6 pipeline
 
-S6 built a DuckDB pipeline on a real dataset. Whichever pipeline you built there, the testing habits below apply directly to it. To make this session self-contained, we'll test a small pipeline of the same shape here — Brexit referendum poll data (`data/brexit.csv`), read via DuckDB, with two transformations:
+- S6 built a DuckDB pipeline on a real dataset — the habits below apply directly to it
+- Self-contained here: Brexit referendum poll data (`data/brexit.csv`), via DuckDB
+- `check_shares()` — flags polls whose `remain + leave + undecided` doesn't sum to ~1 (a silent data problem an agent won't flag unless asked)
+- `pollster_summary()` — aggregates valid polls by pollster: number of polls, average remain/leave share
 
-1. `check_shares()` — flags polls whose `remain + leave + undecided` doesn't sum to ~1. This is exactly the kind of silent data problem an agent will not flag on its own unless asked.
-2. `pollster_summary()` — aggregates valid polls by pollster: number of polls, average remain/leave share.
-
+::: {.notes}
 The full pipeline code is in `scripts/s7/pipeline.R` and `scripts/s7/pipeline.py`. If you already have your own S6 pipeline, treat this as a worked example and then repeat the exercise on your own transformations.
+:::
+
+## The stand-in pipeline, running
 
 ::: {.panel-tabset}
 
@@ -67,33 +77,37 @@ pollster_summary(checked)
 
 :::
 
+::: {.notes}
 Notice something already: some real polls in this dataset have shares that don't quite sum to 1 (rounding in the source data), and `check_shares()` has to decide on a tolerance for what counts as "close enough." That tolerance (`tol = 0.01` by default) is exactly the kind of decision that deserves a test — it's a number someone chose, and choices deserve to be pinned down.
+:::
 
 ## What to test (and what not to bother testing)
 
-Rough triage, useful both when you write code by hand and when an agent writes a first draft for you to review:
+Rough triage, for code you write and code an agent drafts:
 
 **Worth testing:**
 
-- Your own transformation logic — filtering rules, aggregation formulas, anything with a threshold or an edge case (empty input, all-invalid input, a single row).
-- Anywhere a silent decision gets made (a tolerance, a default value, a "drop rows where X" rule an agent added without telling you).
-- Anything that would be embarrassing or costly to get wrong quietly — a mean computed over the wrong denominator, a join that silently drops rows.
+- Your own transformation logic — filtering rules, aggregation formulas, edge cases (empty input, all-invalid input, a single row)
+- Anywhere a silent decision gets made (a tolerance, a default, a "drop rows where X" rule an agent added without telling you)
+- Anything embarrassing or costly to get wrong quietly — a mean over the wrong denominator, a join that silently drops rows
 
 **Not worth testing:**
 
-- Behaviour of a well-tested library you're calling correctly (don't re-test that `dplyr::filter()` filters, or that `pandas.DataFrame.mean()` computes a mean). Test *your usage* of it, not its internals.
-- Trivial getters/setters or one-line wrappers with no logic.
-- Anything that changes on every run for reasons outside your control (current date/time, live network calls) — unless you specifically design a test around that variability (e.g. mocking it out). We won't go there today; S8 covers that territory.
+- Well-tested library behavior you're calling correctly (test *your usage*, not `dplyr::filter()`'s internals)
+- Trivial getters/setters, one-line wrappers with no logic
+- Anything that varies run-to-run for reasons outside your control (current time, live network) — unless designed around (mocking) — S8 territory
 
-The line isn't always obvious, and that's fine — the question to ask is: *"if this were subtly wrong, would anything catch it before a reader of my output does?"* If the answer is no, write a test.
+::: {.notes}
+The line isn't always obvious, and that's fine — the question to ask is: "if this were subtly wrong, would anything catch it before a reader of my output does?" If the answer is no, write a test.
+:::
 
 ## Fixtures
 
-A **fixture** is a small, fixed, known input, factored out so multiple tests can reuse it and so it's obvious at a glance what the input is. Both languages below build the same four-row table: two polls from pollster A (one valid, one that doesn't sum to 1), one valid poll from pollster B, and one poll from pollster C with an invalid (negative) sample size.
+A **fixture**: a small, fixed, known input, factored out so multiple tests can reuse it and the input is obvious at a glance.
 
-::: {.panel-tabset}
+Both languages below build the same four-row table: two polls from pollster A (one valid, one that doesn't sum to 1), one valid poll from pollster B, one poll from pollster C with an invalid (negative) sample size.
 
-### R (a helper function)
+## Fixtures — R
 
 ```r
 make_polls <- function() {
@@ -108,9 +122,11 @@ make_polls <- function() {
 }
 ```
 
+::: {.notes}
 `testthat` has no special fixture decorator for this kind of case — a plain helper function called at the top of each `test_that()` block is idiomatic. (For fixtures that need setup/teardown, e.g. a temp file, see `withr::local_tempfile()` — out of scope today, but worth knowing the name.)
+:::
 
-### Python (`@pytest.fixture`)
+## Fixtures — Python
 
 ```python
 @pytest.fixture
@@ -126,8 +142,8 @@ def polls() -> pd.DataFrame:
     )
 ```
 
+::: {.notes}
 `pytest` fixtures are functions decorated with `@pytest.fixture`; any test function that names `polls` as an argument receives a fresh copy automatically.
-
 :::
 
 ## Arrange — Act — Assert
@@ -136,7 +152,13 @@ Every test below (and every test you should write) has the same three-part shape
 
 1. **Arrange**: build the input — the fixture above.
 2. **Act**: call the function under test, exactly once, with that input.
-3. **Assert**: check the output against a value *you* computed by hand or reasoned out — never a value you got by running the code and copy-pasting whatever it printed. That verifies the code agrees with itself, not that it's correct.
+3. **Assert**: check the output against a value *you* computed by hand — never a value you got by running the code and copy-pasting whatever it printed.
+
+::: {.notes}
+That third step verifies the code agrees with itself, not that it's correct — a test whose expected value came from running the code is not a test.
+:::
+
+## Arrange — Act — Assert, in code
 
 ::: {.panel-tabset}
 
@@ -172,44 +194,48 @@ def test_check_shares_flags_rows_that_sum_to_one(polls):
 
 :::
 
-Notice the `1.00, 0.98, 1.00, 1.00` values in both — those were computed by hand from the fixture above, not generated by running `check_shares()` and copying its output. Also notice the asymmetry between the two languages: `testthat::expect_equal()` compares numerics with a small default tolerance built in, so raw values compare safely; `pytest`'s `==` does not, so floating-point assertions in Python need `pytest.approx()` explicitly, as above — forgetting it is an easy way to write a test that's flaky for the wrong reasons.
+::: {.notes}
+Notice the 1.00, 0.98, 1.00, 1.00 values in both — those were computed by hand from the fixture above, not generated by running check_shares() and copying its output. Also notice the asymmetry between the two languages: testthat::expect_equal() compares numerics with a small default tolerance built in, so raw values compare safely; pytest's == does not, so floating-point assertions in Python need pytest.approx() explicitly — forgetting it is an easy way to write a test that's flaky for the wrong reasons.
+:::
 
 ## The full test suites
 
-The complete, runnable test files:
+- R: `scripts/s7/test-pipeline.R` (6 `test_that()` blocks, 8 expectations)
+- Python: `scripts/s7/test_pipeline.py` (6 tests)
 
-- R: `scripts/s7/test-pipeline.R` (6 `test_that()` blocks, 8 expectations — run with `testthat::test_file("scripts/s7/test-pipeline.R")`)
-- Python: `scripts/s7/test_pipeline.py` (6 tests — run with `pytest scripts/s7/test_pipeline.py -v`)
+Both cover:
 
-Both cover the same cases, because the pipelines are equivalent:
+1. Shares summing to 1 → valid; not summing to 1 → invalid
+2. A wider tolerance can let a borderline row through
+3. Invalid rows and non-positive sample sizes dropped before aggregation
+4. Aggregation numerically correct for a single surviving row
+5. **Edge case**: nothing survives filtering → zero-row summary, not an error
+6. Missing required columns raise a clear error, not a confusing failure deep inside `dplyr`/`pandas`
 
-1. Shares that sum to 1 are flagged valid; shares that don't are flagged invalid.
-2. A wider tolerance can let a borderline row through.
-3. Invalid rows and rows with a non-positive sample size are dropped before aggregation.
-4. Aggregation is numerically correct for a single surviving row.
-5. **Edge case**: if *nothing* survives filtering, the summary is zero rows — not an error, not a row for the wrong pollster.
-6. Missing required columns raise a clear error, rather than failing somewhere deep inside `dplyr`/`pandas` with a confusing message.
-
-Case 5 is the one agents most often get wrong on a first draft: ask an agent to write `pollster_summary()` cold, and there's a good chance it doesn't handle the all-filtered-out case at all, or handles it inconsistently (an empty data frame with the wrong columns, or a `KeyError`/`NULL` crash). Writing that test *before* trusting the function is the whole point of this session.
+::: {.notes}
+Case 5 is the one agents most often get wrong on a first draft: ask an agent to write pollster_summary() cold, and there's a good chance it doesn't handle the all-filtered-out case at all, or handles it inconsistently (an empty data frame with the wrong columns, or a KeyError/NULL crash). Writing that test before trusting the function is the whole point of this session.
 
 Run them yourself:
 
-```bash
 Rscript -e 'testthat::test_file("scripts/s7/test-pipeline.R")'
-```
 
-```bash
 pytest scripts/s7/test_pipeline.py -v
-```
+:::
 
 ## Exercise
 
-1. Open your own S6 pipeline (or, if you haven't finished S6, use `scripts/s7/pipeline.R` / `scripts/s7/pipeline.py` as-is).
-2. Pick one transformation you have **not** tested yet. Ask your agent (OpenCode) to draft a `testthat` or `pytest` test file for it, using arrange-act-assert and at least one fixture.
-3. Before running the tests, read the agent's draft and answer: does each assertion's expected value come from your own reasoning about the input, or did the agent just run the code and paste the output back as the "expected" value? The latter is not a test — it will always pass, and it will pass even after you introduce a bug.
-4. Fix any assertions that fail the check in step 3, run the suite, and add one edge case the agent's draft missed (empty input is the classic one).
-5. Note, in one or two sentences, what your agent's first draft got wrong or skipped. Bring it to S8 — this is exactly the kind of gap S8's expanded toolkit targets.
+1. Open your own S6 pipeline (or use `scripts/s7/pipeline.R` / `.py` as-is)
+2. Pick one untested transformation. Ask OpenCode to draft a test file for it, using arrange-act-assert and at least one fixture
+3. Before running: does each expected value come from your own reasoning, or did the agent just paste back the code's output? The latter is not a test — it always passes, even after a bug
+4. Fix any assertion that fails check 3, run the suite, add one missed edge case (empty input is the classic one)
+5. Note what your agent's first draft got wrong or skipped — bring it to S8
 
 ## Looking ahead
 
-S8 goes beyond "does this specific input give this specific output" into invariants that must hold for *any* input (property-based testing), golden-output comparisons for outputs too complex to hand-compute, and assertions embedded directly in agent-facing scripts. The unit tests you wrote today are the floor, not the ceiling.
+S8 goes beyond "does this input give this output" into:
+
+- Invariants that must hold for *any* input (property-based testing)
+- Golden-output comparisons for outputs too complex to hand-compute
+- Assertions embedded directly in agent-facing scripts
+
+Today's unit tests are the floor, not the ceiling.
