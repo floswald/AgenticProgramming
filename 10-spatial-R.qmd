@@ -1,10 +1,8 @@
 ---
 title: Spatial Data With `R`
-format:
-  clean-revealjs:
-    footer: "[SciencesPo Intro To Programming 2023](https://floswald.github.io/ScPoProgramming/)"
+format: clean-revealjs
 author: Florian Oswald
-subtitle: "[SciencesPo Intro To Programming 2023](https://floswald.github.io/ScPoProgramming/)"
+subtitle: "[Agentic Programming](https://floswald.github.io/AgenticProgramming/)"
 date: today
 date-format: "D MMMM, YYYY"
 ---

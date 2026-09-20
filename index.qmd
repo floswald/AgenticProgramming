@@ -11,7 +11,7 @@ format: html
 * This website is the home of the course _Introduction to Programming_.
 * This course assumes **no prior programming** experience.
 * Below you will find setup instructions and a syllabus.
-* You can obtain all material for this course from the associated github repository at [link](https://github.com/floswald/IntroProgramming/)
+* You can obtain all material for this course from the associated github repository at [link](https://github.com/floswald/AgenticProgramming/)
 
 ## Objectives of this Course
 

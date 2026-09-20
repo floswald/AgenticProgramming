@@ -49,7 +49,7 @@ format:
     highlight-style: github
   clean-revealjs:
     logo: /images/ScPo-logo.png
-    footer: "[SciencesPo Intro To Programming 2024](https://floswald.github.io/ScPoProgramming/)"
+    footer: "[Agentic Programming](https://floswald.github.io/AgenticProgramming/)"
     chalkboard: true
     incremental: false
     code-line-numbers: false

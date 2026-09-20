@@ -2,7 +2,7 @@
 title: "Working with Files and Directories"
 format: clean-revealjs
 author: Florian Oswald and The Software Carpentry
-subtitle: "[SciencesPo Intro To Programming 2024](https://floswald.github.io/ScPoProgramming/)"
+subtitle: "[Agentic Programming](https://floswald.github.io/AgenticProgramming/)"
 date: today
 date-format: "D MMMM, YYYY"
 ---

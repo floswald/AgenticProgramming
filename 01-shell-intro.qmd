@@ -4,7 +4,7 @@ format:
   clean-revealjs:
     chalkboard: false
 author: Florian Oswald and Software Carpentry
-subtitle: "[SciencesPo Intro To Programming 2024](https://floswald.github.io/ScPoProgramming/)"
+subtitle: "[Agentic Programming](https://floswald.github.io/AgenticProgramming/)"
 date: today
 date-format: "D MMMM, YYYY"
 ---
