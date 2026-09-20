@@ -5,13 +5,13 @@ format:
     theme: _extensions/metropolis-theme/metropolis.scss
     chalkboard: true
     logo: /images/ScPo-logo.png
-    footer: "[SciencesPo Intro To Programming 2024](https://floswald.github.io/ScPoProgramming/)"
+    footer: "[Agentic Programming](https://floswald.github.io/AgenticProgramming/)"
     incremental: false
     code-line-numbers: false
     highlight-style: github
     slide-number: true
 author: Florian Oswald
-subtitle: "[SciencesPo Intro To Programming 2024](https://floswald.github.io/ScPoProgramming/)"
+subtitle: "[Agentic Programming](https://floswald.github.io/AgenticProgramming/)"
 date: today
 date-format: "D MMMM, YYYY"
 ---
