@@ -47,6 +47,13 @@ format:
     css: styles.css
     toc: true
     highlight-style: github
+  clean-revealjs:
+    logo: /images/ScPo-logo.png
+    footer: "[SciencesPo Intro To Programming 2024](https://floswald.github.io/ScPoProgramming/)"
+    chalkboard: true
+    incremental: false
+    code-line-numbers: false
+    highlight-style: github
 
 
 
