@@ -1,5 +1,6 @@
 ---
 title: "S8 — Testing & Verification, Part 2: Verification Patterns"
+format: clean-revealjs
 subtitle: "[Agentic Programming](https://floswald.github.io/AgenticProgramming/)"
 author: Florian Oswald
 date: today
