@@ -1,13 +1,8 @@
 ---
 title: "The Unix Shell"
-format: 
-  revealjs:
+format:
+  clean-revealjs:
     chalkboard: false
-    logo: /images/ScPo-logo.png
-    footer: "[Agentic Programming](https://floswald.github.io/AgenticProgramming/)"
-    incremental: false
-    code-line-numbers: false
-    highlight-style: github
 author: Florian Oswald and Software Carpentry
 subtitle: "[Agentic Programming](https://floswald.github.io/AgenticProgramming/)"
 date: today

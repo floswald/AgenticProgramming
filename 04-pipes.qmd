@@ -1,14 +1,6 @@
 ---
 title: "Pipes and Filters"
-format: 
-  revealjs:
-    theme: _extensions/metropolis-theme/metropolis.scss
-    chalkboard: true
-    logo: /images/ScPo-logo.png
-    footer: "[Agentic Programming](https://floswald.github.io/AgenticProgramming/)"
-    incremental: false
-    code-line-numbers: false
-    highlight-style: github
+format: clean-revealjs
 author: Florian Oswald and The Software Carpentry
 subtitle: "[Agentic Programming](https://floswald.github.io/AgenticProgramming/)"
 date: today

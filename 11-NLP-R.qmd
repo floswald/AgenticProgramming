@@ -1,15 +1,6 @@
 ---
 title: Quick Intro to NLP with `R`
-format: 
-  revealjs:
-    theme: _extensions/metropolis-theme/metropolis.scss
-    chalkboard: true
-    logo: /images/ScPo-logo.png
-    footer: "[Agentic Programming](https://floswald.github.io/AgenticProgramming/)"
-    incremental: false
-    code-line-numbers: false
-    highlight-style: github
-    slide-number: true
+format: clean-revealjs
 author: Florian Oswald
 subtitle: "[Agentic Programming](https://floswald.github.io/AgenticProgramming/)"
 date: today
