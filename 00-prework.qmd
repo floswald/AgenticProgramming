@@ -1,10 +1,6 @@
 ---
 title: "S0 — Before Session 1: Accounts & Install"
-format:
-  html:
-    toc: true
-    code-line-numbers: false
-    highlight-style: github
+format: html
 author: Florian Oswald
 date: today
 date-format: "D MMMM, YYYY"

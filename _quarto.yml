@@ -1,5 +1,9 @@
 project:
   type: website
+  render:
+    - "*.qmd"
+    - "*.md"
+    - "!course-redesign-plan.md"
 
 website:
   title: "Intro To Programming"
@@ -40,6 +44,15 @@ website:
     logo: /images/unito-red.png
     foreground: "#ba0202"
     background: "#faf7f7"
+# Format convention (see CLAUDE.md "Conventions"):
+#   - Slides are the project default format (revealjs, once #14 lands) and
+#     should not repeat shared options in their own frontmatter.
+#   - Narrative/doc pages (not slides) opt out of the slide default by
+#     setting `format: html` in their OWN frontmatter (see 00-prework.qmd).
+#     Shared html options that ALL such pages want (theme, css, toc,
+#     highlight-style, etc.) live here, in this `format.html` block, so a
+#     narrative page's frontmatter only needs `format: html` plus any
+#     genuinely page-specific overrides.
 format:
   html:
     theme: journal
