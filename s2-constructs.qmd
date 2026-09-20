@@ -1,0 +1,356 @@
+---
+title: "S2 — Programming Constructs, Agent-Native"
+format: html
+author: Florian Oswald
+date: today
+date-format: "D MMMM, YYYY"
+---
+
+```{r reticulate_config}
+#| cache: false
+#| include: false
+library(reticulate)
+```
+
+::: {.callout-tip}
+## Objectives
+- Learn the four core building blocks of any language — **variable**, **loop**, **conditional**, **function** — in both R and Python.
+- Practice the habit this whole course is built on: have an agent write a first draft, then **verify it, try to break it, and write a test that would have caught the bug if it were there.**
+- By the end you should be asking, reflexively, of any code an agent hands you: *"where is this wrong, and how do I check?"*
+:::
+
+## Why we do this with an agent, not by hand
+
+You could learn these four constructs the old way: read a syntax reference, type it in yourself, get red squiggly lines until it compiles. That's not how you'll actually write code anymore. You'll ask an agent — OpenCode, in this course — to draft something, and your job shifts from "get the syntax right" to "decide whether the result is *correct*."
+
+Today we practice exactly that shift, on the simplest possible material, so the habit is cheap to build before the material gets harder in later sessions.
+
+The core loop for the rest of this session, and honestly the rest of the course:
+
+1. Ask the agent to write something.
+2. Read what it produced. Does it look right?
+3. Try to break it — pick an input the agent probably didn't think about.
+4. Write a small check (an `assert` / `stopifnot`) that would catch the bug if it's there.
+5. Run it. If it fails, you found something real. Fix it, and keep the check.
+
+## Setup
+
+Two terminals, one running `R`, one running `python` (a REPL, a script, or `opencode` sessions in each). We use `numpy` for arrays and `pandas` for dataframes in the reference section below.
+
+```{python}
+#| eval: false
+import numpy as np
+import pandas as pd
+```
+
+## Variables
+
+A variable is a label attached to a value — a number, a string, or any more complex object.
+
+::: {.panel-tabset group="language"}
+
+### Python
+
+```{python pvars}
+#| cache: false
+x = 12.3
+x + 5
+```
+
+### R
+
+```{r rvars}
+#| cache: false
+x <- 12.3  # `=` also works at top level, but `<-` is idiomatic
+x + 5
+```
+
+:::
+
+Where a variable is *visible* (its **scope**) matters. A function looks for names it doesn't recognize locally in the environment where it was *defined* (this is called **lexical scoping**), not necessarily where it's called from:
+
+::: {.panel-tabset group="language"}
+
+### Python
+
+```{python pf}
+#| cache: false
+def myfun(y):
+    return x + y  # `x` is not a parameter — where does it come from?
+
+myfun(8)
+```
+
+### R
+
+```{r rf}
+#| cache: false
+myfun <- function(y){
+    x + y
+}
+myfun(8)
+```
+
+:::
+
+Both work because `x` was defined earlier in the same scope the function was created in. If you'd never defined `x`, both would error — try it (comment out the `x <- ...` / `x = ...` lines above and re-run).
+
+## Conditionals
+
+A conditional runs a branch of code only when some condition is true. The shape is the same in every mainstream language: check a condition, do one thing if true, another (optionally) if false.
+
+::: {.panel-tabset group="language"}
+
+### Python
+
+```{python pcond}
+#| cache: false
+def classify(n):
+    if n > 0:
+        return "positive"
+    elif n < 0:
+        return "negative"
+    else:
+        return "zero"
+
+[classify(v) for v in [-3, 0, 4]]
+```
+
+### R
+
+```{r rcond}
+#| cache: false
+classify <- function(n) {
+  if (n > 0) {
+    "positive"
+  } else if (n < 0) {
+    "negative"
+  } else {
+    "zero"
+  }
+}
+sapply(c(-3, 0, 4), classify)
+```
+
+:::
+
+Two things worth internalizing now, because they cause silent bugs later:
+
+- **Comparing floats with `==` is dangerous.** `0.1 + 0.2 == 0.3` is `False` in Python and `FALSE` in R, because of floating-point representation. An agent will happily write `if (x == 0.3)` — it looks fine, it's wrong.
+- **Empty/missing input often sails through a conditional without raising anything.** `if x > 0` where `x` is `None`/`NA` doesn't always fail loudly — sometimes it fails silently, or crashes far from where the real problem is. This is the kind of thing you have to go looking for; nothing forces you to notice it.
+
+## Loops
+
+Loops repeat an operation over a sequence, so you don't write near-identical statements by hand and don't have to touch the code again when the input size changes.
+
+::: {.panel-tabset group="language"}
+
+### Python
+
+```{python ploop}
+#| cache: false
+for i in range(2, 5):
+    print(f"this is number {i}")
+```
+
+### R
+
+```{r rloop}
+#| cache: false
+for (i in 2:4) {
+  print(paste("this is number", i))
+}
+```
+
+:::
+
+Look closely at what actually printed. If you intended to cover the numbers **2, 3, 4, 5**, did you get all four? `range(2, 5)` in Python and `2:4` in R both stop *before* 5 is reached in the way you might expect from the English description "the numbers 2 through 5." This is a classic off-by-one — the exact kind of thing an agent-written loop will get wrong without a second glance, because the code *runs* and *looks* plausible. There's no error, no warning — just one fewer element than you meant.
+
+::: {.callout-important}
+## Exercise 1 — find the off-by-one, then check for it
+1. Before reading further, predict what the two loops above print. Then run them.
+2. Fix both so they print 2, 3, 4, **and** 5.
+3. Write a check — `stopifnot()` in R, `assert` in Python — that captures the intended output (e.g. "the loop should touch exactly 4 numbers: 2,3,4,5") and would fail on the *original*, unfixed version. Save it; you'll use the same pattern below.
+:::
+
+## Functions
+
+A function packages a computation so you can reuse it and give it a name that documents intent.
+
+::: {.panel-tabset group="language"}
+
+### Python
+
+```{python pfun}
+#| cache: false
+def mean_positive(values):
+    """Average of the positive numbers in `values`."""
+    positives = [v for v in values if v > 0]
+    return sum(positives) / len(positives)
+
+mean_positive([1, -2, 3, 4])
+```
+
+### R
+
+```{r rfun}
+#| cache: false
+mean_positive <- function(values) {
+  positives <- values[values > 0]
+  sum(positives) / length(positives)
+}
+mean_positive(c(1, -2, 3, 4))
+```
+
+:::
+
+Run it on `[1, -2, 3, 4]` and it works fine: `2.6...`. Now think about what breaks it before you try it.
+
+## The exercise: agent draft, then verify, then break it
+
+This is the actual point of today. Below are two small tasks. For each, the "agent draft" columns show code exactly as a first draft from an agent might look — plausible, running, subtly wrong. Don't just read them: open OpenCode, ask it to write the same function fresh in both languages, and compare what you get against these. Free-tier models sometimes get these exactly right, sometimes reproduce the same bug — either way, work through the seeded version below so everyone in the room breaks the *same* code at least once.
+
+### Task A — `mean_positive`: average of the positive numbers in a list
+
+This is the function from above. It has a real bug: **what happens when there are no positive numbers?**
+
+::: {.panel-tabset group="language"}
+
+### Python (agent draft)
+
+```{python pfun_bug}
+#| cache: false
+#| error: true
+def mean_positive(values):
+    positives = [v for v in values if v > 0]
+    return sum(positives) / len(positives)
+
+mean_positive([-1, -2, -3])
+```
+
+### R (agent draft)
+
+```{r rfun_bug}
+#| cache: false
+#| error: true
+mean_positive <- function(values) {
+  positives <- values[values > 0]
+  sum(positives) / length(positives)
+}
+mean_positive(c(-1, -2, -3))
+```
+
+:::
+
+Python raises `ZeroDivisionError`. R silently returns `NaN` and moves on — no error at all, which is worse, because a silent `NaN` can propagate for pages of downstream code before anyone notices.
+
+::: {.callout-important}
+## Exercise 2 — write the test, then fix the function
+1. Write a check that documents the bug before fixing anything:
+   - Python: `assert len(positives) > 0, "no positive values in input"` (placed before the division).
+   - R: `stopifnot(length(positives) > 0)`.
+2. Confirm the check fails (raises) on `[-1, -2, -3]` / `c(-1, -2, -3)` in the *original* function.
+3. Decide what the *correct* behavior should be — raise clearly? Return `NA`/`None` on purpose? There's no single right answer, but the agent's draft picked one **silently**, without telling you. Fix the function to do what you decided, on purpose, and keep the check as a permanent guard.
+:::
+
+### Task B — `running_total`: cumulative sum of a list
+
+::: {.panel-tabset group="language"}
+
+### Python (agent draft)
+
+```{python prun_bug}
+#| cache: false
+def running_total(values):
+    total = 0
+    result = []
+    for v in values[1:]:  # look closely at the slice
+        total += v
+        result.append(total)
+    return result
+
+running_total([10, 20, 30])
+```
+
+### R (agent draft)
+
+```{r rrun_bug}
+#| cache: false
+running_total <- function(values) {
+  total <- 0
+  result <- c()
+  for (v in values[-1]) {  # look closely at the indexing
+    total <- total + v
+    result <- c(result, total)
+  }
+  result
+}
+running_total(c(10, 20, 30))
+```
+
+:::
+
+Both versions drop the first element (`values[1:]` in Python skips index 0; `values[-1]` in R excludes the first element) — so a 3-element input silently returns only 2 cumulative totals, and the first one is missing entirely from the running sum. This is the same *shape* of bug as Task A: it runs without error, produces output that looks like a plausible cumulative sum, and only close reading (or a test on length/first-element) catches it.
+
+::: {.callout-important}
+## Exercise 3 — same pattern, different bug
+1. Predict, then check: what does `running_total([10, 20, 30])` return? What *should* it return? (Hint: length 3, first element 10.)
+2. Write the test first — `assert len(running_total([10, 20, 30])) == 3` / `stopifnot(length(running_total(c(10,20,30))) == 3)` — confirm it fails against the draft.
+3. Fix the function so the test passes. Also add an edge case: what should `running_total([])` return? Does your fix handle it? Write a check for that too.
+:::
+
+## Save your work
+
+By the end of today you should have, in your S1 git repo (or a new folder within it):
+
+- `constructs.py` and `constructs.R` — the corrected `mean_positive` and `running_total` functions in both languages.
+- `test_constructs.py` (`assert` statements) and `test_constructs.R` (`stopifnot()` calls) — the checks you wrote that fail against the buggy drafts and pass against your fixes.
+
+Commit them. We'll build directly on this repo structure in S3.
+
+A worked reference solution (one way to fix both bugs, plus the checks that catch them) lives in [`scripts/s2-constructs/`](scripts/s2-constructs/) in this course repo — don't look until you've written your own; the point is the exercise, not the answer key.
+
+::: {.callout-note}
+## A note on the tests above
+The checks in this session are deliberately plain `assert` / `stopifnot()` — no test framework yet. That's on purpose: the point today is the *habit* of writing down what "correct" means and checking it, not test tooling. Frameworks (`pytest`, `testthat`) with fixtures, test discovery, and reporting come in S7, once you have a real pipeline worth testing systematically.
+:::
+
+## Reference: common data structures
+
+You'll use these constantly; here's the vocabulary mapped between the two languages. (Not today's focus — a reference for when you need it.)
+
+concept | Python | R
+-----| -------|-----
+1d list | `[1, 2]` | `c(1, 2)`
+1d array | `np.array([1, 2])` | `c(1, 2)`
+matrix | `np.array([[..],[..]])` | `matrix(data, rows, cols)`
+n-d array | `np.array` (reshaped) | `array`
+key-value map | `dict` | named `list`
+dataframe | `pandas.DataFrame` | `data.frame`
+
+::: {.panel-tabset group="language"}
+
+### Python
+
+```{python pref}
+#| cache: false
+import numpy as np
+import pandas as pd
+
+li = np.array([1, 3])
+li * li          # element-by-element
+d = {"peter": 1225, "alice": 4333}
+pd.DataFrame({"one": [1.0, 2.0], "two": [4.0, 3.0]})
+```
+
+### R
+
+```{r rref}
+#| cache: false
+li <- c(1, 3)
+li * li          # element-by-element
+d <- list(peter = 1225, alice = 4333)
+data.frame(one = c(1, 2.0), two = c(4, 3.0))
+```
+
+:::
