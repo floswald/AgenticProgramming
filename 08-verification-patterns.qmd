@@ -1,0 +1,160 @@
+---
+title: "S8 — Testing & Verification, Part 2: Verification Patterns"
+subtitle: "[Agentic Programming](https://floswald.github.io/AgenticProgramming/)"
+author: Florian Oswald
+date: today
+date-format: "D MMMM, YYYY"
+---
+
+## Where we left off (S7)
+
+- S7 gave you unit tests: arrange-act-assert, `testthat` / `pytest`, fixtures.
+- Unit tests answer: **"does this one function, called with these inputs, return the value I expect?"**
+- That's necessary but not sufficient for agent-assisted work, because:
+  - The agent can write a function *and* a unit test that both agree with each other — and both be wrong.
+  - Some bugs don't crash and don't fail an obvious spot-check. They just quietly return a plausible number.
+- Today: a toolkit for the harder question — **"where is this wrong, and how would I even know?"**
+
+## The core problem: plausible-but-wrong
+
+A script that throws an error is not dangerous. You see the error.
+
+A script that runs cleanly and prints `0.42` is dangerous if the correct answer was `0.43` — or worse, `0.30`.
+
+Agents are very good at producing code that *runs*. Running is not the same as *correct*. Four patterns today, each catching a different flavor of "runs, but wrong":
+
+1. **Property-based / invariant checks** — relationships that must always hold.
+2. **Golden-output comparisons** — known-correct answers you computed independently.
+3. **Embedded assertions** — checks living inside the pipeline itself, not just outside it in a test file.
+4. **Systematic checks for silent data decisions & hallucinated numbers.**
+
+## Today's running example
+
+We'll use a small pipeline over UK Brexit-referendum poll data (`data/brexit.csv`, 127 polls: `remain`, `leave`, `undecided` shares, `samplesize`, `poll_type`).
+
+The pipeline (`scripts/s8-pipeline.py` / `.R`) claims to compute the **sample-size-weighted average `remain` share, by poll type**.
+
+It contains **one seeded bug**. You are not told where.
+
+::: {.callout-note}
+## Exercise, running throughout this session
+By the end, write a test suite — using today's four patterns — that catches the bug **without being told where it is**. Then, only then, look at the pipeline source and see what you found.
+:::
+
+## Pattern 1 — Property-based / invariant checks
+
+Instead of asserting one fixed output, assert a **relationship that must hold for any valid input**.
+
+- "For every poll, `remain + leave + undecided` is approximately 1."
+- "For every poll, the poll's end date is not after the referendum date."
+- "`spread` equals `remain - leave`."
+
+These don't require knowing the "right" numeric answer. They catch corruption, silent unit errors, and broken joins — the kind of bug that's invisible until you ask "does this even make sense?"
+
+## Property-based testing with Hypothesis / generated data
+
+Manual invariant checks test the data you happen to have. **Property-based testing** (Python: `hypothesis`; R: manual generation is more common, but the idea transfers) generates many *random* inputs and checks the property holds for all of them — including edge cases you didn't think to write by hand.
+
+```python
+from hypothesis import given, strategies as st
+
+@given(remain=st.floats(min_value=0, max_value=1), n=st.integers(min_value=1, max_value=20))
+def test_group_of_identical_polls_averages_to_that_value(remain, n):
+    df = make_group(remain=remain, n=n)
+    result = weighted_remain_share_by_poll_type(df)
+    assert math.isclose(result, remain, abs_tol=1e-9)
+```
+
+If every poll in a group reports the *same* share, **any** correctly-weighted average of that group must equal that share exactly. This property holds regardless of weighting — so on its own it won't catch a bug that only shows up when values differ. That's a real limitation worth naming: one property test rarely proves correctness, it proves the absence of *one* class of error.
+
+## Pattern 2 — Golden-output comparisons
+
+Compute the expected answer **independently of the code you're testing** — by hand, in a spreadsheet, from a different tool, or from a trusted prior run — and compare.
+
+```python
+GOLDEN_WEIGHTED_REMAIN = {
+    "Online": 0.42797727636421834,
+    "Telephone": 0.48178425815433584,
+}
+
+def test_golden_weighted_remain_share(poll_type, expected):
+    got = weighted_remain_share_by_poll_type(polls)[poll_type]
+    assert math.isclose(got, expected, abs_tol=1e-4)
+```
+
+- Strength: catches *any* deviation from a known-correct answer, however it happened.
+- Weakness: you have to trust the golden value. If you compute it with the same bug the pipeline has, the test is worthless. **Compute golden values a genuinely different way** — different tool, different person, or careful hand arithmetic on a tiny subset.
+
+## Pattern 3 — Embedded assertions
+
+Not every check belongs in a separate test file. Some belong **inside the pipeline**, running every time it's used — including in production, including when an agent runs it unattended.
+
+```python
+def weighted_remain_share_by_poll_type(df):
+    assert (df["samplesize"] > 0).all(), "zero or negative sample size found"
+    assert df["poll_type"].notna().all(), "missing poll_type"
+    ...
+    result = ...
+    assert result.between(0, 1).all(), "share outside [0,1] -- check weighting logic"
+    return result
+```
+
+- Test files check the code once, when you remember to run them.
+- Embedded assertions check the *data*, every single run — which matters most when an agent is calling your pipeline on data you haven't looked at.
+- Trade-off: assertions add runtime cost and can be too strict (crashing on legitimately unusual data). Reserve them for invariants you are confident must always hold.
+
+## Pattern 4 — Silent data decisions & hallucinated numbers
+
+The bug in today's pipeline is this kind: **a function that quietly makes a different decision than its name promises**, and produces a number that still looks fine.
+
+The systematic check: **recompute the same quantity a genuinely different way, and compare.**
+
+```python
+naive = polls.groupby("poll_type")["remain"].mean()
+truly_weighted = polls.groupby("poll_type").apply(
+    lambda g: (g["remain"] * g["samplesize"]).sum() / g["samplesize"].sum()
+)
+result = weighted_remain_share_by_poll_type(polls)
+
+assert not (result - naive).abs().max() < 1e-9   # not silently unweighted
+assert (result - truly_weighted).abs().max() < 1e-9  # actually weighted
+```
+
+This is the pattern that most directly targets **hallucinated numbers** from an agent: don't just check the number is plausible — check *how* it was computed by reproducing it independently.
+
+## Why golden values and "recompute independently" both matter here
+
+Look at the actual gap the bug produces:
+
+| poll_type | pipeline says | correctly weighted | difference |
+|---|---|---|---|
+| Online | 0.4213 | 0.4280 | 0.0067 |
+| Telephone | 0.4850 | 0.4818 | 0.0032 |
+
+Both numbers are inside `[0, 1]`. Both look like sane poll averages. Nothing crashes. A quick eyeball check ("is this a percentage between 0 and 1? yes") passes completely. Only a check that knows what the *correct* computation should have been — golden value or independent recomputation — catches it.
+
+## Exercise (do this now)
+
+1. Open `scripts/s8-pipeline.py` (or `.R`) — but don't scroll past the function signatures yet.
+2. Using the four patterns above, write tests in a new file that you believe would catch a bug in this pipeline, **before** reading the implementation.
+3. Run your tests. Do any fail?
+4. Now read the implementation of `weighted_remain_share_by_poll_type`. Did your tests target the actual bug? If not, which pattern would have?
+5. Compare with the instructor reference: `scripts/test_s8_pipeline.py` (Python) / `scripts/test-s8-pipeline.R` (R). Note which of *its* tests fail against the buggy pipeline — that's the toolkit doing its job.
+
+## Debrief
+
+- Which pattern caught the bug in your own attempt?
+- Which pattern would **not** have caught it, and why? (Hint: check the invariant tests in the reference solution — they all pass against the buggy pipeline. Invariants and golden-output checks answer different questions.)
+- Fix the bug (make the function actually use `samplesize`) and rerun the full suite. Everything should go green.
+- Carry this habit forward: for S9–S11, whenever an agent hands you a number, ask "which of these four checks would I need to trust it?"
+
+## Recap
+
+| Pattern | Answers | Misses |
+|---|---|---|
+| Invariant / property | "Is this internally consistent?" | Wrong-but-consistent values |
+| Golden-output | "Does this match a known-correct answer?" | Needs a trustworthy golden value |
+| Embedded assertion | "Is the *data* sane, every time this runs?" | Doesn't check downstream logic |
+| Independent recomputation | "Was this computed the way it claims to be?" | Costs you writing the computation twice |
+
+None of these alone is a full toolkit. Together, they would have caught today's bug three different ways — that's the point.
