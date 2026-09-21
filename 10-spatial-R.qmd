@@ -1,5 +1,5 @@
 ---
-title: Spatial Data With `R`
+title: "Spatial Data, Agent-Native"
 format: clean-revealjs
 author: Florian Oswald
 subtitle: "[Agentic Programming](https://floswald.github.io/AgenticProgramming/)"
@@ -9,14 +9,15 @@ date-format: "D MMMM, YYYY"
 
 ## Intro
 
-
-In this lecture we will cover some basics about geospatial data and how to handle it with `R`. Spatial data is getting always more important, so we need a powerful tool to work with it.
+In this session we cover geospatial data and how to handle it with `R` — but the point is not "learn `sf` syntax by hand." The point is: **spatial bugs are often silent**. A map with the wrong projection, a distance computed by hand on raw lon/lat coordinates instead of a projected one — these still *look like a map* or a plausible number. Nothing crashes. Nothing looks obviously wrong. You have to know what to check — and, just as importantly, which operations already check for you and which don't.
 
 ::: {.callout-note}
 
 # tl;dr
 
-Yes, `R` is a fully fledged GIS. No, you don't need an ArchGIS (or other) license to do real work with spatial data (I don't have one, and I use it for *real work* 😉).
+Yes, `R` is a fully fledged GIS. No, you don't need an ArcGIS (or other) license to do real work with spatial data.
+
+Today: you'll ask your agent (OpenCode) to propose CRS transforms and spatial joins. You verify every one against a plotted map *and* a known fact (an area, a distance, a row count) — because "it looks like a map" is not verification.
 
 :::
 
@@ -29,10 +30,30 @@ Yes, `R` is a fully fledged GIS. No, you don't need an ArchGIS (or other) licens
 
 ---
 
+## Why Spatial Bugs Are Different
+
+::: {.fragment}
+* Most bugs you've met so far (S2, S7, S8) announce themselves: wrong number, failed test, crashed script.
+:::
+::: {.fragment}
+* Some don't: hand-computing a distance from raw lon/lat coordinates instead of routing through a projected CRS gives you a plausible-looking number in the wrong units, with no error and no warning.
+:::
+::: {.fragment}
+* A projection mistake changes areas and distances by a scale factor, but the map still looks like a recognizable outline of the country.
+:::
+::: {.fragment}
+* Others do announce themselves — `st_join()` on mismatched CRS refuses to run rather than silently mis-joining. Knowing *which* operations protect you and which don't is itself part of the skill.
+:::
+::: {.fragment .callout-warning}
+**Rule for today**: never accept an agent's spatial code because "the plot looks right." Always check it against something you can independently compute or already know (a real distance, a known area, an expected row count).
+:::
+
+---
+
 ## Spatial Data Basics
 
-* One prime example of spatial data are of course *maps*, providing an answer to the age-old question *where is what*. 
-* Fundamentally, spatial data still provide an answer to the same question, it is just that the *what* part has gotten much richer over the years. 
+* One prime example of spatial data are of course *maps*, providing an answer to the age-old question *where is what*.
+* Fundamentally, spatial data still provide an answer to the same question, it is just that the *what* part has gotten much richer over the years.
 * The attribute *location* may be only one of many other features of information on a certain observation.
 * Multiple measurements imply that observations can be observed *moving* in space.
 * There are two fundamentally different ways in which to consider spatial data:
@@ -41,7 +62,6 @@ Yes, `R` is a fully fledged GIS. No, you don't need an ArchGIS (or other) licens
 
 ## Spatial Data Types
 
-
 <br>
 
 ::: {.fragment}
@@ -49,11 +69,9 @@ Yes, `R` is a fully fledged GIS. No, you don't need an ArchGIS (or other) licens
 
 # 1. Vector Data
 
-We represent things with *points, lines and polygons*. We can scale and stretch and transform those easily with mathematical operations. Can increase precision to arbitrary levels (can always zoom in futher).
+We represent things with *points, lines and polygons*. We can scale and stretch and transform those easily with mathematical operations. Can increase precision to arbitrary levels (can always zoom in further).
 :::
 :::
-
-
 
 ::: {.fragment}
 ::: {.callout-warning .fragment}
@@ -64,7 +82,7 @@ We have fixed-size *tiles* or *cells* (like a mosaic, or like *pixels*), which f
 :::
 
 ::: {.fragment}
-> 👉 This lecture deals only with *Vector* Data.
+> This lecture deals mostly with *Vector* Data (see the pointers at the end for Raster Data).
 :::
 
 # Vector Data and Coordinate Reference Systems
@@ -74,8 +92,7 @@ We have fixed-size *tiles* or *cells* (like a mosaic, or like *pixels*), which f
 ## Representation of Vector Data
 
 ::: {.fragment}
-* Basically, we concentrate on a 2-dimensional space, even though three-dimensional spaces can be useful as well (any ideas for 
-examples?)
+* Basically, we concentrate on a 2-dimensional space, even though three-dimensional spaces can be useful as well (any ideas for examples?)
 :::
 ::: {.fragment}
 * In other words, we denote a location with a tuple of coordinates $(x,y)$, or $(x,y,z)$ as the case may be, where each coordinate gives the *distance from the origin* in each direction. For example, we could represent Paris by the tuple `c(2.34,48.85)`
@@ -84,7 +101,7 @@ examples?)
 * One key question in the context of spatial data concerning planet earth you should ask is: *Where is the Origin*?
 :::
 ::: {.fragment}
-* Another question is, related to the well known fact that the earth is quasi-elipsoid (i.e. a bit like a squashed football and - just to be sure: **not flat**), *how to represent locations in three dimensions on a 2-dimensional map*?
+* Another question is, related to the well known fact that the earth is quasi-ellipsoid (i.e. a bit like a squashed football and — just to be sure: **not flat**), *how to represent locations in three dimensions on a 2-dimensional map*?
 :::
 
 ---
@@ -103,6 +120,9 @@ examples?)
 ::: {.fragment}
 * *latitude* measures North-South distance of **Equatorial Plane**. (up-down distance from a starting point)
 :::
+::: {.fragment .callout-important}
+This is exactly the kind of thing an agent will get subtly wrong: mixing a **geographic** CRS (degrees) with a **projected** CRS (meters) in the same computation. Both "work" — neither errors out — but only one gives you a sensible distance in km.
+:::
 
 ---
 
@@ -115,9 +135,9 @@ examples?)
 :::
 
 ::: {.column width=40%}
-* The dashed lines are the WGS84 elipsoid coordinate frame
-* The blue circle is *the origin* at $(0,0)$ :
-    1. 0 degrees longitude (x-direction): Prime Meridian through Greenwhich, London.
+* The dashed lines are the WGS84 ellipsoid coordinate frame
+* The blue circle is *the origin* at $(0,0)$:
+    1. 0 degrees longitude (x-direction): Prime Meridian through Greenwich, London.
     1. 0 degrees latitude (y-direction): Equator.
 :::
 
@@ -130,7 +150,7 @@ examples?)
 ::: {columns}
 
 ::: {.column width=45%}
-![*Paris* at `c(2.34,48.85)` in WGS64](/images/vector_lonlatparis.png)
+![*Paris* at `c(2.34,48.85)` in WGS84](/images/vector_lonlatparis.png)
 :::
 
 ::: {.column width=45%}
@@ -140,32 +160,7 @@ examples?)
 
 :::
 
----
-
-
-## Paris Where? {.inverse}
-
-::: {columns}
-::: {.column width=45%}
-![*Paris* at `c(600256.4, 127726.4)` in NTF Lambert North France](/images/vector_projectedparis.png)
-
-:::
-::: {.column width=45%}
-<br>
-<br>
-<br>
-
-### Task
-
-1. Search for *NTF Lambert North France*
-2. What does `c(600256.4, 127726.4)` actually mean?
-
-:::
-:::
-
-
-
-
+Same city, two totally different-looking numbers. Neither is "wrong" — but you cannot add, subtract, or compute distances across the two without transforming first.
 
 ---
 
@@ -173,9 +168,26 @@ examples?)
 
 ![Figure from [Geocomputation with R](https://r.geocompx.org/spatial-class.html). Geocentric and local geodetic datums shown on top of a geoid (in false color and the vertical exaggeration by 10,000 scale factor). Image of the geoid is adapted from the work of Ince et al. (2019)](/images/02_datum_fig.png)
 
+# Vector Spatial Data in `R`, Agent-Native
 
-# Vector Spatial Data in `R` 
+---
 
+## The Workflow For Today
+
+::: {.fragment}
+1. **You** state the task in plain language (e.g. "join the Seine river network to French administrative regions and plot which regions it flows through").
+:::
+::: {.fragment}
+2. **The agent** (OpenCode) proposes `R` code using `sf`: reads the data, checks/transforms CRS, does the join, plots it.
+:::
+::: {.fragment}
+3. **You** verify — not by eyeballing the plot alone, but by checking: same CRS on both inputs? sensible row count after the join? a known distance/area come out close to the real value?
+:::
+::: {.fragment .callout-warning}
+If step 3 fails, you go back to the agent with *what you found* — not "it's wrong," but "the join produced 40 rows when there should be at most 12, I bet the CRS didn't match before the join."
+:::
+
+---
 
 ## Working with (Vector) Spatial Data in **R**
 
@@ -217,10 +229,9 @@ head(nc[,c("AREA","NAME","FIPS","BIR79")])
 
 ---
 
-
 ## Working with **sf** 2
 
-* Notice the `geometry` column. 
+* Notice the `geometry` column.
 * This is basically a geo-referenced `data.frame`.
 
 ```{r}
@@ -230,10 +241,9 @@ plot(nc[,"AREA"])  # plot feature "AREA" (i.e. column 1)
 
 ---
 
+## Working with **sf** 3: A Choropleth
 
-## Working with **sf** 3
-
-* Works also with `ggplot2`
+* Works also with `ggplot2` — this is our first *choropleth*, a map shaded by a variable value.
 
 ```{r}
 #| echo: true
@@ -242,46 +252,46 @@ ggplot(nc) + geom_sf(aes(fill = AREA)) +
     scale_fill_viridis_c(name = "Area")
 ```
 
+**Verification check**: does `AREA` here have sensible units? North Carolina is roughly 139,000 km². Look at `range(nc$AREA)` — if the numbers don't come close to plausible, something about the units or CRS is off *before* you even get to the transform step.
+
 ---
 
-
-## Working with **sf** 4: CRS Transform
+## Prompt Task 1: CRS Transform {.inverse}
 
 ::: {columns}
+::: {.column width=50%}
+Ask your agent:
 
+> "Take the `nc` sf object and reproject it to the Mollweide projection (`+proj=moll`). Plot both the original and reprojected `AREA` choropleth side by side."
+
+Then **verify**:
+
+1. Did the agent use `st_transform()`, not just relabel the CRS with `st_set_crs()`? (The latter is the classic silent bug — it changes the *label*, not the *coordinates*.)
+2. Check `st_crs(nc)` before and after — did it actually change?
+3. Do the two maps look like genuinely different projections of the same shape (not just a re-scaled or shifted copy)?
+:::
 ::: {.column width=45%}
-<br>
-
-
 ```{r}
 #| echo: true
+library(dplyr)
 ggplot(nc) + geom_sf(aes(fill = AREA)) +
     scale_fill_viridis_c(name = "Area")
-```
 
-:::
-
-::: {.column width=45%}
-```{r}
-#| echo: true
-nc %>% 
-    st_transform("+proj=moll") %>%
+nc |>
+    st_transform("+proj=moll") |>
     ggplot() + geom_sf(aes(fill = AREA)) +
-        scale_fill_viridis_c(name = "Area") + 
+        scale_fill_viridis_c(name = "Area") +
         ggtitle("Mollweide Projection")
 ```
-
+:::
 :::
 
-:::
+---
 
+## Geometric Operations with **sf**
 
-## Geometric Operations with **sf** 1
-
-* the [simple features standard](https://en.wikipedia.org/wiki/Simple_Features) specifies a series of operations. 
-* the relevant functions start with `st_` (for *spatio-temporal*)
-* For 2 geometries `x,y` we can compute things like `st_distance(x,y)`, `st_intersect(x,y)`, etc
-* For single geometries we can do things like `st_area(x)`, `st_union(x)`, `st_buffer(x,dist)` etc
+* The [simple features standard](https://en.wikipedia.org/wiki/Simple_Features) specifies a series of operations.
+* The relevant functions start with `st_` (for *spatio-temporal*): `st_distance(x,y)`, `st_intersection(x,y)`, `st_area(x)`, `st_union(x)`, `st_buffer(x,dist)`, `st_centroid(x)`, etc.
 
 ```{r}
 #| echo: true
@@ -289,344 +299,212 @@ nc %>%
 st_area(st_union(nc))
 ```
 
-* Ooof, how many square km is that now? 🤔
-
-. . .
+* That number is in m², which is not very readable. Ask the agent to convert to km² — a correct answer uses `units::set_units()`, not a hand-rolled `/1e6` (which breaks silently if the CRS units aren't meters to start with).
 
 ```{r}
 #| echo: true
 
-st_area(st_union(nc)) %>% units::set_units(km2)
+st_area(st_union(nc)) |> units::set_units(km2)
 ```
+
+**Verification check**: North Carolina's land area is about 126,000 km² (roughly 139,000 km² including water). If your agent's number is off by orders of magnitude, suspect a CRS/units mismatch, not arithmetic.
 
 ---
 
-## Geometric Operations with **sf** 2
+## Mapping the Seine: Setting Up the Join
+
+We now build a real spatial-join example: French administrative regions, joined against the Seine/Marne/Yonne river network.
 
 ```{r}
 #| echo: true
-# copied from https://github.com/uo-ec607/lectures
-nc_centroid = st_centroid(nc)
-
-ggplot(nc) +
-  geom_sf(fill = "black", alpha = 0.8, col = "white") +
-  geom_sf(data = nc_centroid, col = "red") + ## Notice how easy it is to combine different sf objects
-  labs(
-    title = "Counties of North Carolina",
-    subtitle = "Centroids in red"
-    )
+sf::sf_use_s2(FALSE)
 ```
 
----
+* This specific polygon data (a `maps`-package outline) has a ring that the default spherical (`s2`) geometry engine considers invalid; switching to the older planar GEOS engine tolerates it. This is itself an "ask your agent why" moment — checklist item 5 below.
 
-## Mapping the Seine 1 {background-image="/images/seine.png" background-position="75% 70%" background-size="40%"}
-
-::: {columns}
-::: {.column width=35%}
 ```{r}
 #| echo: true
-# copied from https://github.com/uo-ec607/lectures
 # install.packages(c("maps","spData"))
-## Get the data
-france = st_as_sf( 
-    maps::map('france', 
-            plot = FALSE, 
-            fill = TRUE)
-            )
-data("seine", 
-    package = "spData")
+france = st_as_sf(maps::map('france', plot = FALSE, fill = TRUE))
+data("seine", package = "spData")
+```
 
+::: {.callout-important}
+**This is exactly the moment to prompt-check your agent.** Ask it: "before you join `france` and `seine`, print `st_crs(france)` and `st_crs(seine)` — are they the same?" If the agent skips this and jumps straight to `st_join()`, push back — that's the step worth double-checking.
+:::
+
+---
+
+## Mapping the Seine: The Fix
+
+```{r}
+#| echo: true
+#| eval: false
 ## Make sure they have the same projection
-seine = st_transform(seine, 
-        crs = st_crs(france))
-```
-```{r}
-#| echo: true
-# now, make a base plot:
-pseine = ggplot() + 
-  geom_sf(data = france, 
-          alpha = 0.8, 
-          fill = "black", 
-          col = "gray50") + 
-  labs(
-    title = "Administrative regions of France"
-    )
-ggsave(plot = pseine, 
-    "images/seine.png", 
-    width=6, height=6)
-```
-:::
-
-:::
-
----
-
-## Mapping the Seine 2 {background-image="/images/seine2.png" background-position="75% 70%" background-size="40%"}
-
-::: {columns}
-::: {.column width=35%}
-
-```{r}
-#| echo: true
-#| eval: false
-# let's add the seine!
-pseine2 = pseine +
-    geom_sf(data = seine, col = "#05E9FF", lwd = 1) + 
-    labs(
-    title = "Administrative regions of France",
-    subtitle = "Also showing the Seine, Marne and Yonne rivers"
-    )
-ggsave(plot = pseine2, 
-    "images/seine2.png", 
-    width=6, height=6)
-```
-:::
-:::
-
-
----
-
-
-## Intersect two **sf** objects {background-image="/images/seine3.png" background-position="95% 70%" background-size="45%"}
-
-
-::: {columns}
-::: {.column width=50%}
-```{r}
-#| echo: true
 seine = st_transform(seine, crs = st_crs(france))
-sf_use_s2(FALSE)  # need to turn off because of invalid geometry
-france_intersected = st_intersection(france, seine)
-head(france_intersected,2)
+
+pseine = ggplot() +
+  geom_sf(data = france, alpha = 0.8, fill = "black", col = "gray50") +
+  geom_sf(data = seine, col = "#05E9FF", lwd = 1) +
+  labs(title = "Administrative regions of France",
+       subtitle = "Also showing the Seine, Marne and Yonne rivers")
 ```
 
-```{r}
-#| eval: true
-#| echo: true
-pl3 = france_intersected %>%
-  ggplot() + 
-  geom_sf(alpha = 0.8, aes(fill = ID, col = ID)) + 
-  labs(
-    title = "Seine, Marne and Yonne rivers",
-    caption = "Colours depict French administrative regions"
-    ) +
-  theme(legend.title = element_blank())
-ggsave(plot = pl3,"images/seine3.png", 
-    width=7, height=5)
-```
-:::
-:::
+![](/images/seine2.png)
 
 ---
 
-## Join two **sf** objects {background-image="/images/seine4.png" background-position="85% 45%" background-size="45%"}
+## Spatial Join: Which Regions Does the Seine Flow Through?
 
-
-::: {columns}
-::: {.column width=50%}
 ```{r}
-#| eval: false
 #| echo: true
-pl4 = st_join(france, seine) %>% 
+#| eval: false
+pl4 = st_join(france, seine) |>
   ## Get rid of regions with no overlap
-  dplyr::filter(!is.na(name)) %>% 
-  ## Some regions are duplicated b/c two 
-  ## branches of the river network flow through them 
-  dplyr::distinct(ID, .keep_all = T) %>% 
-  ## pipe into ggplot
-  ggplot() + 
-  geom_sf(alpha = 0.5, 
-          fill = "#01731f",
-          col = "#fcb4b3",  # of borders
-          linewidth = 0.5) + # of borders
-  geom_sf(data = seine, col = "#05E9FF", lwd = 1) + 
+  dplyr::filter(!is.na(name)) |>
+  ## Some regions are duplicated b/c two
+  ## branches of the river network flow through them
+  dplyr::distinct(ID, .keep_all = TRUE) |>
+  ggplot() +
+  geom_sf(alpha = 0.5, fill = "#01731f", col = "#fcb4b3", linewidth = 0.5) +
+  geom_sf(data = seine, col = "#05E9FF", lwd = 1) +
   labs(title = "Intersected regions only") +
   theme_bw()
-ggsave(plot = pl4,"images/seine4.png", 
-    width=7, height=5)
 ```
-:::
-:::
+
+![](/images/seine4.png)
 
 ---
 
-## Joining Task { .inverse}
+## The Seeded Bug: Not Every Operation Protects You {.inverse background-color="#3d0303"}
 
-
-::: {columns}
-::: {.column width=35%}
-* Modify the code chunk on the previous slide.
-* We want to have different colors for the shown departements, instead of all "#01731f".
-* I.e. make this for me 👉
-```{r}
-#| eval: false
-#| echo: false
-d5 = st_join(france, seine) %>% 
-  ## Get rid of regions with no overlap
-  dplyr::filter(!is.na(name)) %>% 
-  ## Some regions are duplicated b/c two 
-  ## branches of the river network flow through them 
-  dplyr::distinct(ID, .keep_all = T)
-
-my_colors = palette.colors(nrow(d5), palette = "Alphabet")
-names(my_colors) <- NULL
-
-  ## pipe into ggplot
-pl5 = ggplot(data = d5) + 
-  geom_sf(aes(fill = ID),
-          col = "#fcb4b3",  # of borders
-          linewidth = 0.5) + # of borders
-  geom_sf(data = seine, col = "#05E9FF", lwd = 1.5) + 
-  labs(title = "Intersected regions only", fill = "Departement") +
-  theme_bw() +
-  scale_fill_manual(values = my_colors)
-ggsave(plot = pl5,"images/seine5.png", 
-    width=7, height=5)
-```
-:::
-
-::: {.column width=55%}
-![](images/seine5.png)
-:::
-:::
-
----
-
-## Joining Task Solution
+Here is a version of this exact join, as an agent might first hand it back to you — with the CRS-fix step dropped:
 
 ```{r}
-#| eval: false
 #| echo: true
-d5 = st_join(france, seine) %>% 
-  ## Get rid of regions with no overlap
-  dplyr::filter(!is.na(name)) %>% 
-  ## Some regions are duplicated b/c two 
-  ## branches of the river network flow through them 
-  dplyr::distinct(ID, .keep_all = T)
+#| error: true
+## Reload a fresh, untransformed copy — this demo shouldn't depend on
+## whether you ran the (eval:false) fix chunk above in your own session.
+data("seine", package = "spData")
 
-my_colors = palette.colors(nrow(d5), palette = "Alphabet")
-names(my_colors) <- NULL
-
-  ## pipe into ggplot
-pl5 = ggplot(data = d5) + 
-  geom_sf(aes(fill = ID),
-          col = "#fcb4b3",  # of borders
-          linewidth = 0.5) + # of borders
-  geom_sf(data = seine, col = "#05E9FF", lwd = 1.5) + 
-  labs(title = "Intersected regions only", fill = "Departement") +
-  theme_bw() +
-  scale_fill_manual(values = my_colors)
-ggsave(plot = pl5,"images/seine5.png", 
-    width=7, height=5)
+## BUG: no st_transform() before the join — seine is still in its
+## original CRS, france is in whatever maps::map() returns.
+pl_bug = st_join(france, seine) |>
+  dplyr::filter(!is.na(name))
 ```
 
+::: {.fragment}
+**Good news, this time**: `st_join()` checks that both inputs share a CRS and refuses to run rather than silently matching on whatever coordinates it has — you get `st_crs(x) == st_crs(y) is not TRUE` immediately, not a plausible-looking-but-wrong map. That's `sf` protecting you. Not every spatial computation is this well-behaved — the next section shows one that isn't.
+:::
 
 ---
 
-## Distances
+## A Genuinely Silent Bug: Distance Without Projecting
 
-* Another typical question could be: 
+* A typical question: **what's the straight-line distance between the centroids of the Seine-Maritime and Nièvre départements?**
+* `st_distance()` itself is CRS-aware — it does the sensible thing even on unprojected lon/lat input. But nothing stops an agent (or you) from reaching past it: pulling raw coordinates with `st_coordinates()` and hand-computing a Euclidean distance directly. That version has no error, no warning, and just returns a number — in **degrees**, silently mistaken for kilometers.
 
-> What's the (straight-line) distance between 2 points?
+```{r}
+#| echo: true
+pl = st_join(france, st_transform(seine, crs = st_crs(france))) |>
+  dplyr::filter(!is.na(name)) |>
+  dplyr::distinct(ID, .keep_all = TRUE)
 
-As in
+subdeps = pl |> dplyr::filter(ID %in% c("Seine-Maritime", "Nievre"))
+cents = st_centroid(subdeps)
 
->What's the distance between the centroids of the Seine-Maritime and Nievre Departements?
+## BUG: hand-rolled Euclidean distance on raw lon/lat coordinates,
+## silently treated as if it were kilometers.
+xy = st_coordinates(cents)
+naive_dist = sqrt(sum(diff(xy)^2))
+
+## Correct: project to a metric CRS first, then use st_distance().
+correct_dist = subdeps |>
+  st_transform(2154) |>
+  st_centroid() |>
+  st_distance() |>
+  units::set_units("km")
+
+naive_dist
+correct_dist
+```
+
+**Verification check**: the real straight-line distance between these two départements' centroids is roughly 335–340 km — two independent routes (a projected planar distance and a great-circle distance on the unprojected coordinates) agree within a couple of km of each other. `naive_dist` above comes out around 3.5 — two orders of magnitude off, because it's a difference measured in *degrees*, not km. Nothing in that computation errors or warns; you only catch it by checking against an outside number.
 
 ---
 
-## Task: Distances {.inverse}
+## Task: Catch the Silent One {.inverse}
 
-Modifying the plot from the previous task, produce 2 new plots
+1. Ask your agent for the straight-line distance between two départements' centroids, **without** mentioning the projection pitfall.
+2. Check whether it routed the computation through a projected CRS and `st_distance()`, or hand-computed coordinates directly. Either can *look* like a normal, plausible number — that's the point of a silent bug.
+3. Verify the result **both** ways: (a) plot the two centroids and a connecting line — does it look right on the map? — and (b) check the number against an outside source (a map-ruler estimate, a second computation route).
+4. Write down, in your own words: what did the wrong version's number look like, and what specific check caught it? This is the "one case you had to correct" for this session's outcome.
 
-1. One that colors only the concerned departments, and marks their respective centroids with a point.
-2. Another one with the same coloring, but where a straight solid line connects both centroids, and we print the distance in km into the table title.
+---
 
---- 
+## Task: Distances, Verified {.inverse}
 
-## Task Desired Result: Distances {.inverse}
+Modifying the join from before, ask your agent to produce two plots:
 
-**Hint:**
-
-```r
-# start from here
-p6 = ggplot(d5) + geom_sf()
-```
+1. One that colors only the two named départements and marks their centroids.
+2. Another with a straight line connecting both centroids, printing the distance in km in the plot title.
 
 ::: {layout-ncol=2}
 
-![Figure 1](images/distance1.png)
+![Figure 1](/images/distance1.png)
 
-![Figure 2](images/distance2.png)
+![Figure 2](/images/distance2.png)
 
-Desired Outputs
+Desired outputs
 
 :::
 
+Then verify the printed distance against an independent source (e.g. a quick search for the two départements' préfectures and a rough map-ruler estimate) before you trust it.
 
 ---
 
-## Task Solution
+## Choropleth + Join, Put Together
 
-```{r}
-#| echo: true
-#| eval: false
-cvec = rep(NA, length(unique(d5$ID)))
-names(cvec) <- unique(d5$ID)
-cvec["Seine-Maritime"] <- "purple"
-cvec["Nievre"] <- "brown"
+This session's outcome is a correct choropleth or spatial join you can explain end-to-end, including the one case you had to correct. A minimal checklist to walk through with your own agent-produced map:
 
-p6 = ggplot(d5) + geom_sf()
-p6 = ggplot(d5) + geom_sf(aes(fill = ID))
-p6 = p6 + scale_fill_manual(values = cvec, limits= c("Seine-Maritime","Nievre"))
-subdeps = d5 %>% dplyr::filter(ID %in% c("Seine-Maritime","Nievre"))
-p6 = p6 + geom_sf(data = st_centroid(subdeps))
-ggsave(plot = p6, "images/distance1.png", width = 5,height=4)
+::: {.fragment}
+1. **CRS check**: did you print `st_crs()` on every input before combining them?
+:::
+::: {.fragment}
+2. **Transform, don't relabel**: `st_transform()` changes coordinates; `st_set_crs()` only changes the label. An agent using the latter to "fix" a mismatch is a bug, not a fix.
+:::
+::: {.fragment}
+3. **Row-count sanity**: after a join, does the row count match what you'd expect (not exploded by duplicate matches, not collapsed to zero)?
+:::
+::: {.fragment}
+4. **Independent number**: does at least one summary statistic (area, distance, count) match something you can verify outside the code — a real-world fact, a back-of-envelope estimate, or a value from a different tool?
+:::
+::: {.fragment}
+5. **Can you explain it?** If your agent used a function you don't recognize (e.g. `sf_use_s2()`), ask it to explain *why* it was necessary before moving on.
+:::
 
-dists = st_distance(subdeps) %>% units::set_units("km")
-coords = st_centroid(subdeps) %>% st_coordinates() 
-coords = data.frame(lon = coords[1,"X"],
-                    lat = coords[1,"Y"], 
-                    lon_end = coords[2,"X"],
-                    lat_end = coords[2,"Y"])
-p7 = p6 + geom_segment(data = coords, aes(lon, lat, xend = lon_end, yend = lat_end))
-p7 = p7 + ggtitle(paste("Distance between Centroids:",round(dists[1,2],0), "km"))
-ggsave(plot = p7, "images/distance2.png",width = 5,height=4)
-
-
-```
-
-
-# Raster Data
+# Raster Data (Pointer Only)
 
 ---
 
 ## What's Different?
 
-* We have a grid (*pixels*) where each cell contains one single data value - usually our measure of interest.
-* We can have multiple *layers* of measurements (e.g. temperature, humidity and elevation for a grid cell)
-* CRS considerations equally apply.
-* Remote Sensing Data (e.g. Satelitte images) are often in raster format.
+* We have a grid (*pixels*) where each cell contains one single data value — usually our measure of interest.
+* We can have multiple *layers* of measurements (e.g. temperature, humidity and elevation for a grid cell).
+* CRS considerations equally apply — and so does the same discipline: verify before you trust.
+* Remote Sensing Data (e.g. Satellite images) are often in raster format.
 
 ---
 
-## Raster Resources
+## Raster and Further Spatial Resources
 
-* [Chapter 6 of gecompr](https://r.geocompx.org/raster-vector.html) is a great starting point.
-* [R as GIS for Economists](https://tmieno2.github.io/R-as-GIS-for-Economists/index.html) is in general a great resource, [chapter 4](https://tmieno2.github.io/R-as-GIS-for-Economists/raster-basics.html) in particular so.
-* [`R` package `{raster}`](https://cran.r-project.org/web/packages/raster/index.html) is the very mature and traditional solution.
-* [`R` package `{star}`](https://cran.r-project.org/web/packages/stars/index.html) is a great recent development in this space.
-
----
-
-## Other Spatial Resources
-
-* [Spatial Data Science](https://r-spatial.org/book/): Still WIP but looks like the ultimate authority amongst books.
-* [mapview/](https://r-spatial.github.io/mapview/) : great for interactive and quick mapping
-* [tmaps](https://cran.r-project.org/web/packages/tmap/vignettes/tmap-getstarted.html): same
-* [Analyzing US Census Data](https://walker-data.com/census-r/) by Kyle Walker is a brilliant intro do his package [`{tidycensus}`](https://walker-data.com/tidycensus/).
-* Nice mapping [examples](https://ryanpeek.github.io/2017-11-05-mapping-with-sf-Part-2/)
-* [`sf` and `raster`](https://nceas.github.io/oss-lessons/spatial-data-gis-law/3-mon-intro-gis-in-r.html) intro by NCEAS
-
+* [Chapter 6 of geocompr](https://r.geocompx.org/raster-vector.html) is a great starting point on raster data.
+* [R as GIS for Economists](https://tmieno2.github.io/R-as-GIS-for-Economists/index.html), [chapter 4](https://tmieno2.github.io/R-as-GIS-for-Economists/raster-basics.html) in particular.
+* [`R` package `{raster}`](https://cran.r-project.org/web/packages/raster/index.html) is the mature, traditional solution.
+* [`R` package `{stars}`](https://cran.r-project.org/web/packages/stars/index.html) is a great recent development in this space.
+* [Spatial Data Science](https://r-spatial.org/book/): still WIP but looks like the ultimate authority in this space.
+* [mapview](https://r-spatial.github.io/mapview/): great for interactive and quick mapping.
+* [tmap](https://cran.r-project.org/web/packages/tmap/vignettes/tmap-getstarted.html): same idea.
+* [Analyzing US Census Data](https://walker-data.com/census-r/) by Kyle Walker, a brilliant intro to [`{tidycensus}`](https://walker-data.com/tidycensus/).
 
 # End
