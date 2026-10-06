@@ -44,7 +44,26 @@ The course is 12 in-person/remote sessions (S1–S12) plus an async setup sessio
 > I just want to run some python code right away!!
 > 👉 https://github.com/floswald/hello-devcontainer-with-jupyter
 
+## Schedule
 
+We meet **every Tuesday, 11:00–14:00, Laboratorio Informatico C**. Some meetings cover two sessions back-to-back (longer), others one (shorter) — see each session's linked file for content.
+
+::: {.callout-note}
+# S0 today
+S0 (accounts & install) was meant as async pre-work, but since it slipped, we're doing it together today, Tue 6 Oct 2026, before S1 starts next week.
+:::
+
+| Date | Sessions | Time (used) | Room |
+|:---:|:---:|:---:|:-----------|
+| 6 Oct 2026 | S0 | 11:00–12:30 | Laboratorio Informatico C |
+| 13 Oct 2026 | S1 + S2 | 11:00–14:00 | Laboratorio Informatico C |
+| 20 Oct 2026 | S3 | 11:00–12:30 | Laboratorio Informatico C |
+| 27 Oct 2026 | S4 + S5 | 11:00–14:00 | Laboratorio Informatico C |
+| 3 Nov 2026 | S6 | 11:00–12:30 | Laboratorio Informatico C |
+| 10 Nov 2026 | S7 + S8 | 11:00–14:00 | Laboratorio Informatico C |
+| 17 Nov 2026 | S9 | 11:00–12:30 | Laboratorio Informatico C |
+| 24 Nov 2026 | S10 + S11 | 11:00–14:00 | Laboratorio Informatico C |
+| 1 Dec 2026 | S12 | 11:00–12:30 | Laboratorio Informatico C |
 
 # Setup Instructions {#sec-setup}
 

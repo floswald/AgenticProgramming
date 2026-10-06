@@ -4,6 +4,7 @@ project:
     - "*.qmd"
     - "*.md"
     - "!course-redesign-plan.md"
+    - "!hours.md"
     - "!11-NLP-R.qmd"
 
 website:
