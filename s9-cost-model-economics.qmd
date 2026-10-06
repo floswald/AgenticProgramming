@@ -1,0 +1,212 @@
+---
+title: "Cost & Model Economics"
+format: clean-revealjs
+author: Florian Oswald
+subtitle: "[Agentic Programming](https://floswald.github.io/AgenticProgramming/)"
+date: today
+date-format: "D MMMM, YYYY"
+---
+
+## Where we are
+
+By now you've:
+
+- used an agent to draft a DuckDB pipeline (S6)
+- written tests for it (S7, S8)
+- watched OpenCode+free-model and Claude Code+paid-model do the same task side by side (S5)
+
+Today's question: **what does any of this actually cost**, and how do you decide, in advance, whether a given model/approach is worth it for a given task?
+
+::: {.callout-note}
+# Question
+If your S6 pipeline took 30 seconds and a few cents of API calls on a toy dataset, what happens when the real dataset is 100x bigger? Is the answer "100x the cost", or something else?
+:::
+
+## Why this matters for you as a researcher
+
+- Agent-driven work has a *marginal cost per run*, unlike a script you write once and run for free forever.
+- Grant budgets, RA time, and compute credits are finite — "just ask the agent again" is not free.
+- As Data Editor of a journal, I see replication packages that quietly assume unlimited API budget. That assumption doesn't survive contact with a reviewer re-running your pipeline on their own key.
+- The skill here isn't memorizing prices (they change monthly) — it's building the *habit of estimating before running*.
+
+# Part 1 — How LLM pricing actually works
+
+## Tokens, not characters or words
+
+- Providers bill per **token**, not per word or character.
+- A token is roughly 3/4 of an English word on average, but code, non-English text, and unusual formatting tokenize less efficiently.
+- Almost all providers separate:
+  - **input tokens** (prompt: your instructions + context + tool outputs fed back in)
+  - **output tokens** (what the model generates)
+- Output tokens are typically priced **higher** than input tokens (often 3-5x) — generation is more expensive than reading.
+
+::: {.callout-tip}
+## Try it
+Paste a paragraph of your own writing into a tokenizer (e.g. the OpenAI tokenizer playground, or run `opencode` with a verbose/debug flag if it reports token counts) and compare token count to word count.
+:::
+
+## Why agent loops cost more than "one prompt"
+
+A single chat message is cheap. An **agent** doing a multi-step task is not one call — it's many:
+
+1. system prompt + your instructions (input)
+2. tool definitions available to the agent (input, every single call)
+3. tool call output — e.g. file contents, command output, error messages (input, fed back in)
+4. the model's reasoning/response (output)
+5. repeat for every tool call in the loop
+
+::: {.callout-important}
+## The key fact
+Context accumulates. By the 10th tool call in a session, you are re-paying for the *entire conversation history so far* as input tokens on every single subsequent call, unless the harness does something (compaction, caching) to reduce it.
+:::
+
+This is why a "quick fix" that takes an agent 20 tool calls to find can cost far more than the size of the final diff suggests.
+
+## Model tiers, roughly
+
+Pricing and capability move fast — don't memorize numbers, memorize the *shape* of the landscape:
+
+| Tier | Examples (illustrative, check current pricing) | Cost | Typical use |
+|---|---|---|---|
+| Free / rate-limited | Gemini Flash free tier, OpenRouter `:free` models | \$0 (rate-limited) | learning, low-stakes drafts, this course |
+| Cheap / fast | small open-weight models, "mini"/"flash" tiers | fractions of a cent per 1K tokens | high-volume, simple, well-specified tasks |
+| Frontier / expensive | top-tier proprietary models | 10-50x the cheap tier | hard reasoning, ambiguous specs, high-stakes code |
+| Local / self-hosted | Llama, Qwen, DeepSeek run on your own GPU | \$0 marginal, but hardware + electricity + your time | privacy-sensitive data, offline, high-volume repeated tasks |
+
+## Free tier vs paying: a question
+
+::: {.callout-note}
+# Question
+Why might the *free* tier be exactly the right choice for a course exercise, but the *wrong* choice for a paper you're submitting to a journal with a two-week reviewer deadline?
+:::
+
+## When is "cheap enough" actually good enough?
+
+Ask three questions before reaching for the expensive model:
+
+1. **Is the task well-specified?** ("rename this column", "write a regex for X") — cheap models are fine.
+2. **Is the task ambiguous or high-stakes?** (interpreting a messy codebook, writing the core estimation routine) — pay for the better model, the time you save debugging usually exceeds the price difference.
+3. **Can you verify the output cheaply?** If you have a fast, reliable test (S7/S8!), you can afford to let a cheap model guess and check — verification cost is what makes cheap models viable at all. Without tests, you're trusting a cheap model's output on faith, which is a bad trade.
+
+::: {.callout-tip}
+## This connects back to S7/S8
+A good test suite doesn't just catch bugs — it changes the economics of which model tier you can afford to use.
+:::
+
+# Part 2 — Local vs API
+
+## API models: pros and cons
+
+**Pros**
+
+- No hardware to buy or maintain
+- Always the current best model, no fine-tuning needed
+- Pay only for what you use
+
+**Cons**
+
+- Marginal cost scales with usage — no ceiling unless you set one
+- Your data (prompts, tool outputs, sometimes whole files) leaves your machine
+- Provider outages, rate limits, deprecations are outside your control
+- Costs are close to impossible to predict exactly in advance for agentic (multi-step) workflows
+
+## Local models: pros and cons
+
+**Pros**
+
+- Zero marginal cost per call once you have the hardware
+- Data never leaves your machine — relevant for sensitive survey data, embargoed data, IRB constraints
+- No rate limits, no outages, fully reproducible (pin the exact model weights)
+
+**Cons**
+
+- Upfront hardware cost (GPU with enough VRAM) or cloud rental cost
+- Local open-weight models currently lag frontier proprietary models on hard reasoning tasks
+- You maintain the stack (drivers, quantization, serving software)
+- Your own electricity and setup time are real costs, just not itemized on an invoice
+
+## Local vs API: a question
+
+::: {.callout-note}
+# Question
+For a research pipeline you'll run **once** on a 500-row dataset, is local worth the setup cost? What changes if you'll run it **10,000 times** on similarly-sized batches?
+:::
+
+## The break-even intuition
+
+Local hardware has a fixed upfront cost; API calls have a cost that scales with volume. There's a break-even usage volume above which local is cheaper.
+
+$$
+\text{break-even calls} = \frac{\text{hardware cost}}{\text{API cost per call}}
+$$
+
+This is deliberately naive (ignoring electricity, your time, and quality differences) but it's the right first-order question to ask before deciding.
+
+::: {.callout-tip}
+## Try it
+Pick a rough GPU rental price (e.g. \$0.50-\$2/hour on a cloud provider) and a rough API cost per call for your S6-style task. At what call volume does renting a GPU for the day beat paying per call?
+:::
+
+# Part 3 — Budgeting a real pipeline
+
+## The four numbers you need per run
+
+For any agent-driven step in a pipeline, you can estimate:
+
+1. **Input tokens per call** — roughly: prompt + system prompt + accumulated context + any file/data content fed in
+2. **Output tokens per call** — roughly: length of the expected response (code, summary, analysis)
+3. **Number of calls** — how many agent turns/tool calls does the task realistically take? (Look at a real transcript from S6/S7/S8 — don't guess blind.)
+4. **Price per token** — for input and output separately, for the model tier you plan to use
+
+$$
+\text{cost per run} \approx \sum_{\text{calls}} \big(\text{input tokens} \times \text{price}_{\text{in}} + \text{output tokens} \times \text{price}_{\text{out}}\big)
+$$
+
+## Scaling assumptions matter more than the price
+
+The naive instinct is "10x the data, 10x the cost." That's often wrong in both directions:
+
+- **Sub-linear**: if the agent writes one query/script that then runs over the full dataset without further agent involvement, the *agent cost* barely changes — only the compute cost of running the resulting code changes (and that's not an LLM cost at all).
+- **Super-linear**: if bigger data means more edge cases, more debugging turns, more back-and-forth with the agent to fix things that only show up at scale, cost can grow faster than data size.
+
+::: {.callout-important}
+## The habit
+Before scaling up, ask: "does the agent do more *work* at 10x scale, or does my *existing code* just process more rows?" Those have wildly different cost profiles.
+:::
+
+## Time is a cost too
+
+Token cost is one axis. Wall-clock time is another, and they don't always move together:
+
+- A cheap model may be slow (long queue times on free tiers) — fine for homework, bad the night before a deadline.
+- A frontier model may be fast but rate-limited on your account tier.
+- Local models remove queueing but add your own compute time.
+
+When budgeting a pipeline for a real deadline, estimate *time* separately from *money* — a run that's cheap but takes 6 hours may not be the right choice for a task due in 2.
+
+# Exercise: cost estimate for your own pipeline
+
+## What you'll produce (1/2)
+
+Using **your own S6 pipeline** (the DuckDB pipeline you built, tested in S7/S8), produce a short written cost estimate covering:
+
+1. **Baseline run**: at your current (toy) data scale, how many agent calls did it take to get the pipeline working? Pull actual token counts from your OpenCode session logs/transcript if available, or estimate from prompt/response lengths.
+2. **10x scale estimate**: would you need to re-run the agent at all, or does your existing code just process more rows? If more agent involvement is needed (e.g. new edge cases), estimate how much.
+3. **100x scale estimate**: same question. At what point (if any) would you switch model tier, or consider a local model?
+
+## What you'll produce (2/2)
+
+4. **Dollar and time figures**: give an actual \$ estimate (using a real, current price for the model tier you'd use) and a rough wall-clock time estimate, for both the 10x and 100x scenarios.
+5. **One paragraph**: would you use the same model for all three scales, or would your choice change? Why?
+
+::: {.callout-tip}
+## Where to find real prices
+Check the current pricing page for whichever provider you used in S6/S7/S8 (OpenRouter, Google AI Studio, Anthropic, etc.) — prices change often, always use the number as of the day you write the estimate, and cite the date.
+:::
+
+## Submission
+
+::: {.callout-note}
+## Submission
+A short written note (half a page to a page is plenty) alongside your S6/S7/S8 repo — this is not a slide deck, it's a budgeting memo you could actually hand to a PI or grant officer.
+:::

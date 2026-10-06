@@ -1,0 +1,311 @@
+---
+title: "Data Wrangling: DuckDB"
+format: clean-revealjs
+author: Florian Oswald
+subtitle: "[Agentic Programming](https://floswald.github.io/AgenticProgramming/)"
+date: today
+date-format: "D MMMM, YYYY"
+---
+
+```{r setup}
+#| include: false
+library(duckdb)
+library(dplyr)
+con <- dbConnect(duckdb())
+polls <- tbl(con, "read_csv_auto('data/brexit.csv')")
+```
+
+## Where we are
+
+* S4: how an LLM actually works (tokens in, tokens out, no ground truth inside).
+* S5: how an *agent* wraps that model with tools, context, and a harness.
+* Today the tool is a **database**, and the task is **data wrangling**: getting from raw files to trustworthy numbers.
+
+::: {.callout-note}
+## Today's habit, again
+The agent will happily write a query that runs without error and returns a *plausible* number. Running without error is not the same as being right.
+:::
+
+---
+
+## Today's plan
+
+1. What DuckDB is, and why it is a good fit for this course.
+2. One dataset, three ways to query it: **SQL**, **dplyr**, **Ibis**.
+3. Let the agent draft a query. Find out it's wrong. Fix it.
+4. You do the same, on your own query, and write it down.
+
+# What is DuckDB?
+
+---
+
+## DuckDB in one slide
+
+* An **in-process** analytical (OLAP) SQL database — like SQLite, but built for aggregations over large columnar data instead of many small transactions.
+* No server to install, no daemon to start: `import duckdb` (Python), `library(duckdb)` (R), or the `duckdb` CLI binary.
+* Reads CSV / Parquet / JSON **directly**, without a separate load step:
+
+```sql
+SELECT * FROM 'data/brexit.csv' LIMIT 5;
+```
+
+* Fast, columnar, and free — a real analytical engine on your laptop.
+
+---
+
+## Why DuckDB for *this* course
+
+::: {.fragment}
+* R and Python both talk SQL fluently through DuckDB — it's a genuine common ground between the two languages this course uses.
+:::
+::: {.fragment}
+* The **same question** can be asked three ways:
+  * raw **SQL** — the lingua franca, and what the agent tends to reach for first.
+  * **dplyr** verbs (R) translated to SQL under the hood.
+  * **Ibis** expressions (Python) translated to SQL under the hood.
+:::
+::: {.fragment}
+* All three compile to the *same* DuckDB query plan. If they disagree, one of you (or the agent) made a mistake — that disagreement is itself a verification tool.
+:::
+
+---
+
+## Setup
+
+::: {.columns}
+::: {.column width="33%"}
+**SQL / CLI**
+```bash
+duckdb
+```
+:::
+::: {.column width="33%"}
+**R**
+```r
+library(duckdb)
+library(dplyr)
+con <- dbConnect(duckdb())
+polls <- tbl(
+  con,
+  "read_csv_auto('data/brexit.csv')"
+)
+```
+:::
+::: {.column width="33%"}
+**Python**
+```python
+import duckdb
+import ibis
+
+con = ibis.duckdb.connect()
+polls = con.read_csv(
+  "data/brexit.csv",
+  table_name="polls"
+)
+```
+:::
+:::
+
+All three point at the *same file* — no import/export, no separate database to keep in sync.
+
+# The dataset
+
+---
+
+## UK EU-referendum polls (2016)
+
+* `data/brexit.csv`: 127 opinion polls conducted between January and June 2016, ahead of the UK's "Brexit" referendum.
+* Columns: `pollster`, `poll_type`, `startdate`/`enddate`, `samplesize`, `remain`, `leave`, `undecided`, `spread`.
+* **Known answer**: the actual referendum result was **Leave 51.89%, Remain 48.11%** — a fixed, external fact we can check any query's output against.
+
+```{sql, connection=con}
+SELECT pollster, enddate, samplesize, remain, leave, undecided
+FROM 'data/brexit.csv'
+ORDER BY enddate DESC
+LIMIT 5;
+```
+
+---
+
+## Ask the agent: "what does this data predict?"
+
+Prompt given to the agent (OpenCode):
+
+> *"Write a DuckDB SQL query against `data/brexit.csv` that estimates the referendum outcome — the percentage voting Leave and the percentage voting Remain."*
+
+The agent's first draft — plausible, runs without error:
+
+```sql
+SELECT
+  round(avg(leave)  * 100, 2) AS leave_pct,
+  round(avg(remain) * 100, 2) AS remain_pct
+FROM 'data/brexit.csv';
+```
+
+---
+
+## Running the agent's first query
+
+```{sql, connection=con}
+SELECT
+  round(avg(leave)  * 100, 2) AS leave_pct,
+  round(avg(remain) * 100, 2) AS remain_pct
+FROM 'data/brexit.csv';
+```
+
+::: {.fragment}
+`leave_pct = 42.23`, `remain_pct = 44.24`. Looks like a plausible pair of vote shares. **Do not trust it yet.**
+:::
+
+---
+
+## Verify before you trust it
+
+The cheapest check costs one extra line: do the shares **add up to 100%**?
+
+```{sql, connection=con}
+SELECT
+  round(avg(leave)  * 100, 2) AS leave_pct,
+  round(avg(remain) * 100, 2) AS remain_pct,
+  round(avg(undecided) * 100, 2) AS undecided_pct,
+  round(avg(leave + remain + undecided) * 100, 2) AS total_pct
+FROM 'data/brexit.csv';
+```
+
+::: {.fragment}
+They do (≈100%, modulo rounding) — but the query **silently dropped `undecided` respondents** from the two numbers it reported. `leave_pct + remain_pct` alone is only 86.5%, not 100%. The agent answered the wrong question: "average raw share" instead of "share of those who expressed a preference."
+:::
+
+---
+
+## What actually went wrong
+
+::: {.fragment}
+1. **No re-normalization**: it reported `leave` and `remain` shares out of *all* respondents (including undecided), not as shares of decided voters — the quantity we actually asked for.
+:::
+::: {.fragment}
+2. **No weighting**: `AVG()` treats a poll of 500 people the same as a poll of 5,000 — every poll gets an equal vote, regardless of `samplesize`.
+:::
+::: {.fragment}
+3. **No date filtering**: it averaged polls from January *and* June together, as if opinion in January (5+ months before the vote) were as informative as opinion the week before.
+:::
+
+None of these threw an error. All three are silent, plausible-looking mistakes — exactly the kind unit tests and invariant checks (S7–S8) are built to catch.
+
+---
+
+## Fixed query — SQL
+
+```{sql, connection=con}
+SELECT
+  round(sum(leave  / (leave + remain) * samplesize) / sum(samplesize) * 100, 2) AS leave_pct,
+  round(sum(remain / (leave + remain) * samplesize) / sum(samplesize) * 100, 2) AS remain_pct,
+  count(*) AS n_polls
+FROM 'data/brexit.csv'
+WHERE enddate >= DATE '2016-06-16';   -- final week before the vote
+```
+
+Re-normalized (excludes undecided from the denominator), sample-size weighted, restricted to the final week.
+
+---
+
+## Same query — dplyr (R)
+
+```{r}
+weighted_r <- polls |>
+  filter(enddate >= as.Date("2016-06-16")) |>
+  summarise(
+    leave_pct  = round(sum(leave  / (leave + remain) * samplesize) / sum(samplesize) * 100, 2),
+    remain_pct = round(sum(remain / (leave + remain) * samplesize) / sum(samplesize) * 100, 2),
+    n_polls    = n()
+  )
+weighted_r
+```
+
+`tbl(con, ...)` on a DuckDB connection means these dplyr verbs are translated to SQL and run *inside* DuckDB — `dplyr::show_query(weighted_r)` prints the generated SQL, useful for checking the agent's dplyr code actually does what you think.
+
+---
+
+## Same query — Ibis (Python)
+
+```{python}
+import ibis
+
+con2 = ibis.duckdb.connect()
+polls_py = con2.read_csv("data/brexit.csv", table_name="polls")
+
+recent = polls_py.filter(polls_py.enddate >= ibis.literal("2016-06-16").cast("date"))
+w = recent.samplesize
+share_leave  = (recent.leave  / (recent.leave + recent.remain)) * w
+share_remain = (recent.remain / (recent.leave + recent.remain)) * w
+
+weighted_py = recent.aggregate(
+    leave_pct=((share_leave.sum()  / w.sum()) * 100).round(2),
+    remain_pct=((share_remain.sum() / w.sum()) * 100).round(2),
+    n_polls=recent.count(),
+)
+weighted_py.execute()
+```
+
+Same numbers as the SQL and the dplyr version — three languages, one DuckDB query plan.
+
+---
+
+## Check against the known answer
+
+* Fixed query, final week of polling: **Leave ≈ 48.6%, Remain ≈ 51.4%**.
+* Actual result: **Leave 51.89%, Remain 48.11%**.
+
+::: {.callout-warning}
+## The query is now correct. The prediction is still wrong.
+Fixing the SQL bug (undecided handling, weighting, date window) got us a defensible number — but it's still on the wrong side of the actual outcome. 2016 UK polls famously under-counted Leave support (non-response bias, "shy" Leave voters, herding among pollsters).
+:::
+
+This is the distinction to keep: **verification catches query bugs** (wrong denominator, wrong weights, wrong date range — things you can check against an invariant). It does **not** catch **measurement error in the data itself** — that needs domain knowledge, not a better query. Keep this distinction for S9 (cost/quality tradeoffs) and S11 (cataloguing failure modes).
+
+# Your turn
+
+---
+
+## Exercise (20 min)
+
+Working with the same `brexit.csv` (or a dataset of your choice with a known, checkable answer):
+
+1. Give your agent a data question and let it draft a **first** query — SQL, dplyr, or Ibis, your choice.
+2. Run it. Get a number.
+3. **Before you believe it**, write down at least one check: does it sum to what it should? Does it match a known external fact? Does a second language (SQL vs. dplyr vs. Ibis) give the same answer?
+4. If the first answer fails a check, find out why, fix the query, and re-run.
+
+Ideas to try: split by `pollster` or `poll_type` (phone vs. online — did they differ systematically?), compute a rolling weekly average, or compare `spread` in the data to `leave - remain` you compute yourself (does the pollster's number match your recomputation?).
+
+---
+
+## Deliverable: the written note
+
+For the session outcome, write down **one concrete case** where the agent's first answer was wrong, in this format:
+
+::: {.callout-tip}
+## Template
+- **Prompt** you gave the agent.
+- **First query** it produced (SQL/dplyr/Ibis).
+- **First output** — the specific wrong number(s).
+- **How you caught it** — the check that failed (invariant, known answer, cross-language comparison, or something else).
+- **Fixed query** and the corrected output.
+:::
+
+This is not a hypothetical exercise — use whatever actually happened when you ran your own prompt. If your agent got it right first try, push it further (harder aggregation, trickier date logic, a join) until it doesn't.
+
+---
+
+## Wrap-up
+
+* DuckDB gives you one query engine reachable from SQL, R (dplyr), and Python (Ibis) — no data export/import between them.
+* The agent's first query is a draft, not an answer. It ran without error and still ignored undecided respondents, sample weights, and the relevant date window.
+* Checking against an invariant (do shares sum to 100%?) or a known external fact (the actual referendum result) is cheap and catches real bugs.
+* Even a *correct* query only answers the question you asked — it can't fix bias in the underlying data.
+* Next (S7): turning these ad-hoc checks into a proper, repeatable **test suite**.
+
+```{r cleanup}
+#| include: false
+dbDisconnect(con, shutdown = TRUE)
+```

@@ -1,64 +1,48 @@
 ---
-title: Intro To Programming
+title: Intro To **Agentic** Programming
 author: "[Florian Oswald](https://floswald.github.io)"
 subtitle: "UniTo Master in Economics"
 number-sections: true
+format: html
 ---
 
-# Welcome to *Introduction to Programming*
+# Welcome to *Introduction to Agentic Programming*
 
-* This website is the home of the course _Introduction to Programming_.
+* This website is the home of the course _Introduction to Agentic Programming_.
 * This course assumes **no prior programming** experience.
 * Below you will find setup instructions and a syllabus.
-* You can obtain all material for this course from the associated github repository at [link](https://github.com/floswald/IntroProgramming/)
+* You can obtain all material for this course from the associated github repository at [link](https://github.com/floswald/AgenticProgramming/)
 
 ## Objectives of this Course
 
-* After this course, we want you to be able to participate or conduct your own research project in an efficient way. *Research* nowadays means data sciencey stuff in most cases, certainly in Economics. 
-* We want you to have a basic understanding of how an operating system (in particular, *your* OS) works.
-* We want to be able to achieve a basic level of automation in repetitive tasks.
-* We will introduce Python thoroughly.
-* We will also show R.
-* Maybe, we will have time to look at julia as well.
+* This course is about programming **in the age of coding agents**. After this course, you should be able to supervise an AI agent to do real, reproducible research work — not just write code by hand.
+* You will learn the layered model of modern AI tooling: *model* (the LLM), *harness* (the tool driving it, e.g. OpenCode), *tool calls*, and *skills* — and why "programming" now means verifying an agent's output, not only producing it yourself.
+* You will build the habit, repeated across every session: *where could this be wrong, and how do I check?*
+* We work in both **Python** and **R**. No prior programming experience is assumed.
+* The harness used in class is [OpenCode](https://opencode.ai) with a free-tier model provider, so nobody is blocked by needing a paid subscription.
 
 # Program
 
-This course has several submodules. 
+The course is 12 in-person/remote sessions (S1–S12) plus an async setup session (S0). See @sec-setup for S0.
 
-1. Installing Software and Preparing environment (you do that at home, see below in @sec-setup).
-2. OS Basics: What *is* an OS, how to work with it.
-3. Python
-4. R
-5. julia (maybe)
+| Session | Mode | Topic | File |
+|:---:|:---:|:-----------|:-----------|
+| S0 | async | Accounts & install | [Prework](00-prework.qmd) |
+| S1 | in-person | Kickoff: model/harness/tool/skill, shell, first git repo | [Kickoff](01-kickoff.qmd) |
+| S2 | in-person | Programming constructs, agent-native (R & Python) | [Constructs](s2-constructs.qmd) |
+| S3 | remote | Git + project config as agent-compatibility infrastructure | [Git & Project Config](03-git-project-config.qmd) |
+| S4 | in-person | How LLMs actually work | [LLM Internals](s4-llm-internals.qmd) |
+| S5 | in-person | How agents work: context, tools, harnesses | [Agents: Context, Tools, Harnesses](s5-agents-context-tools-harnesses.qmd) |
+| S6 | in-person | Data wrangling with DuckDB | [DuckDB](s6-duckdb.qmd) |
+| S7 | remote | Testing & verification I: unit tests | [Unit Tests](07-testing-unit-tests.qmd) |
+| S8 | in-person | Testing & verification II: verification patterns | [Verification Patterns](08-verification-patterns.qmd) |
+| S9 | in-person | Cost & model economics | [Cost & Model Economics](s9-cost-model-economics.qmd) |
+| S10 | in-person | Spatial data, agent-native | [Spatial Data](10-spatial-R.qmd) |
+| S11 | remote | Reproducibility & failure modes | [Reproducibility](s11-reproducibility.qmd) |
+| S12 | in-person | Capstone project | [Capstone](12-capstone.qmd) |
 
-> I just want to run some python code right away!! 
+> I just want to run some python code right away!!
 > 👉 https://github.com/floswald/hello-devcontainer-with-jupyter
-
-| Module | Session Number |  Topic      |  Author |
-|:------------:|:------------:|:-----------|:-------------:|
-| OS Basics    | 1        | [The Unix Shell](01-shell-intro.qmd) |  [The Software Carpentry Project](https://software-carpentry.org/) + Florian Oswald |
-| OS Basics    | 2            | [Shell: Files and Directories](02-filedir.qmd) |  [The Software Carpentry Project](https://software-carpentry.org/) + Florian Oswald |
-| OS Basics    | 3            | [Shell: Working with Files and Directories](03-filework.qmd) |  [The Software Carpentry Project](https://software-carpentry.org/) + Florian Oswald |
-|              |              | [Homework 1](https://github.com/floswald/scpoproghw1): complete and run a bash script on gh-actions |  Florian Oswald |
-| Python       | 4-12         | [Python Intro](https://floswald.github.io/2025-09-30-PythonIntro/) |  [The Software Carpentry Project](https://software-carpentry.org/) + Florian Oswald |
-| R + python          | 13            | [`R` and python](06-concepts.qmd) |  Florian Oswald|
-| R            | 13            | [`R` Intro](https://raw.githack.com/ScPoEcon/ScPoEconometrics-Slides/master/chapter_intro_programming/chapter_intro.html) |  Florian Oswald|
-| R            | 14           | [`R {tidyverse}`](https://raw.githack.com/ScPoEcon/ScPoEconometrics-Slides/master/chapter_tidy_programming/chapter_tidy.html) | [Grant McDermott](https://grantmcdermott.| R            com/)  + Florian Oswald|
-| R            | 16            | [`R {data.table}`](https://raw.githack.com/floswald/lectures/master/05-datatable/05-datatable.html) | [Grant McDermott](https://grantmcdermott.com/)  + Florian Oswald|
-| R            | 17            | [Building `R` packages](09-R-packages.qmd) |  Florian Oswald|
-| R            | 18            | [Spatial Data with `R`](10-spatial-R.qmd) |  Florian Oswald|
-
-
-Optional Material
-
-| Module | Session Number |  Topic      |  Author |
-|:------------:|:------------:|:-----------|:-------------:|
-| `*`          |  | [Shell: Pipes and Filters](04-pipes.qmd) |  [The Software Carpentry Project](https://software-carpentry.org/) + Florian Oswald |
-| `*`          |  | [`Git` Version Control](05-git.qmd) |  [The Software Carpentry Project](https://software-carpentry.org/) + Florian Oswald |
-| julia            | 19            | [`julia` intro 1](https://floswald.github.io/julia-bootcamp/01-variables.html) |  Florian Oswald|
-| julia            | 20            | [`julia` intro 2](https://floswald.github.io/julia-bootcamp/02-functions.html) |  Florian Oswald|
-| R            | 21            | [Quick Intro to NLP with R](11-NLP-R.qmd) |  Florian Oswald|
-| R+julia+python            | 22            | [Databases]([11-NLP-R.qmd](https://floswald.github.io/duckdb-polars/)) |  Florian Oswald|
 
 
 

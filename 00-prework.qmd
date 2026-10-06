@@ -1,10 +1,6 @@
 ---
 title: "S0 — Before Session 1: Accounts & Install"
-format:
-  html:
-    toc: true
-    code-line-numbers: false
-    highlight-style: github
+format: html
 author: Florian Oswald
 date: today
 date-format: "D MMMM, YYYY"
@@ -15,6 +11,8 @@ date-format: "D MMMM, YYYY"
 Session 1 is in-person and short. If we spend it watching 20 people sign up for accounts, we lose the lesson. Do everything on this page **before** Session 1. Bring your laptop with all of it working — we will spot-check at the start of Session 1 and troubleshoot only what's still broken.
 
 Budget 30–45 minutes. If something doesn't work, don't spend hours on it — note where you got stuck and bring that to Session 1.
+
+**Deadline:** finish this at least 2 days before Session 1, so there's time to fix anything that doesn't work. You'll get a reminder beforehand asking you to confirm you're set up.
 
 ::: {.callout-tip}
 ## Objectives
@@ -121,12 +119,16 @@ If you get a sensible reply, you're done. Exit with `Ctrl+D` or `/exit`.
 
 ## Checklist
 
+Work through this list yourself before Session 1 — there's nothing to submit, but you should be able to tick off every item honestly. We will spot-check at the start of Session 1, and you'll get a reminder before then if you haven't confirmed you're done.
+
 - [ ] Terminal opens (macOS Terminal or WSL2 Ubuntu)
 - [ ] `git --version` works
 - [ ] API key obtained from OpenRouter or Gemini, saved somewhere safe
 - [ ] `opencode --version` works
 - [ ] `opencode auth login` completed
 - [ ] Smoke test in step 6 returned a real answer
+
+(These boxes don't save state on this page — treat this as a checklist to go through yourself, not a form.)
 
 ## Stuck?
 

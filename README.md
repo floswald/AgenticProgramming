@@ -1,8 +1,8 @@
-# ScPo Intro To Programming
+# Agentic Programming
 
-This repository contains the course material for the introductory programming course at Sciences Po.
+This repository contains the course material for the Agentic Programming course, taught by Florian Oswald at multiple institutions (currently UniTo ESOMAS).
 
-You can find the course website [here](https://floswald.github.io/ScPoProgramming/).
+You can find the course website [here](https://floswald.github.io/AgenticProgramming/).
 
 ## License
 
