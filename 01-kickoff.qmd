@@ -23,7 +23,7 @@ If any of that is broken, say so now — we fix it in the first five minutes, no
 - Initialize a git repo, commit a trivial script, and run one full OpenCode session end to end — reviewing what it did before accepting it.
 :::
 
-# Part 1 — What are you actually talking to?
+# Part 1 — What are you actually talking to when working with an Agent?
 
 ## Why bother with definitions
 
@@ -60,6 +60,9 @@ We'll meet each one today at a "what is it" level. *How* each one works internal
   - actually execute what the model asked for (read a file, run a command, edit code),
   - show you the result, ask permission where configured to.
 * That "something" is the **harness**. In this course: **OpenCode**.
+
+## 2. The harness
+
 * Claude Code, Cursor, GitHub Copilot Chat, Cline — all harnesses, wrapping different (or the same) models.
 
 ::: {.callout-tip}
@@ -89,12 +92,46 @@ You type a prompt → the **harness** builds context and sends it to the **model
 * "Programming with AI" in 2026 mostly means: **you supervise this loop.** You still need judgment about what's correct — you just spend less time typing syntax and more time reviewing diffs.
 * That's the whole course, really: build the habit of checking what the agent did before you trust it.
 
-# Part 2 — The Shell, Fast
+# Part 2 — The Shell. And fast.
 
 ## Why a shell at all
 
 * Agents run in a terminal. If you can't navigate a filesystem or read a command's output yourself, you can't tell whether the agent did the right thing.
 * We're not doing a full Software Carpentry pass today — a condensed version. Full reference material (if you want more drills) is linked at the end.
+* Remember the tradeoff between a GUI and a CLI.
+
+## The filesystem: root, folders, paths
+
+* Everything on your machine lives in one tree, starting at the **root**: `/` on Mac/Linux, `C:\` on Windows.
+* A **folder** (= directory) is a node in that tree — it holds files and/or other folders.
+* Your **home folder** (`~`) is where your own stuff lives: `/Users/you` (Mac), `/home/you` (Linux).
+* A **path** is the address of a file/folder in that tree: list of folders from some starting point, separated by `/`.
+
+## My filesystem
+
+```bash
+> tree -L 1 /
+/
+├── Applications
+├── bin
+├── cores
+├── dev
+├── etc -> private/etc
+├── home -> /System/Volumes/Data/home
+├── Library
+├── Network -> /System/Volumes/Data/Network
+├── opt
+├── private
+├── sbin
+├── System
+├── tmp -> private/tmp
+├── Users
+├── usr
+├── var -> private/var
+└── Volumes
+```
+* Mac: `brew install tree`
+* WSL2/Linux: `sudo apt install tree`
 
 ## Where am I, what's here
 
@@ -151,6 +188,46 @@ $ head -n 5 file.csv  # first 5 lines
 $ tail -n 5 file.csv  # last 5 lines
 $ less file.csv       # scroll interactively (q to quit)
 ```
+
+## How does an agent "search" your code?
+
+* When you ask an agent "where is `greet` defined?" or "find all TODOs," it doesn't magically know. It calls a **tool** (remember Part 1) that searches text.
+* Under the hood, that tool is almost always some flavor of **`grep`** — "global regular expression print." Harnesses wrap it, but the primitive is this.
+* So: knowing `grep` yourself means you can (a) do the same search faster by hand, and (b) tell whether the agent's "I searched and found nothing" claim is even plausible.
+
+## Try it: make a file, then search it
+
+```bash
+$ cat > notes.txt << 'EOF'
+TODO: write greet() in hello.py
+TODO: add a test for greet()
+done: initial commit
+GREETING logic lives in hello.py
+EOF
+```
+
+Now, before looking ahead — guess what each of these prints, then run it:
+
+```bash
+$ grep "TODO" notes.txt
+$ grep -i "greeting" notes.txt
+$ grep -n "done" notes.txt
+```
+
+## `grep`: searching inside files
+
+```bash
+$ grep "greet" hello.py            # lines in hello.py containing "greet"
+$ grep -i "greet" hello.py         # case-insensitive
+$ grep -n "greet" hello.py         # show line numbers
+$ grep -r "TODO" .                 # recursive: search every file under .
+$ grep -rl "TODO" .                # recursive, just filenames (not lines)
+```
+
+::: {.callout-tip}
+# Why this matters for agents
+"Find every place this function is called" is a `grep -rn` under the hood. If an agent tells you it checked the whole repo, you can run the same `grep` yourself in two seconds and confirm it isn't lying or missing a file.
+:::
 
 ## Combining commands: redirection and pipes
 
