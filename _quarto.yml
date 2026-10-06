@@ -5,6 +5,7 @@ project:
     - "*.md"
     - "!course-redesign-plan.md"
     - "!hours.md"
+    - "!CLAUDE.md"
     - "!11-NLP-R.qmd"
 
 website:
@@ -16,28 +17,34 @@ website:
   sidebar:
     style: "docked"
     contents:
-      - section: "Lessons:"
+      - section: "Sessions:"
         contents:
-          - href: 01-shell-intro.qmd
-            text: 1. Shell Intro
-          - href: 02-filedir.qmd
-            text: 2. Files and Directories
-          - href: 03-filework.qmd
-            text: 3. Working with Files
-          - href: https://floswald.github.io/2025-09-30-PythonIntro/
-            text: 4. Python Workshop
-          - href: 06-concepts.qmd
-            text: 13. `R` and python
-          - href: https://raw.githack.com/ScPoEcon/ScPoEconometrics-Slides/master/chapter_tidy_programming/chapter_tidy.html          
-            text: 13. `R` intro
-          - href: https://raw.githack.com/ScPoEcon/ScPoEconometrics-Slides/master/chapter_tidy_programming/chapter_tidy.html
-            text: 14. `R Tidyverse`
-          - href: https://raw.githack.com/floswald/lectures/master/05-datatable/05-datatable.html
-            text: 15. `R data.table`
-          - href: 09-R-packages.qmd
-            text: 16. Building `R` packages
+          - href: 00-prework.qmd
+            text: S0. Accounts & Install
+          - href: 01-kickoff.qmd
+            text: S1. Kickoff
+          - href: s2-constructs.qmd
+            text: S2. Programming Constructs
+          - href: 03-git-project-config.qmd
+            text: S3. Git & Project Config
+          - href: s4-llm-internals.qmd
+            text: S4. How LLMs Work
+          - href: s5-agents-context-tools-harnesses.qmd
+            text: S5. Agents, Context, Tools, Harnesses
+          - href: s6-duckdb.qmd
+            text: S6. DuckDB
+          - href: 07-testing-unit-tests.qmd
+            text: S7. Unit Tests
+          - href: 08-verification-patterns.qmd
+            text: S8. Verification Patterns
+          - href: s9-cost-model-economics.qmd
+            text: S9. Cost & Model Economics
           - href: 10-spatial-R.qmd
-            text: 17. Spatial Data with `R`
+            text: S10. Spatial Data
+          - href: s11-reproducibility.qmd
+            text: S11. Reproducibility
+          - href: 12-capstone.qmd
+            text: S12. Capstone
 
   navbar:
     left:
