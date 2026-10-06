@@ -1,119 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://floswald.github.io/IntroProgramming/02-filedir.html</loc>
-    <lastmod>2025-09-19T09:58:28.433Z</lastmod>
+    <loc>https://floswald.github.io/AgenticProgramming/s9-cost-model-economics.html</loc>
+    <lastmod>2026-10-06T08:57:41.403Z</lastmod>
   </url>
   <url>
-    <loc>https://floswald.github.io/IntroProgramming/exercises/chapter1_q3.html</loc>
-    <lastmod>2025-11-04T18:00:08.656Z</lastmod>
+    <loc>https://floswald.github.io/AgenticProgramming/s5-agents-context-tools-harnesses.html</loc>
+    <lastmod>2026-10-06T08:57:41.402Z</lastmod>
   </url>
   <url>
-    <loc>https://floswald.github.io/IntroProgramming/exercises/chapter3_q3.html</loc>
-    <lastmod>2025-11-04T18:00:08.657Z</lastmod>
+    <loc>https://floswald.github.io/AgenticProgramming/s2-constructs.html</loc>
+    <lastmod>2026-10-06T08:57:41.402Z</lastmod>
   </url>
   <url>
-    <loc>https://floswald.github.io/IntroProgramming/exercises/chapter3_q1.html</loc>
-    <lastmod>2025-11-04T18:00:08.656Z</lastmod>
+    <loc>https://floswald.github.io/AgenticProgramming/index.html</loc>
+    <lastmod>2026-10-06T08:57:41.401Z</lastmod>
   </url>
   <url>
-    <loc>https://floswald.github.io/IntroProgramming/exercises/chapter5_q2.html</loc>
-    <lastmod>2025-11-04T18:00:08.658Z</lastmod>
+    <loc>https://floswald.github.io/AgenticProgramming/12-capstone.html</loc>
+    <lastmod>2026-10-06T08:57:41.398Z</lastmod>
   </url>
   <url>
-    <loc>https://floswald.github.io/IntroProgramming/exercises/chapter2_q1.html</loc>
-    <lastmod>2025-11-04T18:00:08.656Z</lastmod>
+    <loc>https://floswald.github.io/AgenticProgramming/09-R-packages.html</loc>
+    <lastmod>2026-10-06T08:57:41.397Z</lastmod>
   </url>
   <url>
-    <loc>https://floswald.github.io/IntroProgramming/exercises/chapter2_q3.html</loc>
-    <lastmod>2025-11-04T18:00:08.656Z</lastmod>
+    <loc>https://floswald.github.io/AgenticProgramming/07-testing-unit-tests.html</loc>
+    <lastmod>2026-10-06T08:57:41.396Z</lastmod>
   </url>
   <url>
-    <loc>https://floswald.github.io/IntroProgramming/exercises/chapter6_q3.html</loc>
-    <lastmod>2025-11-04T18:00:08.658Z</lastmod>
+    <loc>https://floswald.github.io/AgenticProgramming/05-git.html</loc>
+    <lastmod>2026-10-06T08:57:41.395Z</lastmod>
   </url>
   <url>
-    <loc>https://floswald.github.io/IntroProgramming/exercises/chapter4_q3.html</loc>
-    <lastmod>2025-11-04T18:00:08.657Z</lastmod>
+    <loc>https://floswald.github.io/AgenticProgramming/03-git-project-config.html</loc>
+    <lastmod>2026-10-06T08:57:41.393Z</lastmod>
   </url>
   <url>
-    <loc>https://floswald.github.io/IntroProgramming/exercises/chapter4_q1.html</loc>
-    <lastmod>2025-11-04T18:00:08.657Z</lastmod>
+    <loc>https://floswald.github.io/AgenticProgramming/02-filedir.html</loc>
+    <lastmod>2026-10-06T08:57:41.392Z</lastmod>
   </url>
   <url>
-    <loc>https://floswald.github.io/IntroProgramming/10-spatial-R.html</loc>
-    <lastmod>2025-11-25T12:51:33.265Z</lastmod>
+    <loc>https://floswald.github.io/AgenticProgramming/01-kickoff.html</loc>
+    <lastmod>2026-10-06T08:57:41.391Z</lastmod>
   </url>
   <url>
-    <loc>https://floswald.github.io/IntroProgramming/about.html</loc>
-    <lastmod>2025-09-19T09:58:28.436Z</lastmod>
+    <loc>https://floswald.github.io/AgenticProgramming/00-prework.html</loc>
+    <lastmod>2026-10-06T08:57:41.390Z</lastmod>
   </url>
   <url>
-    <loc>https://floswald.github.io/IntroProgramming/06-concepts.html</loc>
-    <lastmod>2025-11-25T12:46:42.927Z</lastmod>
+    <loc>https://floswald.github.io/AgenticProgramming/01-shell-intro.html</loc>
+    <lastmod>2026-10-06T08:57:41.392Z</lastmod>
   </url>
   <url>
-    <loc>https://floswald.github.io/IntroProgramming/09-R-packages.html</loc>
-    <lastmod>2025-09-19T09:58:28.434Z</lastmod>
+    <loc>https://floswald.github.io/AgenticProgramming/03-filework.html</loc>
+    <lastmod>2026-10-06T08:57:41.393Z</lastmod>
   </url>
   <url>
-    <loc>https://floswald.github.io/IntroProgramming/01-shell-intro.html</loc>
-    <lastmod>2025-09-19T09:58:28.433Z</lastmod>
+    <loc>https://floswald.github.io/AgenticProgramming/04-pipes.html</loc>
+    <lastmod>2026-10-06T08:57:41.394Z</lastmod>
   </url>
   <url>
-    <loc>https://floswald.github.io/IntroProgramming/11-NLP-R.html</loc>
-    <lastmod>2025-09-19T09:58:28.435Z</lastmod>
+    <loc>https://floswald.github.io/AgenticProgramming/06-concepts.html</loc>
+    <lastmod>2026-10-06T08:57:41.395Z</lastmod>
   </url>
   <url>
-    <loc>https://floswald.github.io/IntroProgramming/03-filework.html</loc>
-    <lastmod>2025-09-19T09:58:28.433Z</lastmod>
+    <loc>https://floswald.github.io/AgenticProgramming/08-verification-patterns.html</loc>
+    <lastmod>2026-10-06T08:57:41.396Z</lastmod>
   </url>
   <url>
-    <loc>https://floswald.github.io/IntroProgramming/index.html</loc>
-    <lastmod>2025-11-25T12:48:01.883Z</lastmod>
+    <loc>https://floswald.github.io/AgenticProgramming/10-spatial-R.html</loc>
+    <lastmod>2026-10-06T08:57:41.397Z</lastmod>
   </url>
   <url>
-    <loc>https://floswald.github.io/IntroProgramming/05-git.html</loc>
-    <lastmod>2025-09-19T09:58:28.434Z</lastmod>
+    <loc>https://floswald.github.io/AgenticProgramming/about.html</loc>
+    <lastmod>2026-10-06T08:57:41.400Z</lastmod>
   </url>
   <url>
-    <loc>https://floswald.github.io/IntroProgramming/04-pipes.html</loc>
-    <lastmod>2025-09-19T09:58:28.433Z</lastmod>
+    <loc>https://floswald.github.io/AgenticProgramming/s11-reproducibility.html</loc>
+    <lastmod>2026-10-06T08:57:41.401Z</lastmod>
   </url>
   <url>
-    <loc>https://floswald.github.io/IntroProgramming/exercises/chapter4_q2.html</loc>
-    <lastmod>2025-11-04T18:00:08.657Z</lastmod>
+    <loc>https://floswald.github.io/AgenticProgramming/s4-llm-internals.html</loc>
+    <lastmod>2026-10-06T08:57:41.402Z</lastmod>
   </url>
   <url>
-    <loc>https://floswald.github.io/IntroProgramming/exercises/chapter6_q2.html</loc>
-    <lastmod>2025-11-04T18:00:08.658Z</lastmod>
-  </url>
-  <url>
-    <loc>https://floswald.github.io/IntroProgramming/exercises/chapter6_q1.html</loc>
-    <lastmod>2025-11-04T18:00:08.658Z</lastmod>
-  </url>
-  <url>
-    <loc>https://floswald.github.io/IntroProgramming/exercises/chapter2_q2.html</loc>
-    <lastmod>2025-11-04T18:00:08.656Z</lastmod>
-  </url>
-  <url>
-    <loc>https://floswald.github.io/IntroProgramming/exercises/chapter5_q3.html</loc>
-    <lastmod>2025-11-04T18:00:08.658Z</lastmod>
-  </url>
-  <url>
-    <loc>https://floswald.github.io/IntroProgramming/exercises/chapter5_q1.html</loc>
-    <lastmod>2025-11-04T18:00:08.657Z</lastmod>
-  </url>
-  <url>
-    <loc>https://floswald.github.io/IntroProgramming/exercises/chapter3_q2.html</loc>
-    <lastmod>2025-11-04T18:00:08.657Z</lastmod>
-  </url>
-  <url>
-    <loc>https://floswald.github.io/IntroProgramming/exercises/chapter1_q2.html</loc>
-    <lastmod>2025-11-04T18:00:08.656Z</lastmod>
-  </url>
-  <url>
-    <loc>https://floswald.github.io/IntroProgramming/exercises/chapter1_q1.html</loc>
-    <lastmod>2025-11-04T18:00:08.655Z</lastmod>
+    <loc>https://floswald.github.io/AgenticProgramming/s6-duckdb.html</loc>
+    <lastmod>2026-10-06T08:57:41.403Z</lastmod>
   </url>
 </urlset>

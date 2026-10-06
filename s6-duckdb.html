@@ -10,8 +10,8 @@
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-597958c53c93a607afca12fd375c57ed.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.8.26">
 
-  <meta name="author" content="Florian Oswald and The Software Carpentry">
-  <title>Intro To Programming – Pipes and Filters</title>
+  <meta name="author" content="Florian Oswald">
+  <title>Intro To Programming – Data Wrangling: DuckDB</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -199,7 +199,7 @@
       margin-right: 0; 
     }
   </style>
-<meta name="twitter:title" content="Pipes and Filters – Intro To Programming">
+<meta name="twitter:title" content="Data Wrangling: DuckDB – Intro To Programming">
 <meta name="twitter:description" content="Agentic Programming">
 <meta name="twitter:card" content="summary">
 </head>
@@ -208,325 +208,396 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Pipes and Filters</h1>
+  <h1 class="title">Data Wrangling: DuckDB</h1>
   <p class="subtitle"><a href="https://floswald.github.io/AgenticProgramming/">Agentic Programming</a></p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-Florian Oswald and The Software Carpentry 
+Florian Oswald 
 </div>
 </div>
 </div>
 
   <p class="date">6 October, 2026</p>
 </section>
-<section id="combining-commands" class="slide level2">
-<h2>Combining Commands</h2>
+<section id="where-we-are" class="slide level2">
+<h2>Where we are</h2>
 <ul>
-<li><p>We are now ready to combine some of the commands we learned.</p></li>
-<li><p>You will see that here is where the real power lies.</p></li>
-<li><p>Let’s navigate into our exercise data folder first.</p></li>
+<li>S4: how an LLM actually works (tokens in, tokens out, no ground truth inside).</li>
+<li>S5: how an <em>agent</em> wraps that model with tools, context, and a harness.</li>
+<li>Today the tool is a <strong>database</strong>, and the task is <strong>data wrangling</strong>: getting from raw files to trustworthy numbers.</li>
 </ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/shell-lesson-data/exercise-data/proteins</span>
-<span id="cb1-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ls</span>
-<span id="cb1-3"><a aria-hidden="true" tabindex="-1"></a><span class="ex">cubane.pdb</span>   ethane.pdb   methane.pdb  octane.pdb   pentane.pdb  propane.pdb</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li>Those are <em>protein data bank</em> files.</li>
-</ul>
-</section>
-<section id="capturing-output" class="slide level2">
-<h2>Capturing Output</h2>
-<ul>
-<li>Introducing the <code>wc</code> word count command.</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">wc</span> cubane.pdb</span>
-<span id="cb2-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">20</span>     156    1158 cubane.pdb</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>29 lines, 156 words, 1158 characters.</p>
-<ul>
-<li>Let’s <strong>redirect</strong> the output of <code>wc</code> to a file instead with <code>&gt;</code>:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">wc</span> <span class="at">-l</span> <span class="pp">*</span>.pdb <span class="op">&gt;</span> lengths.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li>no ouput on screen, you see? but now there is a new file: <code>lengths.txt</code>.</li>
-<li>Let’s <em>concatenate</em> its content (i.e.&nbsp;join together) and print to screen:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat lengths.txt </span>
-<span id="cb4-2"><a aria-hidden="true" tabindex="-1"></a>      <span class="ex">20</span> cubane.pdb</span>
-<span id="cb4-3"><a aria-hidden="true" tabindex="-1"></a>      <span class="ex">12</span> ethane.pdb</span>
-<span id="cb4-4"><a aria-hidden="true" tabindex="-1"></a>       <span class="ex">9</span> methane.pdb</span>
-<span id="cb4-5"><a aria-hidden="true" tabindex="-1"></a>      <span class="ex">30</span> octane.pdb</span>
-<span id="cb4-6"><a aria-hidden="true" tabindex="-1"></a>      <span class="ex">21</span> pentane.pdb</span>
-<span id="cb4-7"><a aria-hidden="true" tabindex="-1"></a>      <span class="ex">15</span> propane.pdb</span>
-<span id="cb4-8"><a aria-hidden="true" tabindex="-1"></a>     <span class="ex">107</span> total</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="reading-text-files" class="slide level2">
-<h2>Reading Text Files</h2>
-<ul>
-<li><code>cat</code> prints the entire thing to screen.</li>
-<li><code>tail</code> only the end</li>
-<li><code>head</code> only the beginning</li>
-<li><code>less</code> lets you scroll and read (arrows up/down or <code>j</code> (up) and <code>k</code> (down), <code>q</code> exits.)</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> head <span class="at">-n</span> 3 ../animal-counts/animals.csv</span>
-<span id="cb5-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> tail <span class="at">-n</span> 2 ../animal-counts/animals.csv</span>
-<span id="cb5-3"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> less ../../north-pacific-gyre/NENE01729A.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="printing-text-with-echo" class="slide level2">
-<h2>Printing Text with <code>echo</code></h2>
-<ul>
-<li>The <code>echo</code> function prints text - by default to screen:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo hi</span>
-<span id="cb6-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">hi</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li>But you can redirect it to a file as well:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo I said hi! <span class="op">&gt;</span> echofile1.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="callout callout-important callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Challenge</strong></p>
-</div>
-<div class="callout-content">
-<p>Do 2 times in a row:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo I said hi! <span class="op">&gt;</span> echofile1.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Now do twice (notice <code>&gt;&gt;</code>!)</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo I said hi! <span class="op">&gt;&gt;</span> echofile2.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li>What’s happening?</li>
-</ul>
-</div>
-</div>
-</div>
-</section>
-<section id="appending-to-files" class="slide level2">
-<h2>Appending to Files</h2>
-<div class="callout callout-important callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Challenge</strong></p>
-</div>
-<div class="callout-content">
-<p>Consider the file <code>shell-lesson-data/exercise-data/animal-counts/animals.csv</code>. What is result of this:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> head <span class="at">-n</span> 3 animals.csv <span class="op">&gt;</span> animals-subset.csv</span>
-<span id="cb10-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> tail <span class="at">-n</span> 2 animals.csv <span class="op">&gt;&gt;</span> animals-subset.csv</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ol type="1">
-<li>The first three lines of animals.csv?</li>
-<li>The last two lines of animals.csv?</li>
-<li>The first three lines and the last two lines of animals.csv?</li>
-<li>The second and third lines of animals.csv?</li>
-</ol>
-</div>
-</div>
-</div>
-<details>
-<summary>
-Show Solution
-</summary>
 <div class="callout callout-note callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<p><strong>Solution</strong></p>
+<p><strong>Today’s habit, again</strong></p>
 </div>
 <div class="callout-content">
-<p>Option 3 is correct.</p>
+<p>The agent will happily write a query that runs without error and returns a <em>plausible</em> number. Running without error is not the same as being right.</p>
 </div>
 </div>
 </div>
-</details>
 </section>
-<section id="filtering-files-with-sort" class="slide level2">
-<h2>Filtering Files with <code>sort</code></h2>
-<ul>
-<li><code>sort</code> reads a file and <em>sorts</em> it’s content to screen</li>
-<li>it does not change the file.</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sort <span class="at">-n</span> lengths.txt </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>   9 methane.pdb
-  12 ethane.pdb
-  15 propane.pdb
-  20 cubane.pdb
-  21 pentane.pdb
-  30 octane.pdb
- 107 total</code></pre>
-</section>
-<section id="filtering-files-and-using-the-result" class="slide level2">
-<h2>Filtering Files and using the result</h2>
-<ul>
-<li>Cool 😎 but now we want to use this list.</li>
-<li>Could save it to a new file?</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sort <span class="at">-n</span> lengths.txt <span class="op">&gt;</span> sorted_lengths.txt</span>
-<span id="cb13-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> head <span class="at">-n</span> 2 sorted_lengths.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>   9 methane.pdb
-  12 ethane.pdb</code></pre>
-</section>
-<section id="filtering-files-and-the-pipe" class="slide level2">
-<h2>Filtering Files and <strong>the pipe</strong></h2>
-<ul>
-<li>We call <code>|</code> the pipe. It takes output from a command and gives it to another command.</li>
-<li>Modern languages use their own version of this (R has a package and now also a native pipe, julia has of course a pipe etc. Stata not sure 😜)</li>
-<li>The <strong>pipe</strong> allows us to do this <em>without</em> storing intermediate results.</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sort <span class="at">-n</span> lengths.txt <span class="kw">|</span> <span class="fu">head</span> <span class="at">-n</span> 1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code> 9 methane.pdb</code></pre>
-<ul>
-<li>But, wait 🤔. Then we don’t even need <code>lengths.txt</code>:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> wc <span class="at">-l</span> <span class="pp">*</span>.pdb <span class="kw">|</span> <span class="fu">sort</span> <span class="at">-n</span> <span class="kw">|</span> <span class="fu">head</span> <span class="at">-n</span> 1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code> 9 methane.pdb</code></pre>
-<ul>
-<li>That’s a <em>pipeline</em>. 🤯</li>
-</ul>
-</section>
-<section id="piping-away" class="slide level2">
-<h2>Piping Away</h2>
-<ul>
-<li>Make sure we are still in <code>~/shell-lesson-data/exercise-data/proteins</code></li>
-</ul>
-<div class="callout callout-important callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Pipe Dreams</strong></p>
-</div>
-<div class="callout-content">
-<p>Which of the following commands shows us the 3 files with the least number of lines in the current directory? Build the pipeline up from left to right to check!</p>
+<section id="todays-plan" class="slide level2">
+<h2>Today’s plan</h2>
 <ol type="1">
-<li><code>wc -l * &gt; sort -n &gt; head -n 3</code></li>
-<li><code>wc -l * | sort -n | head -n 1-3</code></li>
-<li><code>wc -l * | sort -n | tail -n 4 | head -n 3</code></li>
-<li><code>wc -l * | sort -n | head -n 3</code></li>
-</ol>
-</div>
-</div>
-</div>
-</section>
-<section id="piping-away-1" class="slide level2">
-<h2>Piping Away</h2>
-<ul>
-<li>Make sure we are still in <code>~/shell-lesson-data/exercise-data/proteins</code></li>
-</ul>
-<details>
-<summary>
-Show Solution
-</summary>
-<div class="callout callout-note callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Solution</strong></p>
-</div>
-<div class="callout-content">
-<p>Option 4 is correct. Option 3 finds the ones with <em>most</em> lines.</p>
-</div>
-</div>
-</div>
-</details>
-</section>
-<section id="cutting-and-piping" class="slide level2">
-<h2>Cutting and Piping</h2>
-<ul>
-<li>We have a <code>.csv</code> file here: <code>shell-lesson-data/exercise-data/animal-counts</code></li>
-<li>Let’s use the <code>cut</code> command to get parts of it.</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/shell-lesson-data/exercise-data/animal-counts</span>
-<span id="cb19-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cut <span class="at">-d</span> , <span class="at">-f</span> 2 animals.csv</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="callout callout-important callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Building a Pipe</strong></p>
-</div>
-<div class="callout-content">
-<ul>
-<li><code>uniq</code> filters <strong>adjacent</strong> matching lines in a file.</li>
-<li>Can you extend the above command with <code>uniq</code> (and another command?) such that we get the list of unique animal names?</li>
-<li>Add the <code>-c</code> flag to <code>uniq</code> to get a contingency table.</li>
-</ul>
-</div>
-</div>
-</div>
-</section>
-<section id="building-a-pipe-1" class="slide level2">
-<h2>Building a Pipe</h2>
-<details>
-<summary>
-Show Solution
-</summary>
-<div class="callout callout-note callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Solution</strong></p>
-</div>
-<div class="callout-content">
-<ol type="1">
-<li><code>cut -d , -f 2 animals.csv | sort | uniq</code></li>
-<li><code>cut -d , -f 2 animals.csv | sort | uniq -c</code></li>
-</ol>
-</div>
-</div>
-</div>
-</details>
-</section>
-<section id="house-prices-in-france" class="slide level2">
-<h2>House Prices in France</h2>
-<p>The below dataset contains information on house sales (price, location, type of house etc). We call one record a <em>housing transaction</em>.</p>
-<p>Using the shell:</p>
-<ol type="1">
-<li>Use <code>wget</code> to download data to <a href="https://static.data.gouv.fr/resources/demandes-de-valeurs-foncieres/20240408-125738/valeursfoncieres-2023.txt">from here</a> to your downloads folder as <code>carburants.csv</code>: <code>wget https://static.data.gouv.fr/resources/demandes-de-valeurs-foncieres/20240408-125738/valeursfoncieres-2023.txt</code></li>
-<li>use <code>wc -l</code> to count how many rows (<em>lines</em>) there are</li>
-<li>use <code>head -n 2</code> to see the first two rows (the <em>header</em>)</li>
-<li>Use the above solution to build a contingency table that tells us the number of housing transactions per <em>commune</em>. Show the 10 cities with most housing transactions.</li>
-<li>Compute the average of variable <code>Valeur fonciere</code>. You should use the <code>awk</code> command like this : <code>awk 'BEGIN{s=0;}{s+=$1;}END{print s/(NR);} your_file.txt'</code></li>
+<li>What DuckDB is, and why it is a good fit for this course.</li>
+<li>One dataset, three ways to query it: <strong>SQL</strong>, <strong>dplyr</strong>, <strong>Ibis</strong>.</li>
+<li>Let the agent draft a query. Find out it’s wrong. Fix it.</li>
+<li>You do the same, on your own query, and write it down.</li>
 </ol>
 </section>
-<section id="house-prices-in-france-1" class="slide level2">
-<h2>House Prices in France</h2>
-<p>The below dataset contains information on house sales (price, location, type of house etc). We call one record a <em>housing transaction</em>.</p>
-<p>Using the shell:</p>
-<ol start="5" type="1">
-<li>Compute the average of variable <code>Valeur fonciere</code>. You should use the <code>awk</code> command like this : <code>awk 'BEGIN{s=0;}{s+=$1;}END{print s/(NR);} your_file.txt'</code></li>
-</ol>
-</section>
-<section id="real-data" class="slide level2">
-<h2>Real Data</h2>
-<details>
-<summary>
-Show Solution
-</summary>
-<ol type="1">
-<li><code>wget https://static.data.gouv.fr/resources/demandes-de-valeurs-foncieres/20240408-125738/valeursfoncieres-2023.txt</code></li>
-<li><code>wc -l valeursfoncieres-2023.txt</code></li>
-<li><code>head -n 2 valeursfoncieres-2023.txt</code></li>
-<li><code>cut -d '|' -f 18 valeursfoncieres-2023.txt | sort | uniq -c | sort -r | head -n 10</code></li>
-<li><code>cut -d '|' -f 11 valeursfoncieres-2023.txt | cut -d , -f 1 | awk 'BEGIN{s=0;}{s+=$1;}END{print s/(NR);}'</code></li>
-<li>If you have R installed you can check whether this is the same as reading this column into it (it’s not! odd.)</li>
-</ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">'x = data.table::fread(cmd = "cut -d \'</span><span class="kw">|</span><span class="ex">\'</span> <span class="at">-f</span> 11 valeursfoncieres-2023.txt <span class="kw">|</span> <span class="fu">cut</span> <span class="at">-d</span> , <span class="at">-f</span> 1<span class="st">"); x[, mean(</span><span class="kw">`</span><span class="ex">Valeur</span> fonciere<span class="kw">`</span><span class="st">,na.rm = TRUE)]'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-
+<section>
+<section id="what-is-duckdb" class="title-slide slide level1 center">
+<h1>What is DuckDB?</h1>
 
 </section>
+<section id="duckdb-in-one-slide" class="slide level2">
+<h2>DuckDB in one slide</h2>
+<ul>
+<li>An <strong>in-process</strong> analytical (OLAP) SQL database — like SQLite, but built for aggregations over large columnar data instead of many small transactions.</li>
+<li>No server to install, no daemon to start: <code>import duckdb</code> (Python), <code>library(duckdb)</code> (R), or the <code>duckdb</code> CLI binary.</li>
+<li>Reads CSV / Parquet / JSON <strong>directly</strong>, without a separate load step:</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb1-1"><a aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> <span class="st">'data/brexit.csv'</span> <span class="kw">LIMIT</span> <span class="dv">5</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li>Fast, columnar, and free — a real analytical engine on your laptop.</li>
+</ul>
+</section>
+<section id="why-duckdb-for-this-course" class="slide level2">
+<h2>Why DuckDB for <em>this</em> course</h2>
+<div class="fragment">
+<ul>
+<li>R and Python both talk SQL fluently through DuckDB — it’s a genuine common ground between the two languages this course uses.</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>The <strong>same question</strong> can be asked three ways:
+<ul>
+<li>raw <strong>SQL</strong> — the lingua franca, and what the agent tends to reach for first.</li>
+<li><strong>dplyr</strong> verbs (R) translated to SQL under the hood.</li>
+<li><strong>Ibis</strong> expressions (Python) translated to SQL under the hood.</li>
+</ul></li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>All three compile to the <em>same</em> DuckDB query plan. If they disagree, one of you (or the agent) made a mistake — that disagreement is itself a verification tool.</li>
+</ul>
+</div>
+</section>
+<section id="setup" class="slide level2">
+<h2>Setup</h2>
+<div class="columns">
+<div class="column" style="width:33%;">
+<p><strong>SQL / CLI</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">duckdb</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column" style="width:33%;">
+<p><strong>R</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(duckdb)</span>
+<span id="cb3-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb3-3"><a aria-hidden="true" tabindex="-1"></a>con <span class="ot">&lt;-</span> <span class="fu">dbConnect</span>(<span class="fu">duckdb</span>())</span>
+<span id="cb3-4"><a aria-hidden="true" tabindex="-1"></a>polls <span class="ot">&lt;-</span> <span class="fu">tbl</span>(</span>
+<span id="cb3-5"><a aria-hidden="true" tabindex="-1"></a>  con,</span>
+<span id="cb3-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="st">"read_csv_auto('data/brexit.csv')"</span></span>
+<span id="cb3-7"><a aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column" style="width:33%;">
+<p><strong>Python</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a aria-hidden="true" tabindex="-1"></a><span class="im">import</span> duckdb</span>
+<span id="cb4-2"><a aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ibis</span>
+<span id="cb4-3"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a aria-hidden="true" tabindex="-1"></a>con <span class="op">=</span> ibis.duckdb.<span class="ex">connect</span>()</span>
+<span id="cb4-5"><a aria-hidden="true" tabindex="-1"></a>polls <span class="op">=</span> con.read_csv(</span>
+<span id="cb4-6"><a aria-hidden="true" tabindex="-1"></a>  <span class="st">"data/brexit.csv"</span>,</span>
+<span id="cb4-7"><a aria-hidden="true" tabindex="-1"></a>  table_name<span class="op">=</span><span class="st">"polls"</span></span>
+<span id="cb4-8"><a aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div></div>
+<p>All three point at the <em>same file</em> — no import/export, no separate database to keep in sync.</p>
+</section></section>
+<section>
+<section id="the-dataset" class="title-slide slide level1 center">
+<h1>The dataset</h1>
+
+</section>
+<section id="uk-eu-referendum-polls-2016" class="slide level2">
+<h2>UK EU-referendum polls (2016)</h2>
+<ul>
+<li><code>data/brexit.csv</code>: 127 opinion polls conducted between January and June 2016, ahead of the UK’s “Brexit” referendum.</li>
+<li>Columns: <code>pollster</code>, <code>poll_type</code>, <code>startdate</code>/<code>enddate</code>, <code>samplesize</code>, <code>remain</code>, <code>leave</code>, <code>undecided</code>, <code>spread</code>.</li>
+<li><strong>Known answer</strong>: the actual referendum result was <strong>Leave 51.89%, Remain 48.11%</strong> — a fixed, external fact we can check any query’s output against.</li>
+</ul>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top">
+<caption>5 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">pollster</th>
+<th style="text-align: left;">enddate</th>
+<th style="text-align: right;">samplesize</th>
+<th style="text-align: right;">remain</th>
+<th style="text-align: right;">leave</th>
+<th style="text-align: right;">undecided</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">YouGov</td>
+<td style="text-align: left;">2016-06-23</td>
+<td style="text-align: right;">4772</td>
+<td style="text-align: right;">0.52</td>
+<td style="text-align: right;">0.48</td>
+<td style="text-align: right;">0.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Populus</td>
+<td style="text-align: left;">2016-06-22</td>
+<td style="text-align: right;">4700</td>
+<td style="text-align: right;">0.55</td>
+<td style="text-align: right;">0.45</td>
+<td style="text-align: right;">0.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">YouGov</td>
+<td style="text-align: left;">2016-06-22</td>
+<td style="text-align: right;">3766</td>
+<td style="text-align: right;">0.51</td>
+<td style="text-align: right;">0.49</td>
+<td style="text-align: right;">0.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ipsos MORI</td>
+<td style="text-align: left;">2016-06-22</td>
+<td style="text-align: right;">1592</td>
+<td style="text-align: right;">0.49</td>
+<td style="text-align: right;">0.46</td>
+<td style="text-align: right;">0.01</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Opinium</td>
+<td style="text-align: left;">2016-06-22</td>
+<td style="text-align: right;">3011</td>
+<td style="text-align: right;">0.44</td>
+<td style="text-align: right;">0.45</td>
+<td style="text-align: right;">0.09</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="ask-the-agent-what-does-this-data-predict" class="slide level2">
+<h2>Ask the agent: “what does this data predict?”</h2>
+<p>Prompt given to the agent (OpenCode):</p>
+<blockquote>
+<p><em>“Write a DuckDB SQL query against <code>data/brexit.csv</code> that estimates the referendum outcome — the percentage voting Leave and the percentage voting Remain.”</em></p>
+</blockquote>
+<p>The agent’s first draft — plausible, runs without error:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb5-1"><a aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span></span>
+<span id="cb5-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="fu">avg</span>(leave)  <span class="op">*</span> <span class="dv">100</span>, <span class="dv">2</span>) <span class="kw">AS</span> leave_pct,</span>
+<span id="cb5-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="fu">avg</span>(remain) <span class="op">*</span> <span class="dv">100</span>, <span class="dv">2</span>) <span class="kw">AS</span> remain_pct</span>
+<span id="cb5-4"><a aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> <span class="st">'data/brexit.csv'</span>;</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="running-the-agents-first-query" class="slide level2">
+<h2>Running the agent’s first query</h2>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top">
+<caption>1 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">leave_pct</th>
+<th style="text-align: right;">remain_pct</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">42.23</td>
+<td style="text-align: right;">44.24</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="fragment">
+<p><code>leave_pct = 42.23</code>, <code>remain_pct = 44.24</code>. Looks like a plausible pair of vote shares. <strong>Do not trust it yet.</strong></p>
+</div>
+</section>
+<section id="verify-before-you-trust-it" class="slide level2">
+<h2>Verify before you trust it</h2>
+<p>The cheapest check costs one extra line: do the shares <strong>add up to 100%</strong>?</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top">
+<caption>1 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">leave_pct</th>
+<th style="text-align: right;">remain_pct</th>
+<th style="text-align: right;">undecided_pct</th>
+<th style="text-align: right;">total_pct</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">42.23</td>
+<td style="text-align: right;">44.24</td>
+<td style="text-align: right;">12.65</td>
+<td style="text-align: right;">99.11</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="fragment">
+<p>They do (≈100%, modulo rounding) — but the query <strong>silently dropped <code>undecided</code> respondents</strong> from the two numbers it reported. <code>leave_pct + remain_pct</code> alone is only 86.5%, not 100%. The agent answered the wrong question: “average raw share” instead of “share of those who expressed a preference.”</p>
+</div>
+</section>
+<section id="what-actually-went-wrong" class="slide level2">
+<h2>What actually went wrong</h2>
+<div class="fragment">
+<ol type="1">
+<li><strong>No re-normalization</strong>: it reported <code>leave</code> and <code>remain</code> shares out of <em>all</em> respondents (including undecided), not as shares of decided voters — the quantity we actually asked for.</li>
+</ol>
+</div>
+<div class="fragment">
+<ol start="2" type="1">
+<li><strong>No weighting</strong>: <code>AVG()</code> treats a poll of 500 people the same as a poll of 5,000 — every poll gets an equal vote, regardless of <code>samplesize</code>.</li>
+</ol>
+</div>
+<div class="fragment">
+<ol start="3" type="1">
+<li><strong>No date filtering</strong>: it averaged polls from January <em>and</em> June together, as if opinion in January (5+ months before the vote) were as informative as opinion the week before.</li>
+</ol>
+</div>
+<p>None of these threw an error. All three are silent, plausible-looking mistakes — exactly the kind unit tests and invariant checks (S7–S8) are built to catch.</p>
+</section>
+<section id="fixed-query-sql" class="slide level2">
+<h2>Fixed query — SQL</h2>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top">
+<caption>1 records</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">leave_pct</th>
+<th style="text-align: right;">remain_pct</th>
+<th style="text-align: right;">n_polls</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">48.61</td>
+<td style="text-align: right;">51.39</td>
+<td style="text-align: right;">15</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Re-normalized (excludes undecided from the denominator), sample-size weighted, restricted to the final week.</p>
+</section>
+<section id="same-query-dplyr-r" class="slide level2">
+<h2>Same query — dplyr (R)</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># Source:   SQL [?? x 3]
+# Database: DuckDB 1.4.2 [floswald@Darwin 24.6.0:R 4.5.1/:memory:]
+  leave_pct remain_pct n_polls
+      &lt;dbl&gt;      &lt;dbl&gt;   &lt;dbl&gt;
+1      48.6       51.4      15</code></pre>
+</div>
+</div>
+<p><code>tbl(con, ...)</code> on a DuckDB connection means these dplyr verbs are translated to SQL and run <em>inside</em> DuckDB — <code>dplyr::show_query(weighted_r)</code> prints the generated SQL, useful for checking the agent’s dplyr code actually does what you think.</p>
+</section>
+<section id="same-query-ibis-python" class="slide level2">
+<h2>Same query — Ibis (Python)</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>   leave_pct  remain_pct  n_polls
+0      48.61       51.39       15</code></pre>
+</div>
+</div>
+<p>Same numbers as the SQL and the dplyr version — three languages, one DuckDB query plan.</p>
+</section>
+<section id="check-against-the-known-answer" class="slide level2">
+<h2>Check against the known answer</h2>
+<ul>
+<li>Fixed query, final week of polling: <strong>Leave ≈ 48.6%, Remain ≈ 51.4%</strong>.</li>
+<li>Actual result: <strong>Leave 51.89%, Remain 48.11%</strong>.</li>
+</ul>
+<div class="callout callout-warning callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>The query is now correct. The prediction is still wrong.</strong></p>
+</div>
+<div class="callout-content">
+<p>Fixing the SQL bug (undecided handling, weighting, date window) got us a defensible number — but it’s still on the wrong side of the actual outcome. 2016 UK polls famously under-counted Leave support (non-response bias, “shy” Leave voters, herding among pollsters).</p>
+</div>
+</div>
+</div>
+<p>This is the distinction to keep: <strong>verification catches query bugs</strong> (wrong denominator, wrong weights, wrong date range — things you can check against an invariant). It does <strong>not</strong> catch <strong>measurement error in the data itself</strong> — that needs domain knowledge, not a better query. Keep this distinction for S9 (cost/quality tradeoffs) and S11 (cataloguing failure modes).</p>
+</section></section>
+<section>
+<section id="your-turn" class="title-slide slide level1 center">
+<h1>Your turn</h1>
+
+</section>
+<section id="exercise-20-min" class="slide level2">
+<h2>Exercise (20 min)</h2>
+<p>Working with the same <code>brexit.csv</code> (or a dataset of your choice with a known, checkable answer):</p>
+<ol type="1">
+<li>Give your agent a data question and let it draft a <strong>first</strong> query — SQL, dplyr, or Ibis, your choice.</li>
+<li>Run it. Get a number.</li>
+<li><strong>Before you believe it</strong>, write down at least one check: does it sum to what it should? Does it match a known external fact? Does a second language (SQL vs.&nbsp;dplyr vs.&nbsp;Ibis) give the same answer?</li>
+<li>If the first answer fails a check, find out why, fix the query, and re-run.</li>
+</ol>
+<p>Ideas to try: split by <code>pollster</code> or <code>poll_type</code> (phone vs.&nbsp;online — did they differ systematically?), compute a rolling weekly average, or compare <code>spread</code> in the data to <code>leave - remain</code> you compute yourself (does the pollster’s number match your recomputation?).</p>
+</section>
+<section id="deliverable-the-written-note" class="slide level2">
+<h2>Deliverable: the written note</h2>
+<p>For the session outcome, write down <strong>one concrete case</strong> where the agent’s first answer was wrong, in this format:</p>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Template</strong></p>
+</div>
+<div class="callout-content">
+<ul>
+<li><strong>Prompt</strong> you gave the agent.</li>
+<li><strong>First query</strong> it produced (SQL/dplyr/Ibis).</li>
+<li><strong>First output</strong> — the specific wrong number(s).</li>
+<li><strong>How you caught it</strong> — the check that failed (invariant, known answer, cross-language comparison, or something else).</li>
+<li><strong>Fixed query</strong> and the corrected output.</li>
+</ul>
+</div>
+</div>
+</div>
+<p>This is not a hypothetical exercise — use whatever actually happened when you ran your own prompt. If your agent got it right first try, push it further (harder aggregation, trickier date logic, a join) until it doesn’t.</p>
+</section>
+<section id="wrap-up" class="slide level2">
+<h2>Wrap-up</h2>
+<ul>
+<li>DuckDB gives you one query engine reachable from SQL, R (dplyr), and Python (Ibis) — no data export/import between them.</li>
+<li>The agent’s first query is a draft, not an answer. It ran without error and still ignored undecided respondents, sample weights, and the relevant date window.</li>
+<li>Checking against an invariant (do shares sum to 100%?) or a known external fact (the actual referendum result) is cheap and catches real bugs.</li>
+<li>Even a <em>correct</em> query only answers the question you asked — it can’t fix bias in the underlying data.</li>
+<li>Next (S7): turning these ad-hoc checks into a proper, repeatable <strong>test suite</strong>.</li>
+</ul>
+
+
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <p><img src="./images/ScPo-logo.png" class="slide-logo"></p>
@@ -745,6 +816,44 @@ Show Solution
         ]
       });
     </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
     <script id="quarto-html-after-body" type="application/javascript">
       window.document.addEventListener("DOMContentLoaded", function (event) {
         const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")

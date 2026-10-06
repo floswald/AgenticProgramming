@@ -10,8 +10,8 @@
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-597958c53c93a607afca12fd375c57ed.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.8.26">
 
-  <meta name="author" content="Florian Oswald and The Software Carpentry">
-  <title>Intro To Programming – Pipes and Filters</title>
+  <meta name="author" content="Florian Oswald">
+  <title>Intro To Programming – S8 — Testing &amp; Verification, Part 2: Verification Patterns</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -199,7 +199,7 @@
       margin-right: 0; 
     }
   </style>
-<meta name="twitter:title" content="Pipes and Filters – Intro To Programming">
+<meta name="twitter:title" content="S8 — Testing &amp; Verification, Part 2: Verification Patterns – Intro To Programming">
 <meta name="twitter:description" content="Agentic Programming">
 <meta name="twitter:card" content="summary">
 </head>
@@ -208,322 +208,216 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Pipes and Filters</h1>
+  <h1 class="title">S8 — Testing &amp; Verification, Part 2: Verification Patterns</h1>
   <p class="subtitle"><a href="https://floswald.github.io/AgenticProgramming/">Agentic Programming</a></p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-Florian Oswald and The Software Carpentry 
+Florian Oswald 
 </div>
 </div>
 </div>
 
   <p class="date">6 October, 2026</p>
 </section>
-<section id="combining-commands" class="slide level2">
-<h2>Combining Commands</h2>
+<section id="where-we-left-off-s7" class="slide level2">
+<h2>Where we left off (S7)</h2>
 <ul>
-<li><p>We are now ready to combine some of the commands we learned.</p></li>
-<li><p>You will see that here is where the real power lies.</p></li>
-<li><p>Let’s navigate into our exercise data folder first.</p></li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/shell-lesson-data/exercise-data/proteins</span>
-<span id="cb1-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ls</span>
-<span id="cb1-3"><a aria-hidden="true" tabindex="-1"></a><span class="ex">cubane.pdb</span>   ethane.pdb   methane.pdb  octane.pdb   pentane.pdb  propane.pdb</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<li>S7 gave you unit tests: arrange-act-assert, <code>testthat</code> / <code>pytest</code>, fixtures.</li>
+<li>Unit tests answer: <strong>“does this one function, called with these inputs, return the value I expect?”</strong></li>
+<li>That’s necessary but not sufficient for agent-assisted work, because:
 <ul>
-<li>Those are <em>protein data bank</em> files.</li>
+<li>The agent can write a function <em>and</em> a unit test that both agree with each other — and both be wrong.</li>
+<li>Some bugs don’t crash and don’t fail an obvious spot-check. They just quietly return a plausible number.</li>
+</ul></li>
+<li>Today: a toolkit for the harder question — <strong>“where is this wrong, and how would I even know?”</strong></li>
 </ul>
 </section>
-<section id="capturing-output" class="slide level2">
-<h2>Capturing Output</h2>
-<ul>
-<li>Introducing the <code>wc</code> word count command.</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">wc</span> cubane.pdb</span>
-<span id="cb2-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">20</span>     156    1158 cubane.pdb</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>29 lines, 156 words, 1158 characters.</p>
-<ul>
-<li>Let’s <strong>redirect</strong> the output of <code>wc</code> to a file instead with <code>&gt;</code>:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">wc</span> <span class="at">-l</span> <span class="pp">*</span>.pdb <span class="op">&gt;</span> lengths.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li>no ouput on screen, you see? but now there is a new file: <code>lengths.txt</code>.</li>
-<li>Let’s <em>concatenate</em> its content (i.e.&nbsp;join together) and print to screen:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat lengths.txt </span>
-<span id="cb4-2"><a aria-hidden="true" tabindex="-1"></a>      <span class="ex">20</span> cubane.pdb</span>
-<span id="cb4-3"><a aria-hidden="true" tabindex="-1"></a>      <span class="ex">12</span> ethane.pdb</span>
-<span id="cb4-4"><a aria-hidden="true" tabindex="-1"></a>       <span class="ex">9</span> methane.pdb</span>
-<span id="cb4-5"><a aria-hidden="true" tabindex="-1"></a>      <span class="ex">30</span> octane.pdb</span>
-<span id="cb4-6"><a aria-hidden="true" tabindex="-1"></a>      <span class="ex">21</span> pentane.pdb</span>
-<span id="cb4-7"><a aria-hidden="true" tabindex="-1"></a>      <span class="ex">15</span> propane.pdb</span>
-<span id="cb4-8"><a aria-hidden="true" tabindex="-1"></a>     <span class="ex">107</span> total</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="reading-text-files" class="slide level2">
-<h2>Reading Text Files</h2>
-<ul>
-<li><code>cat</code> prints the entire thing to screen.</li>
-<li><code>tail</code> only the end</li>
-<li><code>head</code> only the beginning</li>
-<li><code>less</code> lets you scroll and read (arrows up/down or <code>j</code> (up) and <code>k</code> (down), <code>q</code> exits.)</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> head <span class="at">-n</span> 3 ../animal-counts/animals.csv</span>
-<span id="cb5-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> tail <span class="at">-n</span> 2 ../animal-counts/animals.csv</span>
-<span id="cb5-3"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> less ../../north-pacific-gyre/NENE01729A.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="printing-text-with-echo" class="slide level2">
-<h2>Printing Text with <code>echo</code></h2>
-<ul>
-<li>The <code>echo</code> function prints text - by default to screen:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo hi</span>
-<span id="cb6-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">hi</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li>But you can redirect it to a file as well:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo I said hi! <span class="op">&gt;</span> echofile1.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="callout callout-important callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Challenge</strong></p>
-</div>
-<div class="callout-content">
-<p>Do 2 times in a row:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo I said hi! <span class="op">&gt;</span> echofile1.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Now do twice (notice <code>&gt;&gt;</code>!)</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo I said hi! <span class="op">&gt;&gt;</span> echofile2.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li>What’s happening?</li>
-</ul>
-</div>
-</div>
-</div>
-</section>
-<section id="appending-to-files" class="slide level2">
-<h2>Appending to Files</h2>
-<div class="callout callout-important callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Challenge</strong></p>
-</div>
-<div class="callout-content">
-<p>Consider the file <code>shell-lesson-data/exercise-data/animal-counts/animals.csv</code>. What is result of this:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> head <span class="at">-n</span> 3 animals.csv <span class="op">&gt;</span> animals-subset.csv</span>
-<span id="cb10-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> tail <span class="at">-n</span> 2 animals.csv <span class="op">&gt;&gt;</span> animals-subset.csv</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="the-core-problem-plausible-but-wrong" class="slide level2">
+<h2>The core problem: plausible-but-wrong</h2>
+<p>A script that throws an error is not dangerous. You see the error.</p>
+<p>A script that runs cleanly and prints <code>0.42</code> is dangerous if the correct answer was <code>0.43</code> — or worse, <code>0.30</code>.</p>
+<p>Agents are very good at producing code that <em>runs</em>. Running is not the same as <em>correct</em>. Four patterns today, each catching a different flavor of “runs, but wrong”:</p>
 <ol type="1">
-<li>The first three lines of animals.csv?</li>
-<li>The last two lines of animals.csv?</li>
-<li>The first three lines and the last two lines of animals.csv?</li>
-<li>The second and third lines of animals.csv?</li>
+<li><strong>Property-based / invariant checks</strong> — relationships that must always hold.</li>
+<li><strong>Golden-output comparisons</strong> — known-correct answers you computed independently.</li>
+<li><strong>Embedded assertions</strong> — checks living inside the pipeline itself, not just outside it in a test file.</li>
+<li><strong>Systematic checks for silent data decisions &amp; hallucinated numbers.</strong></li>
 </ol>
-</div>
-</div>
-</div>
-<details>
-<summary>
-Show Solution
-</summary>
+</section>
+<section id="todays-running-example" class="slide level2">
+<h2>Today’s running example</h2>
+<p>We’ll use a small pipeline over UK Brexit-referendum poll data (<code>data/brexit.csv</code>, 127 polls: <code>remain</code>, <code>leave</code>, <code>undecided</code> shares, <code>samplesize</code>, <code>poll_type</code>).</p>
+<p>The pipeline (<code>scripts/s8-pipeline.py</code> / <code>.R</code>) claims to compute the <strong>sample-size-weighted average <code>remain</code> share, by poll type</strong>.</p>
+<p>It contains <strong>one seeded bug</strong>. You are not told where.</p>
 <div class="callout callout-note callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<p><strong>Solution</strong></p>
+<p><strong>Exercise, running throughout this session</strong></p>
 </div>
 <div class="callout-content">
-<p>Option 3 is correct.</p>
+<p>By the end, write a test suite — using today’s four patterns — that catches the bug <strong>without being told where it is</strong>. Then, only then, look at the pipeline source and see what you found.</p>
 </div>
 </div>
 </div>
-</details>
 </section>
-<section id="filtering-files-with-sort" class="slide level2">
-<h2>Filtering Files with <code>sort</code></h2>
+<section id="pattern-1-property-based-invariant-checks" class="slide level2">
+<h2>Pattern 1 — Property-based / invariant checks</h2>
+<p>Instead of asserting one fixed output, assert a <strong>relationship that must hold for any valid input</strong>.</p>
 <ul>
-<li><code>sort</code> reads a file and <em>sorts</em> it’s content to screen</li>
-<li>it does not change the file.</li>
+<li>“For every poll, <code>remain + leave + undecided</code> is approximately 1.”</li>
+<li>“For every poll, the poll’s end date is not after the referendum date.”</li>
+<li>“<code>spread</code> equals <code>remain - leave</code>.”</li>
 </ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sort <span class="at">-n</span> lengths.txt </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>   9 methane.pdb
-  12 ethane.pdb
-  15 propane.pdb
-  20 cubane.pdb
-  21 pentane.pdb
-  30 octane.pdb
- 107 total</code></pre>
+<p>These don’t require knowing the “right” numeric answer. They catch corruption, silent unit errors, and broken joins — the kind of bug that’s invisible until you ask “does this even make sense?”</p>
 </section>
-<section id="filtering-files-and-using-the-result" class="slide level2">
-<h2>Filtering Files and using the result</h2>
-<ul>
-<li>Cool 😎 but now we want to use this list.</li>
-<li>Could save it to a new file?</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sort <span class="at">-n</span> lengths.txt <span class="op">&gt;</span> sorted_lengths.txt</span>
-<span id="cb13-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> head <span class="at">-n</span> 2 sorted_lengths.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>   9 methane.pdb
-  12 ethane.pdb</code></pre>
+<section id="property-based-testing-with-hypothesis-generated-data" class="slide level2">
+<h2>Property-based testing with Hypothesis / generated data</h2>
+<p>Manual invariant checks test the data you happen to have. <strong>Property-based testing</strong> (Python: <code>hypothesis</code>; R: manual generation is more common, but the idea transfers) generates many <em>random</em> inputs and checks the property holds for all of them — including edge cases you didn’t think to write by hand.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a aria-hidden="true" tabindex="-1"></a><span class="im">from</span> hypothesis <span class="im">import</span> given, strategies <span class="im">as</span> st</span>
+<span id="cb1-2"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a aria-hidden="true" tabindex="-1"></a><span class="at">@given</span>(remain<span class="op">=</span>st.floats(min_value<span class="op">=</span><span class="dv">0</span>, max_value<span class="op">=</span><span class="dv">1</span>), n<span class="op">=</span>st.integers(min_value<span class="op">=</span><span class="dv">1</span>, max_value<span class="op">=</span><span class="dv">20</span>))</span>
+<span id="cb1-4"><a aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_group_of_identical_polls_averages_to_that_value(remain, n):</span>
+<span id="cb1-5"><a aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> make_group(remain<span class="op">=</span>remain, n<span class="op">=</span>n)</span>
+<span id="cb1-6"><a aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> weighted_remain_share_by_poll_type(df)</span>
+<span id="cb1-7"><a aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> math.isclose(result, remain, abs_tol<span class="op">=</span><span class="fl">1e-9</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>If every poll in a group reports the <em>same</em> share, <strong>any</strong> correctly-weighted average of that group must equal that share exactly. This property holds regardless of weighting — so on its own it won’t catch a bug that only shows up when values differ. That’s a real limitation worth naming: one property test rarely proves correctness, it proves the absence of <em>one</em> class of error.</p>
 </section>
-<section id="filtering-files-and-the-pipe" class="slide level2">
-<h2>Filtering Files and <strong>the pipe</strong></h2>
+<section id="pattern-2-golden-output-comparisons" class="slide level2">
+<h2>Pattern 2 — Golden-output comparisons</h2>
+<p>Compute the expected answer <strong>independently of the code you’re testing</strong> — by hand, in a spreadsheet, from a different tool, or from a trusted prior run — and compare.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a aria-hidden="true" tabindex="-1"></a>GOLDEN_WEIGHTED_REMAIN <span class="op">=</span> {</span>
+<span id="cb2-2"><a aria-hidden="true" tabindex="-1"></a>    <span class="st">"Online"</span>: <span class="fl">0.42797727636421834</span>,</span>
+<span id="cb2-3"><a aria-hidden="true" tabindex="-1"></a>    <span class="st">"Telephone"</span>: <span class="fl">0.48178425815433584</span>,</span>
+<span id="cb2-4"><a aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-5"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_golden_weighted_remain_share(poll_type, expected):</span>
+<span id="cb2-7"><a aria-hidden="true" tabindex="-1"></a>    got <span class="op">=</span> weighted_remain_share_by_poll_type(polls)[poll_type]</span>
+<span id="cb2-8"><a aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> math.isclose(got, expected, abs_tol<span class="op">=</span><span class="fl">1e-4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
-<li>We call <code>|</code> the pipe. It takes output from a command and gives it to another command.</li>
-<li>Modern languages use their own version of this (R has a package and now also a native pipe, julia has of course a pipe etc. Stata not sure 😜)</li>
-<li>The <strong>pipe</strong> allows us to do this <em>without</em> storing intermediate results.</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sort <span class="at">-n</span> lengths.txt <span class="kw">|</span> <span class="fu">head</span> <span class="at">-n</span> 1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code> 9 methane.pdb</code></pre>
-<ul>
-<li>But, wait 🤔. Then we don’t even need <code>lengths.txt</code>:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> wc <span class="at">-l</span> <span class="pp">*</span>.pdb <span class="kw">|</span> <span class="fu">sort</span> <span class="at">-n</span> <span class="kw">|</span> <span class="fu">head</span> <span class="at">-n</span> 1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code> 9 methane.pdb</code></pre>
-<ul>
-<li>That’s a <em>pipeline</em>. 🤯</li>
+<li>Strength: catches <em>any</em> deviation from a known-correct answer, however it happened.</li>
+<li>Weakness: you have to trust the golden value. If you compute it with the same bug the pipeline has, the test is worthless. <strong>Compute golden values a genuinely different way</strong> — different tool, different person, or careful hand arithmetic on a tiny subset.</li>
 </ul>
 </section>
-<section id="piping-away" class="slide level2">
-<h2>Piping Away</h2>
+<section id="pattern-3-embedded-assertions" class="slide level2">
+<h2>Pattern 3 — Embedded assertions</h2>
+<p>Not every check belongs in a separate test file. Some belong <strong>inside the pipeline</strong>, running every time it’s used — including in production, including when an agent runs it unattended.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> weighted_remain_share_by_poll_type(df):</span>
+<span id="cb3-2"><a aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> (df[<span class="st">"samplesize"</span>] <span class="op">&gt;</span> <span class="dv">0</span>).<span class="bu">all</span>(), <span class="st">"zero or negative sample size found"</span></span>
+<span id="cb3-3"><a aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> df[<span class="st">"poll_type"</span>].notna().<span class="bu">all</span>(), <span class="st">"missing poll_type"</span></span>
+<span id="cb3-4"><a aria-hidden="true" tabindex="-1"></a>    ...</span>
+<span id="cb3-5"><a aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> ...</span>
+<span id="cb3-6"><a aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> result.between(<span class="dv">0</span>, <span class="dv">1</span>).<span class="bu">all</span>(), <span class="st">"share outside [0,1] -- check weighting logic"</span></span>
+<span id="cb3-7"><a aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> result</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
-<li>Make sure we are still in <code>~/shell-lesson-data/exercise-data/proteins</code></li>
+<li>Test files check the code once, when you remember to run them.</li>
+<li>Embedded assertions check the <em>data</em>, every single run — which matters most when an agent is calling your pipeline on data you haven’t looked at.</li>
+<li>Trade-off: assertions add runtime cost and can be too strict (crashing on legitimately unusual data). Reserve them for invariants you are confident must always hold.</li>
+<li>Limitation worth naming up front: assertions like these check that inputs and outputs are <em>sane</em> (positive sample sizes, a share between 0 and 1). They do <strong>not</strong> check that the computation in between did what its name promises — a wrong-but-plausible number can sail straight through them.</li>
 </ul>
-<div class="callout callout-important callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Pipe Dreams</strong></p>
-</div>
-<div class="callout-content">
-<p>Which of the following commands shows us the 3 files with the least number of lines in the current directory? Build the pipeline up from left to right to check!</p>
+</section>
+<section id="pattern-4-silent-data-decisions-hallucinated-numbers" class="slide level2">
+<h2>Pattern 4 — Silent data decisions &amp; hallucinated numbers</h2>
+<p>Some of the worst agent-introduced bugs are <strong>a function that quietly makes a different decision than its name or docstring promises</strong>, and still returns a plausible-looking number. Two classic examples:</p>
+<ul>
+<li>A <code>merge</code>/<code>join</code> with the wrong key silently drops or duplicates rows — the row count still looks “about right”.</li>
+<li>A function named <code>weighted_average(...)</code> that, somewhere in its body, forgets to actually use the weight column — the result is still a valid average, just not <em>the</em> average it claims to be.</li>
+</ul>
+<p>The systematic check: <strong>recompute the same quantity a genuinely different way, and compare</strong> — don’t just check the output is plausible, check <em>how</em> it was derived.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># generic pattern, illustrative -- not today's exact case</span></span>
+<span id="cb4-2"><a aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> some_pipeline_function(df)</span>
+<span id="cb4-3"><a aria-hidden="true" tabindex="-1"></a>independent <span class="op">=</span> recompute_the_same_quantity_a_different_way(df)</span>
+<span id="cb4-4"><a aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">abs</span>(result <span class="op">-</span> independent) <span class="op">&lt;</span> tolerance</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>This is the pattern that most directly targets <strong>hallucinated numbers</strong> from an agent: an LLM-written aggregation can be internally consistent and still not compute what its own name says it computes.</p>
+</section>
+<section id="exercise-do-this-now" class="slide level2">
+<h2>Exercise (do this now)</h2>
 <ol type="1">
-<li><code>wc -l * &gt; sort -n &gt; head -n 3</code></li>
-<li><code>wc -l * | sort -n | head -n 1-3</code></li>
-<li><code>wc -l * | sort -n | tail -n 4 | head -n 3</code></li>
-<li><code>wc -l * | sort -n | head -n 3</code></li>
+<li>Open <code>scripts/s8-pipeline.py</code> (or <code>.R</code>) — read the function signatures and docstrings, but resist the urge to hand-trace every line yet.</li>
+<li>Using the four patterns above, write tests in a new file that you believe would catch a bug in this pipeline, <strong>before</strong> you’re sure exactly what it is.</li>
+<li>Run your tests. Do any fail?</li>
+<li>Now read the implementation of <code>weighted_remain_share_by_poll_type</code> line by line. Did your tests target the actual bug? If not, which pattern would have?</li>
+<li>Compare with the instructor reference: <code>scripts/test_s8_pipeline.py</code> (Python) / <code>scripts/test-s8-pipeline.R</code> (R). Note which of <em>its</em> tests fail against the buggy pipeline — that’s the toolkit doing its job.</li>
 </ol>
-</div>
-</div>
-</div>
 </section>
-<section id="piping-away-1" class="slide level2">
-<h2>Piping Away</h2>
+<section id="debrief" class="slide level2">
+<h2>Debrief</h2>
 <ul>
-<li>Make sure we are still in <code>~/shell-lesson-data/exercise-data/proteins</code></li>
+<li><p>Which pattern caught the bug in your own attempt?</p></li>
+<li><p>Which pattern would <strong>not</strong> have caught it, and why?</p></li>
+<li><p>Look at the actual gap the bug produces:</p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>poll_type</th>
+<th>pipeline says</th>
+<th>correctly weighted</th>
+<th>difference</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Online</td>
+<td>0.4213</td>
+<td>0.4280</td>
+<td>0.0067</td>
+</tr>
+<tr class="even">
+<td>Telephone</td>
+<td>0.4850</td>
+<td>0.4818</td>
+<td>0.0032</td>
+</tr>
+</tbody>
+</table>
+<p>Both numbers are inside <code>[0, 1]</code>. Both look like sane poll averages. Nothing crashes, and the pipeline’s own embedded assertions (share in <code>[0,1]</code>, positive sample sizes) stay silent — they check the data is sane, not that the <em>formula</em> is the one advertised. Only a check that knows what the correct computation should have been — golden value or independent recomputation — catches it. (Check the invariant tests in the reference solution too — they all pass against the buggy pipeline, for the same reason.)</p></li>
+<li><p>Fix the bug (make the function actually use <code>samplesize</code>) and rerun the full suite. Everything should go green.</p></li>
+<li><p>Carry this habit forward: for S9–S11, whenever an agent hands you a number, ask “which of these four checks would I need to trust it?”</p></li>
 </ul>
-<details>
-<summary>
-Show Solution
-</summary>
-<div class="callout callout-note callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Solution</strong></p>
-</div>
-<div class="callout-content">
-<p>Option 4 is correct. Option 3 finds the ones with <em>most</em> lines.</p>
-</div>
-</div>
-</div>
-</details>
 </section>
-<section id="cutting-and-piping" class="slide level2">
-<h2>Cutting and Piping</h2>
-<ul>
-<li>We have a <code>.csv</code> file here: <code>shell-lesson-data/exercise-data/animal-counts</code></li>
-<li>Let’s use the <code>cut</code> command to get parts of it.</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/shell-lesson-data/exercise-data/animal-counts</span>
-<span id="cb19-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cut <span class="at">-d</span> , <span class="at">-f</span> 2 animals.csv</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="callout callout-important callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Building a Pipe</strong></p>
-</div>
-<div class="callout-content">
-<ul>
-<li><code>uniq</code> filters <strong>adjacent</strong> matching lines in a file.</li>
-<li>Can you extend the above command with <code>uniq</code> (and another command?) such that we get the list of unique animal names?</li>
-<li>Add the <code>-c</code> flag to <code>uniq</code> to get a contingency table.</li>
-</ul>
-</div>
-</div>
-</div>
-</section>
-<section id="building-a-pipe-1" class="slide level2">
-<h2>Building a Pipe</h2>
-<details>
-<summary>
-Show Solution
-</summary>
-<div class="callout callout-note callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Solution</strong></p>
-</div>
-<div class="callout-content">
-<ol type="1">
-<li><code>cut -d , -f 2 animals.csv | sort | uniq</code></li>
-<li><code>cut -d , -f 2 animals.csv | sort | uniq -c</code></li>
-</ol>
-</div>
-</div>
-</div>
-</details>
-</section>
-<section id="house-prices-in-france" class="slide level2">
-<h2>House Prices in France</h2>
-<p>The below dataset contains information on house sales (price, location, type of house etc). We call one record a <em>housing transaction</em>.</p>
-<p>Using the shell:</p>
-<ol type="1">
-<li>Use <code>wget</code> to download data to <a href="https://static.data.gouv.fr/resources/demandes-de-valeurs-foncieres/20240408-125738/valeursfoncieres-2023.txt">from here</a> to your downloads folder as <code>carburants.csv</code>: <code>wget https://static.data.gouv.fr/resources/demandes-de-valeurs-foncieres/20240408-125738/valeursfoncieres-2023.txt</code></li>
-<li>use <code>wc -l</code> to count how many rows (<em>lines</em>) there are</li>
-<li>use <code>head -n 2</code> to see the first two rows (the <em>header</em>)</li>
-<li>Use the above solution to build a contingency table that tells us the number of housing transactions per <em>commune</em>. Show the 10 cities with most housing transactions.</li>
-<li>Compute the average of variable <code>Valeur fonciere</code>. You should use the <code>awk</code> command like this : <code>awk 'BEGIN{s=0;}{s+=$1;}END{print s/(NR);} your_file.txt'</code></li>
-</ol>
-</section>
-<section id="house-prices-in-france-1" class="slide level2">
-<h2>House Prices in France</h2>
-<p>The below dataset contains information on house sales (price, location, type of house etc). We call one record a <em>housing transaction</em>.</p>
-<p>Using the shell:</p>
-<ol start="5" type="1">
-<li>Compute the average of variable <code>Valeur fonciere</code>. You should use the <code>awk</code> command like this : <code>awk 'BEGIN{s=0;}{s+=$1;}END{print s/(NR);} your_file.txt'</code></li>
-</ol>
-</section>
-<section id="real-data" class="slide level2">
-<h2>Real Data</h2>
-<details>
-<summary>
-Show Solution
-</summary>
-<ol type="1">
-<li><code>wget https://static.data.gouv.fr/resources/demandes-de-valeurs-foncieres/20240408-125738/valeursfoncieres-2023.txt</code></li>
-<li><code>wc -l valeursfoncieres-2023.txt</code></li>
-<li><code>head -n 2 valeursfoncieres-2023.txt</code></li>
-<li><code>cut -d '|' -f 18 valeursfoncieres-2023.txt | sort | uniq -c | sort -r | head -n 10</code></li>
-<li><code>cut -d '|' -f 11 valeursfoncieres-2023.txt | cut -d , -f 1 | awk 'BEGIN{s=0;}{s+=$1;}END{print s/(NR);}'</code></li>
-<li>If you have R installed you can check whether this is the same as reading this column into it (it’s not! odd.)</li>
-</ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">'x = data.table::fread(cmd = "cut -d \'</span><span class="kw">|</span><span class="ex">\'</span> <span class="at">-f</span> 11 valeursfoncieres-2023.txt <span class="kw">|</span> <span class="fu">cut</span> <span class="at">-d</span> , <span class="at">-f</span> 1<span class="st">"); x[, mean(</span><span class="kw">`</span><span class="ex">Valeur</span> fonciere<span class="kw">`</span><span class="st">,na.rm = TRUE)]'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<section id="recap" class="slide level2">
+<h2>Recap</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Pattern</th>
+<th>Answers</th>
+<th>Misses</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Invariant / property</td>
+<td>“Is this internally consistent?”</td>
+<td>Wrong-but-consistent values</td>
+</tr>
+<tr class="even">
+<td>Golden-output</td>
+<td>“Does this match a known-correct answer?”</td>
+<td>Needs a trustworthy golden value</td>
+</tr>
+<tr class="odd">
+<td>Embedded assertion</td>
+<td>“Is the <em>data</em> sane, every time this runs?”</td>
+<td>Doesn’t check downstream logic</td>
+</tr>
+<tr class="even">
+<td>Independent recomputation</td>
+<td>“Was this computed the way it claims to be?”</td>
+<td>Costs you writing the computation twice</td>
+</tr>
+</tbody>
+</table>
+<p>None of these alone is a full toolkit. Together, they would have caught today’s bug three different ways — that’s the point.</p>
 
 
 </section>

@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Florian Oswald">
 
-<title>About – Intro To Programming</title>
+<title>S0 — Before Session 1: Accounts &amp; Install – Intro To Programming</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -81,7 +117,7 @@ gtag('config', 'G-TQGG8QBSRH', { 'anonymize_ip': true});
 
 
 <link rel="stylesheet" href="styles.css">
-<meta name="twitter:title" content="About – Intro To Programming">
+<meta name="twitter:title" content="S0 — Before Session 1: Accounts &amp; Install – Intro To Programming">
 <meta name="twitter:description" content="">
 <meta name="twitter:card" content="summary">
 </head>
@@ -122,7 +158,7 @@ gtag('config', 'G-TQGG8QBSRH', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">About</li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./00-prework.html">Sessions:</a></li><li class="breadcrumb-item"><a href="./00-prework.html">S0. Accounts &amp; Install</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
     </div>
@@ -145,7 +181,7 @@ gtag('config', 'G-TQGG8QBSRH', { 'anonymize_ip': true});
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./00-prework.html" class="sidebar-item-text sidebar-link">
+  <a href="./00-prework.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">S0. Accounts &amp; Install</span></a>
   </div>
 </li>
@@ -228,22 +264,48 @@ gtag('config', 'G-TQGG8QBSRH', { 'anonymize_ip': true});
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#why-this-page-exists" id="toc-why-this-page-exists" class="nav-link active" data-scroll-target="#why-this-page-exists">Why this page exists</a></li>
+  <li><a href="#get-a-terminal" id="toc-get-a-terminal" class="nav-link" data-scroll-target="#get-a-terminal">1. Get a terminal</a></li>
+  <li><a href="#install-git" id="toc-install-git" class="nav-link" data-scroll-target="#install-git">2. Install git</a></li>
+  <li><a href="#get-a-free-llm-api-key" id="toc-get-a-free-llm-api-key" class="nav-link" data-scroll-target="#get-a-free-llm-api-key">3. Get a free LLM API key</a></li>
+  <li><a href="#install-opencode" id="toc-install-opencode" class="nav-link" data-scroll-target="#install-opencode">4. Install OpenCode</a></li>
+  <li><a href="#connect-opencode-to-your-provider" id="toc-connect-opencode-to-your-provider" class="nav-link" data-scroll-target="#connect-opencode-to-your-provider">5. Connect OpenCode to your provider</a></li>
+  <li><a href="#smoke-test" id="toc-smoke-test" class="nav-link" data-scroll-target="#smoke-test">6. Smoke test</a></li>
+  <li><a href="#checklist" id="toc-checklist" class="nav-link" data-scroll-target="#checklist">Checklist</a></li>
+  <li><a href="#stuck" id="toc-stuck" class="nav-link" data-scroll-target="#stuck">Stuck?</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./00-prework.html">Sessions:</a></li><li class="breadcrumb-item"><a href="./00-prework.html">S0. Accounts &amp; Install</a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">About</h1>
+<h1 class="title">S0 — Before Session 1: Accounts &amp; Install</h1>
 </div>
 
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Florian Oswald </p>
+          </div>
+  </div>
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">6 October, 2026</p>
+    </div>
+  </div>
   
     
   </div>
@@ -253,9 +315,119 @@ gtag('config', 'G-TQGG8QBSRH', { 'anonymize_ip': true});
 </header>
 
 
-<p>About this site</p>
+<section id="why-this-page-exists" class="level2">
+<h2 class="anchored" data-anchor-id="why-this-page-exists">Why this page exists</h2>
+<p>Session 1 is in-person and short. If we spend it watching 20 people sign up for accounts, we lose the lesson. Do everything on this page <strong>before</strong> Session 1. Bring your laptop with all of it working — we will spot-check at the start of Session 1 and troubleshoot only what’s still broken.</p>
+<p>Budget 30–45 minutes. If something doesn’t work, don’t spend hours on it — note where you got stuck and bring that to Session 1.</p>
+<p><strong>Deadline:</strong> finish this at least 2 days before Session 1, so there’s time to fix anything that doesn’t work. You’ll get a reminder beforehand asking you to confirm you’re set up.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Objectives
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>Have a working terminal (shell) on your machine.</li>
+<li>Have <code>git</code> installed.</li>
+<li>Have an API key for an LLM provider (free tier is fine).</li>
+<li>Have <code>opencode</code> installed and successfully talking to that provider.</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="get-a-terminal" class="level2">
+<h2 class="anchored" data-anchor-id="get-a-terminal">1. Get a terminal</h2>
+<ul>
+<li><strong>macOS</strong>: open the built-in <code>Terminal</code> app (Spotlight → “Terminal”).</li>
+<li><strong>Windows</strong>: install <strong>WSL2</strong> (Windows Subsystem for Linux) — this gives you a real Linux shell, which is what everything else in this course assumes. Follow: <a href="https://learn.microsoft.com/en-us/windows/wsl/install">Microsoft’s WSL install guide</a>. One command in PowerShell (as administrator) usually does it:</li>
+</ul>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode powershell code-with-copy"><code class="sourceCode powershell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>wsl <span class="op">--</span>install</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Restart when prompted, then open the “Ubuntu” app that got installed — that’s your terminal from now on.</p>
+<ul>
+<li><strong>Linux</strong>: you already have one.</li>
+</ul>
+<p>Check it works:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"hello from my shell"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="install-git" class="level2">
+<h2 class="anchored" data-anchor-id="install-git">2. Install git</h2>
+<ul>
+<li><strong>macOS</strong>: <code>git</code> usually comes with Xcode Command Line Tools. Run <code>git --version</code>; if missing, it will prompt you to install.</li>
+<li><strong>WSL2 / Linux</strong>: <code>sudo apt update &amp;&amp; sudo apt install git -y</code></li>
+</ul>
+<p>Check:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> <span class="at">--version</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="get-a-free-llm-api-key" class="level2">
+<h2 class="anchored" data-anchor-id="get-a-free-llm-api-key">3. Get a free LLM API key</h2>
+<p>You do <strong>not</strong> need a paid subscription for this course. Pick <strong>one</strong> of these:</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">OpenRouter (recommended)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Google Gemini</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<ol type="1">
+<li>Go to <a href="https://openrouter.ai">openrouter.ai</a> and sign up.</li>
+<li>Go to <em>Keys</em> → <em>Create Key</em>. Copy it somewhere safe (you won’t see it again).</li>
+<li>OpenRouter gives access to several free-tier models (look for <code>:free</code> suffixed models, e.g.&nbsp;some Gemini, GLM, Qwen, DeepSeek variants). Availability changes — check <a href="https://openrouter.ai/models">openrouter.ai/models</a> and filter by price = free.</li>
+</ol>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<ol type="1">
+<li>Go to <a href="https://aistudio.google.com">aistudio.google.com</a> and sign in with a Google account.</li>
+<li><em>Get API key</em> → create a new key. Copy it.</li>
+<li>Gemini has a genuinely free tier (rate-limited), no card required.</li>
+</ol>
+</div>
+</div>
+</div>
+<p>Either way, <strong>do not commit this key to git or paste it in a public chat</strong>. Treat it like a password.</p>
+</section>
+<section id="install-opencode" class="level2">
+<h2 class="anchored" data-anchor-id="install-opencode">4. Install OpenCode</h2>
+<p>OpenCode is the agent harness we’ll use in class — it’s free and open source, and works with whichever provider/key you picked above (unlike Claude Code, which is tied to Anthropic billing).</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-fsSL</span> https://opencode.ai/install <span class="kw">|</span> <span class="fu">bash</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>(macOS with Homebrew also works: <code>brew install sst/tap/opencode</code>)</p>
+<p>Check:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">opencode</span> <span class="at">--version</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="connect-opencode-to-your-provider" class="level2">
+<h2 class="anchored" data-anchor-id="connect-opencode-to-your-provider">5. Connect OpenCode to your provider</h2>
+<p>Run:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">opencode</span> auth login</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Pick your provider (OpenRouter or Gemini) and paste the API key from step 3 when asked. OpenCode stores it locally, not in your project files.</p>
+</section>
+<section id="smoke-test" class="level2">
+<h2 class="anchored" data-anchor-id="smoke-test">6. Smoke test</h2>
+<p>In an empty folder:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> opencode-test <span class="kw">&amp;&amp;</span> <span class="bu">cd</span> opencode-test</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">opencode</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>At the prompt, type:</p>
+<pre><code>say hello and tell me what model you are</code></pre>
+<p>If you get a sensible reply, you’re done. Exit with <code>Ctrl+D</code> or <code>/exit</code>.</p>
+</section>
+<section id="checklist" class="level2">
+<h2 class="anchored" data-anchor-id="checklist">Checklist</h2>
+<p>Work through this list yourself before Session 1 — there’s nothing to submit, but you should be able to tick off every item honestly. We will spot-check at the start of Session 1, and you’ll get a reminder before then if you haven’t confirmed you’re done.</p>
+<ul class="task-list">
+<li><label><input type="checkbox">Terminal opens (macOS Terminal or WSL2 Ubuntu)</label></li>
+<li><label><input type="checkbox"><code>git --version</code> works</label></li>
+<li><label><input type="checkbox">API key obtained from OpenRouter or Gemini, saved somewhere safe</label></li>
+<li><label><input type="checkbox"><code>opencode --version</code> works</label></li>
+<li><label><input type="checkbox"><code>opencode auth login</code> completed</label></li>
+<li><label><input type="checkbox">Smoke test in step 6 returned a real answer</label></li>
+</ul>
+<p>(These boxes don’t save state on this page — treat this as a checklist to go through yourself, not a form.)</p>
+</section>
+<section id="stuck" class="level2">
+<h2 class="anchored" data-anchor-id="stuck">Stuck?</h2>
+<p>Bring the exact error message (screenshot or copy-paste) to Session 1. “It didn’t work” is hard to debug — the error text is not.</p>
 
 
+</section>
 
 <p>© Florian Oswald, 2026</p></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

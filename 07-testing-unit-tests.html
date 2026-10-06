@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<link href=".//images/unito-shield.png" rel="icon" type="image/png">
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-html/tabby.min.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-597958c53c93a607afca12fd375c57ed.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.26">
+
+  <meta name="author" content="Florian Oswald">
+  <title>Intro To Programming – S7 — Testing &amp; Verification, Part 1: Unit Tests</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="site_libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+      }
+    pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+    div.sourceCode
+      { color: #24292e;  }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #24292e; } /* Normal */
+    code span.al { color: #ff5555; font-weight: bold; } /* Alert */
+    code span.an { color: #6a737d; } /* Annotation */
+    code span.at { color: #d73a49; } /* Attribute */
+    code span.bn { color: #005cc5; } /* BaseN */
+    code span.bu { color: #d73a49; } /* BuiltIn */
+    code span.cf { color: #d73a49; } /* ControlFlow */
+    code span.ch { color: #032f62; } /* Char */
+    code span.cn { color: #005cc5; } /* Constant */
+    code span.co { color: #6a737d; } /* Comment */
+    code span.cv { color: #6a737d; } /* CommentVar */
+    code span.do { color: #6a737d; } /* Documentation */
+    code span.dt { color: #d73a49; } /* DataType */
+    code span.dv { color: #005cc5; } /* DecVal */
+    code span.er { color: #ff5555; text-decoration: underline; } /* Error */
+    code span.ex { color: #d73a49; font-weight: bold; } /* Extension */
+    code span.fl { color: #005cc5; } /* Float */
+    code span.fu { color: #6f42c1; } /* Function */
+    code span.im { color: #032f62; } /* Import */
+    code span.in { color: #6a737d; } /* Information */
+    code span.kw { color: #d73a49; } /* Keyword */
+    code span.op { color: #24292e; } /* Operator */
+    code span.ot { color: #6f42c1; } /* Other */
+    code span.pp { color: #d73a49; } /* Preprocessor */
+    code span.re { color: #6a737d; } /* RegionMarker */
+    code span.sc { color: #005cc5; } /* SpecialChar */
+    code span.ss { color: #032f62; } /* SpecialString */
+    code span.st { color: #032f62; } /* String */
+    code span.va { color: #e36209; } /* Variable */
+    code span.vs { color: #032f62; } /* VerbatimString */
+    code span.wa { color: #ff5555; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="site_libs/revealjs/dist/theme/quarto-0d18aec1b1fcaaff7478d59d00932c06.css">
+  <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-TQGG8QBSRH"></script>
+
+  <script type="text/javascript">
+
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-TQGG8QBSRH', { 'anonymize_ip': true});
+  </script>
+  <link href="site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="site_libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+  <link href="site_libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+  <link href="site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+<meta name="twitter:title" content="S7 — Testing &amp; Verification, Part 1: Unit Tests – Intro To Programming">
+<meta name="twitter:card" content="summary">
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" class="quarto-title-block center">
+  <h1 class="title">S7 — Testing &amp; Verification, Part 1: Unit Tests</h1>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Florian Oswald 
+</div>
+</div>
+</div>
+
+  <p class="date">6 October, 2026</p>
+</section>
+<section id="why-this-session-exists" class="slide level2">
+<h2>Why this session exists</h2>
+<p>Since S2: <em>“where is this wrong, and how do I check?”</em></p>
+<ul>
+<li>So far: read the code, run it, look at the output — doesn’t scale</li>
+<li>Scales even less once an agent writes most of the code and you review it</li>
+<li>A <strong>unit test</strong> writes down “here is what I checked” so it’s checked again automatically, every time the code changes — including every agent edit</li>
+</ul>
+<aside class="notes">
+<p>This session runs remotely (over video call rather than in person) but is still hands-on: work through it at your own computer, running everything as you go. S8 builds directly on this with property-based tests and golden-output checks; S7 is the foundation.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Objectives</strong></p>
+</div>
+<div class="callout-content">
+<ul>
+<li>Know what a unit test is, and what it is <em>not</em> worth testing.</li>
+<li>Write tests in <code>testthat</code> (R) and <code>pytest</code> (Python) using arrange-act-assert.</li>
+<li>Understand fixtures: fixed, known inputs with a known correct output.</li>
+<li>Have a first test suite covering real data-wrangling transformations.</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<section id="a-stand-in-for-the-s6-pipeline" class="slide level2">
+<h2>A stand-in for the S6 pipeline</h2>
+<ul>
+<li>S6 built a DuckDB pipeline on a real dataset — the habits below apply directly to it</li>
+<li>Self-contained here: Brexit referendum poll data (<code>data/brexit.csv</code>), via DuckDB</li>
+<li><code>check_shares()</code> — flags polls whose <code>remain + leave + undecided</code> doesn’t sum to ~1 (a silent data problem an agent won’t flag unless asked)</li>
+<li><code>pollster_summary()</code> — aggregates valid polls by pollster: number of polls, average remain/leave share</li>
+</ul>
+<aside class="notes">
+<p>The full pipeline code is in <code>scripts/s7/pipeline.R</code> and <code>scripts/s7/pipeline.py</code>. If you already have your own S6 pipeline, treat this as a worked example and then repeat the exercise on your own transformations.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="the-stand-in-pipeline-running" class="slide level2">
+<h2>The stand-in pipeline, running</h2>
+<div class="panel-tabset">
+<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">R</a></li><li><a href="#tabset-1-2">Python</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1">
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>    pollster remain leave undecided share_total valid
+1     YouGov   0.52  0.48      0.00        1.00  TRUE
+2    Populus   0.55  0.45      0.00        1.00  TRUE
+3     YouGov   0.51  0.49      0.00        1.00  TRUE
+4 Ipsos MORI   0.49  0.46      0.01        0.96 FALSE
+5    Opinium   0.44  0.45      0.09        0.98 FALSE
+6     ComRes   0.54  0.46      0.00        1.00  TRUE</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 13 × 4
+   pollster                         n_polls avg_remain avg_leave
+   &lt;chr&gt;                              &lt;int&gt;      &lt;dbl&gt;     &lt;dbl&gt;
+ 1 BMG Research                           4      0.42      0.442
+ 2 ComRes                                 9      0.5       0.408
+ 3 ICM                                   24      0.434     0.431
+ 4 Ipsos MORI                             3      0.527     0.377
+ 5 ORB                                   14      0.503     0.469
+ 6 Opinium                                5      0.412     0.424
+ 7 Populus                                1      0.55      0.45 
+ 8 Populus/Number Cruncher Politics       2      0.48      0.41 
+ 9 Survation                              7      0.436     0.386
+10 Survation/IG Group                     1      0.45      0.44 
+11 TNS                                    8      0.38      0.396
+12 YouGov                                 5      0.434     0.446
+13 YouGov/The Times                       1      0.36      0.45 </code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-1-2">
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>     pollster  remain  leave  undecided  share_total  valid
+0      YouGov    0.52   0.48       0.00         1.00   True
+1     Populus    0.55   0.45       0.00         1.00   True
+2      YouGov    0.51   0.49       0.00         1.00   True
+3  Ipsos MORI    0.49   0.46       0.01         0.96  False
+4     Opinium    0.44   0.45       0.09         0.98  False</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>                            pollster  n_polls  avg_remain  avg_leave
+0                       BMG Research        4    0.420000   0.442500
+1                             ComRes        9    0.500000   0.407778
+2                                ICM       24    0.433750   0.431250
+3                         Ipsos MORI        3    0.526667   0.376667
+4                                ORB       14    0.502857   0.468571
+5                            Opinium        5    0.412000   0.424000
+6                            Populus        1    0.550000   0.450000
+7   Populus/Number Cruncher Politics        2    0.480000   0.410000
+8                          Survation        7    0.435714   0.385714
+9                 Survation/IG Group        1    0.450000   0.440000
+10                               TNS        8    0.380000   0.396250
+11                            YouGov        5    0.434000   0.446000
+12                  YouGov/The Times        1    0.360000   0.450000</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<aside class="notes">
+<p>Notice something already: some real polls in this dataset have shares that don’t quite sum to 1 (rounding in the source data), and <code>check_shares()</code> has to decide on a tolerance for what counts as “close enough.” That tolerance (<code>tol = 0.01</code> by default) is exactly the kind of decision that deserves a test — it’s a number someone chose, and choices deserve to be pinned down.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="what-to-test-and-what-not-to-bother-testing" class="slide level2">
+<h2>What to test (and what not to bother testing)</h2>
+<p>Rough triage, for code you write and code an agent drafts:</p>
+<p><strong>Worth testing:</strong></p>
+<ul>
+<li>Your own transformation logic — filtering rules, aggregation formulas, edge cases (empty input, all-invalid input, a single row)</li>
+<li>Anywhere a silent decision gets made (a tolerance, a default, a “drop rows where X” rule an agent added without telling you)</li>
+<li>Anything embarrassing or costly to get wrong quietly — a mean over the wrong denominator, a join that silently drops rows</li>
+</ul>
+<p><strong>Not worth testing:</strong></p>
+<ul>
+<li>Well-tested library behavior you’re calling correctly (test <em>your usage</em>, not <code>dplyr::filter()</code>’s internals)</li>
+<li>Trivial getters/setters, one-line wrappers with no logic</li>
+<li>Anything that varies run-to-run for reasons outside your control (current time, live network) — unless designed around (mocking) — S8 territory</li>
+</ul>
+<aside class="notes">
+<p>The line isn’t always obvious, and that’s fine — the question to ask is: “if this were subtly wrong, would anything catch it before a reader of my output does?” If the answer is no, write a test.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="fixtures" class="slide level2">
+<h2>Fixtures</h2>
+<p>A <strong>fixture</strong>: a small, fixed, known input, factored out so multiple tests can reuse it and the input is obvious at a glance.</p>
+<p>Both languages below build the same four-row table: two polls from pollster A (one valid, one that doesn’t sum to 1), one valid poll from pollster B, one poll from pollster C with an invalid (negative) sample size.</p>
+</section>
+<section id="fixtures-r" class="slide level2">
+<h2>Fixtures — R</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a aria-hidden="true" tabindex="-1"></a>make_polls <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb5-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb5-3"><a aria-hidden="true" tabindex="-1"></a>    <span class="at">pollster   =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>),</span>
+<span id="cb5-4"><a aria-hidden="true" tabindex="-1"></a>    <span class="at">samplesize =</span> <span class="fu">c</span>(<span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">500</span>, <span class="sc">-</span><span class="dv">1</span>),</span>
+<span id="cb5-5"><a aria-hidden="true" tabindex="-1"></a>    <span class="at">remain     =</span> <span class="fu">c</span>(<span class="fl">0.52</span>, <span class="fl">0.48</span>, <span class="fl">0.50</span>, <span class="fl">0.50</span>),</span>
+<span id="cb5-6"><a aria-hidden="true" tabindex="-1"></a>    <span class="at">leave      =</span> <span class="fu">c</span>(<span class="fl">0.48</span>, <span class="fl">0.50</span>, <span class="fl">0.50</span>, <span class="fl">0.50</span>),</span>
+<span id="cb5-7"><a aria-hidden="true" tabindex="-1"></a>    <span class="at">undecided  =</span> <span class="fu">c</span>(<span class="fl">0.00</span>, <span class="fl">0.00</span>, <span class="fl">0.00</span>, <span class="fl">0.00</span>),</span>
+<span id="cb5-8"><a aria-hidden="true" tabindex="-1"></a>    <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb5-9"><a aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb5-10"><a aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<aside class="notes">
+<p><code>testthat</code> has no special fixture decorator for this kind of case — a plain helper function called at the top of each <code>test_that()</code> block is idiomatic. (For fixtures that need setup/teardown, e.g.&nbsp;a temp file, see <code>withr::local_tempfile()</code> — out of scope today, but worth knowing the name.)</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="fixtures-python" class="slide level2">
+<h2>Fixtures — Python</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a aria-hidden="true" tabindex="-1"></a><span class="at">@pytest.fixture</span></span>
+<span id="cb6-2"><a aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> polls() <span class="op">-&gt;</span> pd.DataFrame:</span>
+<span id="cb6-3"><a aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame(</span>
+<span id="cb6-4"><a aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb6-5"><a aria-hidden="true" tabindex="-1"></a>            <span class="st">"pollster"</span>: [<span class="st">"A"</span>, <span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>],</span>
+<span id="cb6-6"><a aria-hidden="true" tabindex="-1"></a>            <span class="st">"samplesize"</span>: [<span class="dv">1000</span>, <span class="dv">1000</span>, <span class="dv">500</span>, <span class="op">-</span><span class="dv">1</span>],</span>
+<span id="cb6-7"><a aria-hidden="true" tabindex="-1"></a>            <span class="st">"remain"</span>: [<span class="fl">0.52</span>, <span class="fl">0.48</span>, <span class="fl">0.50</span>, <span class="fl">0.50</span>],</span>
+<span id="cb6-8"><a aria-hidden="true" tabindex="-1"></a>            <span class="st">"leave"</span>: [<span class="fl">0.48</span>, <span class="fl">0.50</span>, <span class="fl">0.50</span>, <span class="fl">0.50</span>],</span>
+<span id="cb6-9"><a aria-hidden="true" tabindex="-1"></a>            <span class="st">"undecided"</span>: [<span class="fl">0.00</span>, <span class="fl">0.00</span>, <span class="fl">0.00</span>, <span class="fl">0.00</span>],</span>
+<span id="cb6-10"><a aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb6-11"><a aria-hidden="true" tabindex="-1"></a>    )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<aside class="notes">
+<p><code>pytest</code> fixtures are functions decorated with <code>@pytest.fixture</code>; any test function that names <code>polls</code> as an argument receives a fresh copy automatically.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="arrange-act-assert" class="slide level2">
+<h2>Arrange — Act — Assert</h2>
+<p>Every test below (and every test you should write) has the same three-part shape:</p>
+<ol type="1">
+<li><strong>Arrange</strong>: build the input — the fixture above.</li>
+<li><strong>Act</strong>: call the function under test, exactly once, with that input.</li>
+<li><strong>Assert</strong>: check the output against a value <em>you</em> computed by hand — never a value you got by running the code and copy-pasting whatever it printed.</li>
+</ol>
+<aside class="notes">
+<p>That third step verifies the code agrees with itself, not that it’s correct — a test whose expected value came from running the code is not a test.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="arrange-act-assert-in-code" class="slide level2">
+<h2>Arrange — Act — Assert, in code</h2>
+<div class="panel-tabset">
+<ul id="tabset-2" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-2-1">R (testthat)</a></li><li><a href="#tabset-2-2">Python (pytest)</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">test_that</span>(<span class="st">"check_shares flags rows that sum to 1 as valid"</span>, {</span>
+<span id="cb7-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="co"># Arrange</span></span>
+<span id="cb7-3"><a aria-hidden="true" tabindex="-1"></a>  polls <span class="ot">&lt;-</span> <span class="fu">make_polls</span>()</span>
+<span id="cb7-4"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a aria-hidden="true" tabindex="-1"></a>  <span class="co"># Act</span></span>
+<span id="cb7-6"><a aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">check_shares</span>(polls)</span>
+<span id="cb7-7"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a aria-hidden="true" tabindex="-1"></a>  <span class="co"># Assert</span></span>
+<span id="cb7-9"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">expect_equal</span>(out<span class="sc">$</span>share_total, <span class="fu">c</span>(<span class="fl">1.00</span>, <span class="fl">0.98</span>, <span class="fl">1.00</span>, <span class="fl">1.00</span>))</span>
+<span id="cb7-10"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">expect_equal</span>(out<span class="sc">$</span>valid, <span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span>, <span class="cn">TRUE</span>))</span>
+<span id="cb7-11"><a aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="tabset-2-2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_check_shares_flags_rows_that_sum_to_one(polls):</span>
+<span id="cb8-2"><a aria-hidden="true" tabindex="-1"></a>    <span class="co"># Arrange: `polls` fixture</span></span>
+<span id="cb8-3"><a aria-hidden="true" tabindex="-1"></a>    <span class="co"># Act</span></span>
+<span id="cb8-4"><a aria-hidden="true" tabindex="-1"></a>    out <span class="op">=</span> check_shares(polls)</span>
+<span id="cb8-5"><a aria-hidden="true" tabindex="-1"></a>    <span class="co"># Assert</span></span>
+<span id="cb8-6"><a aria-hidden="true" tabindex="-1"></a>    <span class="co"># Note: floats need pytest.approx, not `==` -- exact equality on a</span></span>
+<span id="cb8-7"><a aria-hidden="true" tabindex="-1"></a>    <span class="co"># computed sum passes only "by luck" of binary representation.</span></span>
+<span id="cb8-8"><a aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> out[<span class="st">"share_total"</span>].tolist() <span class="op">==</span> pytest.approx([<span class="fl">1.00</span>, <span class="fl">0.98</span>, <span class="fl">1.00</span>, <span class="fl">1.00</span>])</span>
+<span id="cb8-9"><a aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> <span class="bu">list</span>(out[<span class="st">"valid"</span>]) <span class="op">==</span> [<span class="va">True</span>, <span class="va">False</span>, <span class="va">True</span>, <span class="va">True</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</div>
+</div>
+<aside class="notes">
+<p>Notice the 1.00, 0.98, 1.00, 1.00 values in both — those were computed by hand from the fixture above, not generated by running check_shares() and copying its output. Also notice the asymmetry between the two languages: testthat::expect_equal() compares numerics with a small default tolerance built in, so raw values compare safely; pytest’s == does not, so floating-point assertions in Python need pytest.approx() explicitly — forgetting it is an easy way to write a test that’s flaky for the wrong reasons.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="the-full-test-suites" class="slide level2">
+<h2>The full test suites</h2>
+<ul>
+<li>R: <code>scripts/s7/test-pipeline.R</code> (6 <code>test_that()</code> blocks, 8 expectations)</li>
+<li>Python: <code>scripts/s7/test_pipeline.py</code> (6 tests)</li>
+</ul>
+<p>Both cover:</p>
+<ol type="1">
+<li>Shares summing to 1 → valid; not summing to 1 → invalid</li>
+<li>A wider tolerance can let a borderline row through</li>
+<li>Invalid rows and non-positive sample sizes dropped before aggregation</li>
+<li>Aggregation numerically correct for a single surviving row</li>
+<li><strong>Edge case</strong>: nothing survives filtering → zero-row summary, not an error</li>
+<li>Missing required columns raise a clear error, not a confusing failure deep inside <code>dplyr</code>/<code>pandas</code></li>
+</ol>
+<aside class="notes">
+<p>Case 5 is the one agents most often get wrong on a first draft: ask an agent to write pollster_summary() cold, and there’s a good chance it doesn’t handle the all-filtered-out case at all, or handles it inconsistently (an empty data frame with the wrong columns, or a KeyError/NULL crash). Writing that test before trusting the function is the whole point of this session.</p>
+<p>Run them yourself:</p>
+<p>Rscript -e ‘testthat::test_file(“scripts/s7/test-pipeline.R”)’</p>
+<p>pytest scripts/s7/test_pipeline.py -v</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="exercise" class="slide level2">
+<h2>Exercise</h2>
+<ol type="1">
+<li>Open your own S6 pipeline (or use <code>scripts/s7/pipeline.R</code> / <code>.py</code> as-is)</li>
+<li>Pick one untested transformation. Ask OpenCode to draft a test file for it, using arrange-act-assert and at least one fixture</li>
+<li>Before running: does each expected value come from your own reasoning, or did the agent just paste back the code’s output? The latter is not a test — it always passes, even after a bug</li>
+<li>Fix any assertion that fails check 3, run the suite, add one missed edge case (empty input is the classic one)</li>
+<li>Note what your agent’s first draft got wrong or skipped — bring it to S8</li>
+</ol>
+</section>
+<section id="looking-ahead" class="slide level2">
+<h2>Looking ahead</h2>
+<p>S8 goes beyond “does this input give this output” into:</p>
+<ul>
+<li>Invariants that must hold for <em>any</em> input (property-based testing)</li>
+<li>Golden-output comparisons for outputs too complex to hand-compute</li>
+<li>Assertions embedded directly in agent-facing scripts</li>
+</ul>
+<p>Today’s unit tests are the floor, not the ceiling.</p>
+
+
+</section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<p><img src="./images/ScPo-logo.png" class="slide-logo"></p>
+<div class="footer footer-default">
+<p><a href="https://floswald.github.io/AgenticProgramming/">Agentic Programming</a></p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="site_libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
+  <script src="site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleChalkboard(event)\"><kbd>b</kbd> Toggle Chalkboard</a></li>\n<li class=\"slide-tool-item\" data-item=\"6\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleNotesCanvas(event)\"><kbd>c</kbd> Toggle Notes Canvas</a></li>\n<li class=\"slide-tool-item\" data-item=\"7\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.downloadDrawings(event)\"><kbd>d</kbd> Download Drawings</a></li>\n<li class=\"slide-tool-item\" data-item=\"8\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'chalkboard': {"buttons":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealChalkboard, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp("https:\/\/floswald\.github\.io\/AgenticProgramming\/");
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>

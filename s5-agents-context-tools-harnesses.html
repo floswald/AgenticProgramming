@@ -10,8 +10,8 @@
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-597958c53c93a607afca12fd375c57ed.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.8.26">
 
-  <meta name="author" content="Florian Oswald and The Software Carpentry">
-  <title>Intro To Programming – Pipes and Filters</title>
+  <meta name="author" content="Florian Oswald">
+  <title>Intro To Programming – How Agents Work: Context, Tools, Harnesses</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -29,72 +29,6 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
-    /* CSS for syntax highlighting */
-    html { -webkit-text-size-adjust: 100%; }
-    pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-    pre > code.sourceCode > span:empty { height: 1.2em; }
-    .sourceCode { overflow: visible; }
-    code.sourceCode > span { color: inherit; text-decoration: inherit; }
-    div.sourceCode { margin: 1em 0; }
-    pre.sourceCode { margin: 0; }
-    @media screen {
-    div.sourceCode { overflow: auto; }
-    }
-    @media print {
-    pre > code.sourceCode { white-space: pre-wrap; }
-    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-    }
-    pre.numberSource code
-      { counter-reset: source-line 0; }
-    pre.numberSource code > span
-      { position: relative; left: -4em; counter-increment: source-line; }
-    pre.numberSource code > span > a:first-child::before
-      { content: counter(source-line);
-        position: relative; left: -1em; text-align: right; vertical-align: baseline;
-        border: none; display: inline-block;
-        -webkit-touch-callout: none; -webkit-user-select: none;
-        -khtml-user-select: none; -moz-user-select: none;
-        -ms-user-select: none; user-select: none;
-        padding: 0 4px; width: 4em;
-      }
-    pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-    div.sourceCode
-      { color: #24292e;  }
-    @media screen {
-    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-    }
-    code span { color: #24292e; } /* Normal */
-    code span.al { color: #ff5555; font-weight: bold; } /* Alert */
-    code span.an { color: #6a737d; } /* Annotation */
-    code span.at { color: #d73a49; } /* Attribute */
-    code span.bn { color: #005cc5; } /* BaseN */
-    code span.bu { color: #d73a49; } /* BuiltIn */
-    code span.cf { color: #d73a49; } /* ControlFlow */
-    code span.ch { color: #032f62; } /* Char */
-    code span.cn { color: #005cc5; } /* Constant */
-    code span.co { color: #6a737d; } /* Comment */
-    code span.cv { color: #6a737d; } /* CommentVar */
-    code span.do { color: #6a737d; } /* Documentation */
-    code span.dt { color: #d73a49; } /* DataType */
-    code span.dv { color: #005cc5; } /* DecVal */
-    code span.er { color: #ff5555; text-decoration: underline; } /* Error */
-    code span.ex { color: #d73a49; font-weight: bold; } /* Extension */
-    code span.fl { color: #005cc5; } /* Float */
-    code span.fu { color: #6f42c1; } /* Function */
-    code span.im { color: #032f62; } /* Import */
-    code span.in { color: #6a737d; } /* Information */
-    code span.kw { color: #d73a49; } /* Keyword */
-    code span.op { color: #24292e; } /* Operator */
-    code span.ot { color: #6f42c1; } /* Other */
-    code span.pp { color: #d73a49; } /* Preprocessor */
-    code span.re { color: #6a737d; } /* RegionMarker */
-    code span.sc { color: #005cc5; } /* SpecialChar */
-    code span.ss { color: #032f62; } /* SpecialString */
-    code span.st { color: #032f62; } /* String */
-    code span.va { color: #e36209; } /* Variable */
-    code span.vs { color: #032f62; } /* VerbatimString */
-    code span.wa { color: #ff5555; } /* Warning */
   </style>
   <link rel="stylesheet" href="site_libs/revealjs/dist/theme/quarto-0d18aec1b1fcaaff7478d59d00932c06.css">
   <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-TQGG8QBSRH"></script>
@@ -199,8 +133,8 @@
       margin-right: 0; 
     }
   </style>
-<meta name="twitter:title" content="Pipes and Filters – Intro To Programming">
-<meta name="twitter:description" content="Agentic Programming">
+<meta name="twitter:title" content="How Agents Work: Context, Tools, Harnesses – Intro To Programming">
+<meta name="twitter:description" content="Session 5 — Agentic Programming">
 <meta name="twitter:card" content="summary">
 </head>
 <body class="quarto-light">
@@ -208,324 +142,399 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Pipes and Filters</h1>
-  <p class="subtitle"><a href="https://floswald.github.io/AgenticProgramming/">Agentic Programming</a></p>
+  <h1 class="title">How Agents Work: Context, Tools, Harnesses</h1>
+  <p class="subtitle">Session 5 — <a href="https://floswald.github.io/AgenticProgramming/">Agentic Programming</a></p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-Florian Oswald and The Software Carpentry 
+Florian Oswald 
 </div>
 </div>
 </div>
 
   <p class="date">6 October, 2026</p>
 </section>
-<section id="combining-commands" class="slide level2">
-<h2>Combining Commands</h2>
-<ul>
-<li><p>We are now ready to combine some of the commands we learned.</p></li>
-<li><p>You will see that here is where the real power lies.</p></li>
-<li><p>Let’s navigate into our exercise data folder first.</p></li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/shell-lesson-data/exercise-data/proteins</span>
-<span id="cb1-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ls</span>
-<span id="cb1-3"><a aria-hidden="true" tabindex="-1"></a><span class="ex">cubane.pdb</span>   ethane.pdb   methane.pdb  octane.pdb   pentane.pdb  propane.pdb</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li>Those are <em>protein data bank</em> files.</li>
-</ul>
-</section>
-<section id="capturing-output" class="slide level2">
-<h2>Capturing Output</h2>
-<ul>
-<li>Introducing the <code>wc</code> word count command.</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">wc</span> cubane.pdb</span>
-<span id="cb2-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">20</span>     156    1158 cubane.pdb</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>29 lines, 156 words, 1158 characters.</p>
-<ul>
-<li>Let’s <strong>redirect</strong> the output of <code>wc</code> to a file instead with <code>&gt;</code>:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">wc</span> <span class="at">-l</span> <span class="pp">*</span>.pdb <span class="op">&gt;</span> lengths.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li>no ouput on screen, you see? but now there is a new file: <code>lengths.txt</code>.</li>
-<li>Let’s <em>concatenate</em> its content (i.e.&nbsp;join together) and print to screen:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat lengths.txt </span>
-<span id="cb4-2"><a aria-hidden="true" tabindex="-1"></a>      <span class="ex">20</span> cubane.pdb</span>
-<span id="cb4-3"><a aria-hidden="true" tabindex="-1"></a>      <span class="ex">12</span> ethane.pdb</span>
-<span id="cb4-4"><a aria-hidden="true" tabindex="-1"></a>       <span class="ex">9</span> methane.pdb</span>
-<span id="cb4-5"><a aria-hidden="true" tabindex="-1"></a>      <span class="ex">30</span> octane.pdb</span>
-<span id="cb4-6"><a aria-hidden="true" tabindex="-1"></a>      <span class="ex">21</span> pentane.pdb</span>
-<span id="cb4-7"><a aria-hidden="true" tabindex="-1"></a>      <span class="ex">15</span> propane.pdb</span>
-<span id="cb4-8"><a aria-hidden="true" tabindex="-1"></a>     <span class="ex">107</span> total</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="reading-text-files" class="slide level2">
-<h2>Reading Text Files</h2>
-<ul>
-<li><code>cat</code> prints the entire thing to screen.</li>
-<li><code>tail</code> only the end</li>
-<li><code>head</code> only the beginning</li>
-<li><code>less</code> lets you scroll and read (arrows up/down or <code>j</code> (up) and <code>k</code> (down), <code>q</code> exits.)</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> head <span class="at">-n</span> 3 ../animal-counts/animals.csv</span>
-<span id="cb5-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> tail <span class="at">-n</span> 2 ../animal-counts/animals.csv</span>
-<span id="cb5-3"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> less ../../north-pacific-gyre/NENE01729A.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="printing-text-with-echo" class="slide level2">
-<h2>Printing Text with <code>echo</code></h2>
-<ul>
-<li>The <code>echo</code> function prints text - by default to screen:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo hi</span>
-<span id="cb6-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">hi</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li>But you can redirect it to a file as well:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo I said hi! <span class="op">&gt;</span> echofile1.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="callout callout-important callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Challenge</strong></p>
-</div>
-<div class="callout-content">
-<p>Do 2 times in a row:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo I said hi! <span class="op">&gt;</span> echofile1.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Now do twice (notice <code>&gt;&gt;</code>!)</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo I said hi! <span class="op">&gt;&gt;</span> echofile2.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li>What’s happening?</li>
-</ul>
-</div>
-</div>
-</div>
-</section>
-<section id="appending-to-files" class="slide level2">
-<h2>Appending to Files</h2>
-<div class="callout callout-important callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Challenge</strong></p>
-</div>
-<div class="callout-content">
-<p>Consider the file <code>shell-lesson-data/exercise-data/animal-counts/animals.csv</code>. What is result of this:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> head <span class="at">-n</span> 3 animals.csv <span class="op">&gt;</span> animals-subset.csv</span>
-<span id="cb10-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> tail <span class="at">-n</span> 2 animals.csv <span class="op">&gt;&gt;</span> animals-subset.csv</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ol type="1">
-<li>The first three lines of animals.csv?</li>
-<li>The last two lines of animals.csv?</li>
-<li>The first three lines and the last two lines of animals.csv?</li>
-<li>The second and third lines of animals.csv?</li>
-</ol>
-</div>
-</div>
-</div>
-<details>
-<summary>
-Show Solution
-</summary>
+<section id="where-we-left-off" class="slide level2">
+<h2>Where we left off</h2>
 <div class="callout callout-note callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<p><strong>Solution</strong></p>
+<p><strong>Recap from Session 4</strong></p>
 </div>
 <div class="callout-content">
-<p>Option 3 is correct.</p>
+<ul>
+<li>An LLM is a next-token predictor, trained on huge amounts of text, then fine-tuned with human feedback.</li>
+<li>It has no memory between calls, no access to your files, no ability to run code — on its own.</li>
+<li>Hallucination is structural: the model always produces <em>some</em> plausible next token, correct or not.</li>
+</ul>
 </div>
 </div>
 </div>
-</details>
+<div class="fragment">
+<p>So how does typing a prompt into OpenCode turn into a diff on your screen, touching real files on your disk?</p>
+<p>That gap is what today is about: <strong>the harness</strong> — everything wrapped around the model to make it useful.</p>
+</div>
 </section>
-<section id="filtering-files-with-sort" class="slide level2">
-<h2>Filtering Files with <code>sort</code></h2>
+<section id="objectives" class="slide level2">
+<h2>Objectives</h2>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>By the end of this session you can explain</strong></p>
+</div>
+<div class="callout-content">
 <ul>
-<li><code>sort</code> reads a file and <em>sorts</em> it’s content to screen</li>
-<li>it does not change the file.</li>
+<li>What a context window is, and why it is finite and expensive.</li>
+<li>Conceptually, what “attention” does — no math required.</li>
+<li>What a system prompt is and what it’s doing behind the scenes.</li>
+<li>What “tool calling” means and why it’s the mechanism that lets a model <em>act</em>.</li>
+<li>The full loop: prompt → context assembly → model call → tool call → result → repeat → diff.</li>
+<li>Why the same task can cost very differently depending on model + harness choice.</li>
 </ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sort <span class="at">-n</span> lengths.txt </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>   9 methane.pdb
-  12 ethane.pdb
-  15 propane.pdb
-  20 cubane.pdb
-  21 pentane.pdb
-  30 octane.pdb
- 107 total</code></pre>
+</div>
+</div>
+</div>
 </section>
-<section id="filtering-files-and-using-the-result" class="slide level2">
-<h2>Filtering Files and using the result</h2>
+<section id="the-layered-model-again" class="slide level2">
+<h2>The layered model, again</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><strong>From Session 1:</strong></p>
 <ul>
-<li>Cool 😎 but now we want to use this list.</li>
-<li>Could save it to a new file?</li>
+<li><strong>Model</strong> — the LLM itself (GPT, Claude, Llama, …)</li>
+<li><strong>Harness</strong> — the program that talks to the model (OpenCode, Claude Code, Cursor, …)</li>
+<li><strong>Tool</strong> — a capability the harness exposes to the model (read file, run shell command, edit file, search web)</li>
+<li><strong>Skill</strong> — a packaged, reusable procedure built on top of tools</li>
 </ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sort <span class="at">-n</span> lengths.txt <span class="op">&gt;</span> sorted_lengths.txt</span>
-<span id="cb13-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> head <span class="at">-n</span> 2 sorted_lengths.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>   9 methane.pdb
-  12 ethane.pdb</code></pre>
-</section>
-<section id="filtering-files-and-the-pipe" class="slide level2">
-<h2>Filtering Files and <strong>the pipe</strong></h2>
-<ul>
-<li>We call <code>|</code> the pipe. It takes output from a command and gives it to another command.</li>
-<li>Modern languages use their own version of this (R has a package and now also a native pipe, julia has of course a pipe etc. Stata not sure 😜)</li>
-<li>The <strong>pipe</strong> allows us to do this <em>without</em> storing intermediate results.</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sort <span class="at">-n</span> lengths.txt <span class="kw">|</span> <span class="fu">head</span> <span class="at">-n</span> 1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code> 9 methane.pdb</code></pre>
-<ul>
-<li>But, wait 🤔. Then we don’t even need <code>lengths.txt</code>:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> wc <span class="at">-l</span> <span class="pp">*</span>.pdb <span class="kw">|</span> <span class="fu">sort</span> <span class="at">-n</span> <span class="kw">|</span> <span class="fu">head</span> <span class="at">-n</span> 1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code> 9 methane.pdb</code></pre>
-<ul>
-<li>That’s a <em>pipeline</em>. 🤯</li>
-</ul>
-</section>
-<section id="piping-away" class="slide level2">
-<h2>Piping Away</h2>
-<ul>
-<li>Make sure we are still in <code>~/shell-lesson-data/exercise-data/proteins</code></li>
-</ul>
+</div><div class="column" style="width:50%;">
 <div class="callout callout-important callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<p><strong>Pipe Dreams</strong></p>
+<p><strong>Today’s focus</strong></p>
 </div>
 <div class="callout-content">
-<p>Which of the following commands shows us the 3 files with the least number of lines in the current directory? Build the pipeline up from left to right to check!</p>
-<ol type="1">
-<li><code>wc -l * &gt; sort -n &gt; head -n 3</code></li>
-<li><code>wc -l * | sort -n | head -n 1-3</code></li>
-<li><code>wc -l * | sort -n | tail -n 4 | head -n 3</code></li>
-<li><code>wc -l * | sort -n | head -n 3</code></li>
-</ol>
+<p>The <strong>harness</strong> layer. The model is a black box that takes text in and produces text out. Everything else — memory, files, actions in the world — is the harness’s job.</p>
 </div>
 </div>
+</div>
+</div></div>
+</section>
+<section id="what-actually-gets-sent-to-the-model" class="slide level2">
+<h2>What actually gets sent to the model</h2>
+<div class="fragment">
+<p>An LLM API call is just: <strong>a block of text in, a block of text out.</strong></p>
+<p>Every time you send a message in OpenCode, the harness doesn’t just send <em>your message</em>. It assembles a whole package:</p>
+<ul>
+<li class="fragment">A <strong>system prompt</strong>: instructions about how to behave, what tools exist, how to format tool calls.</li>
+<li class="fragment">The <strong>conversation history</strong> so far (your previous messages, the model’s previous replies).</li>
+<li class="fragment">Any <strong>tool results</strong> from earlier in the session (file contents, command output).</li>
+<li class="fragment">Your <strong>new message</strong>.</li>
+</ul>
+</div>
+<div class="fragment">
+<p>All of that, concatenated into one text blob, is the <em>actual</em> input to the model. The model has no separate “memory” — the entire past of the conversation is re-sent, every single turn.</p>
 </div>
 </section>
-<section id="piping-away-1" class="slide level2">
-<h2>Piping Away</h2>
-<ul>
-<li>Make sure we are still in <code>~/shell-lesson-data/exercise-data/proteins</code></li>
-</ul>
-<details>
-<summary>
-Show Solution
-</summary>
+<section id="the-context-window" class="slide level2">
+<h2>The context window</h2>
 <div class="callout callout-note callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<p><strong>Solution</strong></p>
+<p><strong>Definition</strong></p>
 </div>
 <div class="callout-content">
-<p>Option 4 is correct. Option 3 finds the ones with <em>most</em> lines.</p>
+<p>The context window is the maximum amount of text (measured in <strong>tokens</strong>, not characters or words) the model can process in a single call — both what goes in and what comes out.</p>
 </div>
 </div>
 </div>
-</details>
-</section>
-<section id="cutting-and-piping" class="slide level2">
-<h2>Cutting and Piping</h2>
+<div class="fragment">
 <ul>
-<li>We have a <code>.csv</code> file here: <code>shell-lesson-data/exercise-data/animal-counts</code></li>
-<li>Let’s use the <code>cut</code> command to get parts of it.</li>
+<li>A token is roughly 3/4 of a word (recall Session 4: a chunk of a word, not a whole word).</li>
+<li>Typical modern context windows: 128k–1M+ tokens (this changes fast, and providers advertise it as a selling point).</li>
+<li>If the assembled input (system prompt + history + tool results + your message) exceeds the window, something has to give: the harness truncates, summarizes, or drops old turns.</li>
 </ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/shell-lesson-data/exercise-data/animal-counts</span>
-<span id="cb19-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cut <span class="at">-d</span> , <span class="at">-f</span> 2 animals.csv</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="fragment">
+<div class="callout callout-warning callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Why this matters practically</strong></p>
+</div>
+<div class="callout-content">
+<p>A long agent session — lots of files read, lots of back-and-forth — can silently fill the context window. The agent starts “forgetting” things you told it 20 turns ago, not because it’s being careless, but because that text is no longer in the window.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="attention-conceptually" class="slide level2">
+<h2>Attention, conceptually</h2>
+<p>You don’t need the math. You need the idea.</p>
+<div class="fragment">
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>The idea</strong></p>
+</div>
+<div class="callout-content">
+<p>For every token the model is about to generate, it doesn’t treat every earlier token in the context equally. It computes, on the fly, “how relevant is each earlier piece of text to what I’m producing right now?” — and weighs accordingly.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="fragment">
+<ul>
+<li>This is why putting the important instruction at the <em>end</em> of a long prompt often works better than burying it in the middle — the mechanism doesn’t guarantee uniform “reading.”</li>
+<li>It is also why irrelevant context isn’t free: every token in the window is a candidate for attention, and more candidates means more room for the model to attend to the wrong thing.</li>
+<li>Nothing here is guaranteed or hand-tunable by you — you interact with it indirectly, by controlling <em>what’s in the context</em> and <em>where</em>.</li>
+</ul>
+</div>
+</section>
+<section id="system-prompts-the-harnesss-instructions-to-the-model" class="slide level2">
+<h2>System prompts: the harness’s instructions to the model</h2>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Definition</strong></p>
+</div>
+<div class="callout-content">
+<p>A system prompt is a block of text the harness prepends to every conversation, invisible to you by default, that tells the model: who it is, what it can do, and — critically — the exact syntax for calling tools.</p>
+</div>
+</div>
+</div>
+<div class="fragment">
+<p>A real agent system prompt typically says things like:</p>
+<ul>
+<li>“You are a coding assistant operating inside a project directory.”</li>
+<li>“You have access to the following tools: <code>read_file</code>, <code>write_file</code>, <code>run_command</code>, <code>edit</code>. To use one, output <exact format="">.”</exact></li>
+<li>“Always explain your plan before making changes.” / “Prefer minimal diffs.” / project-specific rules (recall S3’s agent-rules file).</li>
+</ul>
+</div>
+<div class="fragment">
+<p>This is <em>why</em> project-level config files (<code>AGENTS.md</code>, <code>CLAUDE.md</code>, OpenCode’s config) matter: they get folded into the system prompt on every single call in that project, shaping every response without you retyping anything.</p>
+</div>
+</section>
+<section id="tool-calling-how-a-model-does-something" class="slide level2">
+<h2>Tool calling: how a model “does” something</h2>
+<p>The model itself cannot read a file, run <code>git commit</code>, or edit code. It can only produce text.</p>
+<div class="fragment">
 <div class="callout callout-important callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<p><strong>Building a Pipe</strong></p>
+<p><strong>The trick</strong></p>
 </div>
 <div class="callout-content">
-<ul>
-<li><code>uniq</code> filters <strong>adjacent</strong> matching lines in a file.</li>
-<li>Can you extend the above command with <code>uniq</code> (and another command?) such that we get the list of unique animal names?</li>
-<li>Add the <code>-c</code> flag to <code>uniq</code> to get a contingency table.</li>
-</ul>
+<p>The harness tells the model, in the system prompt: “if you want to read a file, output text in this exact format.” The model, being a good next-token predictor trained on this pattern, does exactly that when it decides a file read would help. The harness watches for that pattern, intercepts it, actually runs the file read, and feeds the result back in as a new turn.</p>
 </div>
 </div>
+</div>
+</div>
+<div class="fragment">
+<p>So a “tool call” from the model’s point of view is just: producing a specific string of text that <em>looks like</em> a function call. The intelligence is in the harness recognizing and executing it — the model is never touching your filesystem directly.</p>
 </div>
 </section>
-<section id="building-a-pipe-1" class="slide level2">
-<h2>Building a Pipe</h2>
-<details>
-<summary>
-Show Solution
-</summary>
+<section id="the-full-loop" class="slide level2">
+<h2>The full loop</h2>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>From prompt to diff — the actual sequence</strong></p>
+</div>
+<div class="callout-content">
+<ol type="1">
+<li>You type a prompt in OpenCode.</li>
+<li>Harness assembles context: system prompt + history + your message.</li>
+<li>Harness sends this to the model API.</li>
+<li>Model returns text — either a normal reply, or a tool-call pattern (e.g.&nbsp;“read file <code>x.R</code>”).</li>
+<li>If it’s a tool call: harness executes it for real (reads the file), appends the result to the context, and goes back to step 3 — <strong>without you doing anything</strong>.</li>
+<li>This repeats — read, edit, run tests, read output, edit again — until the model produces a final reply with no more tool calls.</li>
+<li>Harness renders any file edits as a <strong>diff</strong> on your screen.</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="fragment">
+<p>What looks like one prompt → one answer is often <strong>many</strong> model calls chained by the harness, each one re-sending the whole growing context.</p>
+</div>
+</section>
+<section id="activity-write-the-loop-from-memory" class="slide level2">
+<h2>Activity: write the loop from memory</h2>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>5 minutes, pairs</strong></p>
+</div>
+<div class="callout-content">
+<p>Close this deck. On paper or in a text file, write the prompt-to-diff loop in your own words, in 5 steps or fewer. Then turn to your neighbor and explain it to them out loud — no notes.</p>
+</div>
+</div>
+</div>
+<div class="fragment">
+<p>Trade papers. Check each other’s version against the slide before this one:</p>
+<ul>
+<li>Did they mention the system prompt getting re-sent every turn?</li>
+<li>Did they capture that a tool call is text the harness intercepts, not the model directly acting?</li>
+<li>Did they show at least one loop-back (tool result feeding into another model call)?</li>
+</ul>
+</div>
+<div class="fragment">
+<p>Keep this page — you’ll want it again in Session 11 when we catalogue where agents went wrong across the course.</p>
+</div>
+</section>
+<section id="why-this-explains-agent-behavior-youve-seen" class="slide level2">
+<h2>Why this explains agent behavior you’ve seen</h2>
+<ul>
+<li class="fragment"><strong>Why agents sometimes “forget” earlier instructions</strong> → context window pressure, or the instruction got attended to weakly.</li>
+<li class="fragment"><strong>Why agents can get expensive fast</strong> → every tool-call round-trip re-sends the <em>entire</em> context so far, and cost scales with tokens in <em>and</em> out.</li>
+<li class="fragment"><strong>Why a good system prompt / config file makes a noticeable difference</strong> → it’s re-injected on every call, unlike something you said once ten turns ago.</li>
+<li class="fragment"><strong>Why two harnesses on the same model can behave differently</strong> → different system prompts, different tool sets, different strategies for compacting old context when it fills up.</li>
+</ul>
+</section>
+<section id="live-demo-same-task-two-harnesses" class="slide level2">
+<h2>Live demo: same task, two harnesses</h2>
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>The task</strong></p>
+</div>
+<div class="callout-content">
+<p>Starting fixture: <code>scripts/s5-winsorize/winsorize.R</code>. It contains a small, untested function <code>winsorize(x, p = 0.05)</code> that is supposed to cap the bottom <code>p</code> fraction of a numeric vector at the <code>p</code>-quantile and the top <code>p</code> fraction at the <code>1 - p</code>-quantile, but currently has a bug (the upper cutoff is computed as <code>quantile(x, p)</code> instead of <code>quantile(x, 1 - p)</code>, so it caps far too many high values instead of just the top <code>p</code> fraction). Run the <strong>identical prompt</strong> in both harnesses, in a fresh copy of the same starting directory:</p>
+<blockquote>
+<p>“Look at <code>winsorize.R</code>. Write a <code>testthat</code> test file for <code>winsorize()</code> that checks it correctly caps values at the p and 1-p quantiles, including edge cases. Run the test, and if it fails, find and fix the bug in <code>winsorize()</code>. Show me the diff.”</p>
+</blockquote>
+</div>
+</div>
+</div>
+<ul>
+<li><strong>Run 1:</strong> OpenCode + free-tier model (what you use day to day in this course).</li>
+<li><strong>Run 2:</strong> Claude Code + a paid frontier model (one-off comparison — not what we teach).</li>
+</ul>
+<div class="fragment">
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Fill this in live, one column per harness</strong></p>
+</div>
+<div class="callout-content">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Observation</th>
+<th>OpenCode (free)</th>
+<th>Claude Code (paid)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Read <code>winsorize.R</code> before writing the test?</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Number of tool-call rounds to finish</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Did the test fail on first run, as expected?</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Found and fixed the actual bug (not a different one)?</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Diff quality (minimal / noisy)</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="fragment">
 <div class="callout callout-note callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<p><strong>Solution</strong></p>
+<p><strong>The point of this demo</strong></p>
 </div>
 <div class="callout-content">
-<ol type="1">
-<li><code>cut -d , -f 2 animals.csv | sort | uniq</code></li>
-<li><code>cut -d , -f 2 animals.csv | sort | uniq -c</code></li>
-</ol>
+<p>The <strong>model</strong> and the <strong>harness</strong> are separate axes of choice. A better/pricier model does not automatically mean a better harness experience, and vice versa — you are always choosing both. Cost numbers get precise in Session 9; today, just notice that one of these runs was free and the other wasn’t.</p>
 </div>
 </div>
 </div>
-</details>
+</div>
 </section>
-<section id="house-prices-in-france" class="slide level2">
-<h2>House Prices in France</h2>
-<p>The below dataset contains information on house sales (price, location, type of house etc). We call one record a <em>housing transaction</em>.</p>
-<p>Using the shell:</p>
-<ol type="1">
-<li>Use <code>wget</code> to download data to <a href="https://static.data.gouv.fr/resources/demandes-de-valeurs-foncieres/20240408-125738/valeursfoncieres-2023.txt">from here</a> to your downloads folder as <code>carburants.csv</code>: <code>wget https://static.data.gouv.fr/resources/demandes-de-valeurs-foncieres/20240408-125738/valeursfoncieres-2023.txt</code></li>
-<li>use <code>wc -l</code> to count how many rows (<em>lines</em>) there are</li>
-<li>use <code>head -n 2</code> to see the first two rows (the <em>header</em>)</li>
-<li>Use the above solution to build a contingency table that tells us the number of housing transactions per <em>commune</em>. Show the 10 cities with most housing transactions.</li>
-<li>Compute the average of variable <code>Valeur fonciere</code>. You should use the <code>awk</code> command like this : <code>awk 'BEGIN{s=0;}{s+=$1;}END{print s/(NR);} your_file.txt'</code></li>
-</ol>
-</section>
-<section id="house-prices-in-france-1" class="slide level2">
-<h2>House Prices in France</h2>
-<p>The below dataset contains information on house sales (price, location, type of house etc). We call one record a <em>housing transaction</em>.</p>
-<p>Using the shell:</p>
-<ol start="5" type="1">
-<li>Compute the average of variable <code>Valeur fonciere</code>. You should use the <code>awk</code> command like this : <code>awk 'BEGIN{s=0;}{s+=$1;}END{print s/(NR);} your_file.txt'</code></li>
-</ol>
-</section>
-<section id="real-data" class="slide level2">
-<h2>Real Data</h2>
-<details>
-<summary>
-Show Solution
-</summary>
-<ol type="1">
-<li><code>wget https://static.data.gouv.fr/resources/demandes-de-valeurs-foncieres/20240408-125738/valeursfoncieres-2023.txt</code></li>
-<li><code>wc -l valeursfoncieres-2023.txt</code></li>
-<li><code>head -n 2 valeursfoncieres-2023.txt</code></li>
-<li><code>cut -d '|' -f 18 valeursfoncieres-2023.txt | sort | uniq -c | sort -r | head -n 10</code></li>
-<li><code>cut -d '|' -f 11 valeursfoncieres-2023.txt | cut -d , -f 1 | awk 'BEGIN{s=0;}{s+=$1;}END{print s/(NR);}'</code></li>
-<li>If you have R installed you can check whether this is the same as reading this column into it (it’s not! odd.)</li>
-</ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">'x = data.table::fread(cmd = "cut -d \'</span><span class="kw">|</span><span class="ex">\'</span> <span class="at">-f</span> 11 valeursfoncieres-2023.txt <span class="kw">|</span> <span class="fu">cut</span> <span class="at">-d</span> , <span class="at">-f</span> 1<span class="st">"); x[, mean(</span><span class="kw">`</span><span class="ex">Valeur</span> fonciere<span class="kw">`</span><span class="st">,na.rm = TRUE)]'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<section id="wrap-up" class="slide level2">
+<h2>Wrap-up</h2>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>You should now be able to explain</strong></p>
+</div>
+<div class="callout-content">
+<ul>
+<li>What happens, mechanically, between typing a prompt and seeing a diff.</li>
+<li>Why context windows are finite and why that has practical consequences.</li>
+<li>What a system prompt is doing and why project config files matter.</li>
+<li>What a “tool call” actually is (text pattern recognized by the harness, not the model reaching into your computer).</li>
+<li>Why model choice and harness choice are two separate cost/quality decisions.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="fragment">
+<p>Next: Session 6 puts this to work on a real data-wrangling pipeline with DuckDB — where you’ll watch the agent draft SQL/dplyr queries and have to verify them yourself.</p>
 
 
+</div>
 </section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">

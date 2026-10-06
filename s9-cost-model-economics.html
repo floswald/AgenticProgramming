@@ -10,8 +10,8 @@
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-597958c53c93a607afca12fd375c57ed.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.8.26">
 
-  <meta name="author" content="Florian Oswald and The Software Carpentry">
-  <title>Intro To Programming – Pipes and Filters</title>
+  <meta name="author" content="Florian Oswald">
+  <title>Intro To Programming – Cost &amp; Model Economics</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -29,72 +29,6 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
-    /* CSS for syntax highlighting */
-    html { -webkit-text-size-adjust: 100%; }
-    pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-    pre > code.sourceCode > span:empty { height: 1.2em; }
-    .sourceCode { overflow: visible; }
-    code.sourceCode > span { color: inherit; text-decoration: inherit; }
-    div.sourceCode { margin: 1em 0; }
-    pre.sourceCode { margin: 0; }
-    @media screen {
-    div.sourceCode { overflow: auto; }
-    }
-    @media print {
-    pre > code.sourceCode { white-space: pre-wrap; }
-    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-    }
-    pre.numberSource code
-      { counter-reset: source-line 0; }
-    pre.numberSource code > span
-      { position: relative; left: -4em; counter-increment: source-line; }
-    pre.numberSource code > span > a:first-child::before
-      { content: counter(source-line);
-        position: relative; left: -1em; text-align: right; vertical-align: baseline;
-        border: none; display: inline-block;
-        -webkit-touch-callout: none; -webkit-user-select: none;
-        -khtml-user-select: none; -moz-user-select: none;
-        -ms-user-select: none; user-select: none;
-        padding: 0 4px; width: 4em;
-      }
-    pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-    div.sourceCode
-      { color: #24292e;  }
-    @media screen {
-    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-    }
-    code span { color: #24292e; } /* Normal */
-    code span.al { color: #ff5555; font-weight: bold; } /* Alert */
-    code span.an { color: #6a737d; } /* Annotation */
-    code span.at { color: #d73a49; } /* Attribute */
-    code span.bn { color: #005cc5; } /* BaseN */
-    code span.bu { color: #d73a49; } /* BuiltIn */
-    code span.cf { color: #d73a49; } /* ControlFlow */
-    code span.ch { color: #032f62; } /* Char */
-    code span.cn { color: #005cc5; } /* Constant */
-    code span.co { color: #6a737d; } /* Comment */
-    code span.cv { color: #6a737d; } /* CommentVar */
-    code span.do { color: #6a737d; } /* Documentation */
-    code span.dt { color: #d73a49; } /* DataType */
-    code span.dv { color: #005cc5; } /* DecVal */
-    code span.er { color: #ff5555; text-decoration: underline; } /* Error */
-    code span.ex { color: #d73a49; font-weight: bold; } /* Extension */
-    code span.fl { color: #005cc5; } /* Float */
-    code span.fu { color: #6f42c1; } /* Function */
-    code span.im { color: #032f62; } /* Import */
-    code span.in { color: #6a737d; } /* Information */
-    code span.kw { color: #d73a49; } /* Keyword */
-    code span.op { color: #24292e; } /* Operator */
-    code span.ot { color: #6f42c1; } /* Other */
-    code span.pp { color: #d73a49; } /* Preprocessor */
-    code span.re { color: #6a737d; } /* RegionMarker */
-    code span.sc { color: #005cc5; } /* SpecialChar */
-    code span.ss { color: #032f62; } /* SpecialString */
-    code span.st { color: #032f62; } /* String */
-    code span.va { color: #e36209; } /* Variable */
-    code span.vs { color: #032f62; } /* VerbatimString */
-    code span.wa { color: #ff5555; } /* Warning */
   </style>
   <link rel="stylesheet" href="site_libs/revealjs/dist/theme/quarto-0d18aec1b1fcaaff7478d59d00932c06.css">
   <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-TQGG8QBSRH"></script>
@@ -199,7 +133,7 @@
       margin-right: 0; 
     }
   </style>
-<meta name="twitter:title" content="Pipes and Filters – Intro To Programming">
+<meta name="twitter:title" content="Cost &amp; Model Economics – Intro To Programming">
 <meta name="twitter:description" content="Agentic Programming">
 <meta name="twitter:card" content="summary">
 </head>
@@ -208,325 +142,366 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Pipes and Filters</h1>
+  <h1 class="title">Cost &amp; Model Economics</h1>
   <p class="subtitle"><a href="https://floswald.github.io/AgenticProgramming/">Agentic Programming</a></p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-Florian Oswald and The Software Carpentry 
+Florian Oswald 
 </div>
 </div>
 </div>
 
   <p class="date">6 October, 2026</p>
 </section>
-<section id="combining-commands" class="slide level2">
-<h2>Combining Commands</h2>
+<section id="where-we-are" class="slide level2">
+<h2>Where we are</h2>
+<p>By now you’ve:</p>
 <ul>
-<li><p>We are now ready to combine some of the commands we learned.</p></li>
-<li><p>You will see that here is where the real power lies.</p></li>
-<li><p>Let’s navigate into our exercise data folder first.</p></li>
+<li>used an agent to draft a DuckDB pipeline (S6)</li>
+<li>written tests for it (S7, S8)</li>
+<li>watched OpenCode+free-model and Claude Code+paid-model do the same task side by side (S5)</li>
 </ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/shell-lesson-data/exercise-data/proteins</span>
-<span id="cb1-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ls</span>
-<span id="cb1-3"><a aria-hidden="true" tabindex="-1"></a><span class="ex">cubane.pdb</span>   ethane.pdb   methane.pdb  octane.pdb   pentane.pdb  propane.pdb</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li>Those are <em>protein data bank</em> files.</li>
-</ul>
-</section>
-<section id="capturing-output" class="slide level2">
-<h2>Capturing Output</h2>
-<ul>
-<li>Introducing the <code>wc</code> word count command.</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">wc</span> cubane.pdb</span>
-<span id="cb2-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">20</span>     156    1158 cubane.pdb</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>29 lines, 156 words, 1158 characters.</p>
-<ul>
-<li>Let’s <strong>redirect</strong> the output of <code>wc</code> to a file instead with <code>&gt;</code>:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">wc</span> <span class="at">-l</span> <span class="pp">*</span>.pdb <span class="op">&gt;</span> lengths.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li>no ouput on screen, you see? but now there is a new file: <code>lengths.txt</code>.</li>
-<li>Let’s <em>concatenate</em> its content (i.e.&nbsp;join together) and print to screen:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat lengths.txt </span>
-<span id="cb4-2"><a aria-hidden="true" tabindex="-1"></a>      <span class="ex">20</span> cubane.pdb</span>
-<span id="cb4-3"><a aria-hidden="true" tabindex="-1"></a>      <span class="ex">12</span> ethane.pdb</span>
-<span id="cb4-4"><a aria-hidden="true" tabindex="-1"></a>       <span class="ex">9</span> methane.pdb</span>
-<span id="cb4-5"><a aria-hidden="true" tabindex="-1"></a>      <span class="ex">30</span> octane.pdb</span>
-<span id="cb4-6"><a aria-hidden="true" tabindex="-1"></a>      <span class="ex">21</span> pentane.pdb</span>
-<span id="cb4-7"><a aria-hidden="true" tabindex="-1"></a>      <span class="ex">15</span> propane.pdb</span>
-<span id="cb4-8"><a aria-hidden="true" tabindex="-1"></a>     <span class="ex">107</span> total</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="reading-text-files" class="slide level2">
-<h2>Reading Text Files</h2>
-<ul>
-<li><code>cat</code> prints the entire thing to screen.</li>
-<li><code>tail</code> only the end</li>
-<li><code>head</code> only the beginning</li>
-<li><code>less</code> lets you scroll and read (arrows up/down or <code>j</code> (up) and <code>k</code> (down), <code>q</code> exits.)</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> head <span class="at">-n</span> 3 ../animal-counts/animals.csv</span>
-<span id="cb5-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> tail <span class="at">-n</span> 2 ../animal-counts/animals.csv</span>
-<span id="cb5-3"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> less ../../north-pacific-gyre/NENE01729A.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="printing-text-with-echo" class="slide level2">
-<h2>Printing Text with <code>echo</code></h2>
-<ul>
-<li>The <code>echo</code> function prints text - by default to screen:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo hi</span>
-<span id="cb6-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">hi</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li>But you can redirect it to a file as well:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo I said hi! <span class="op">&gt;</span> echofile1.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="callout callout-important callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Challenge</strong></p>
-</div>
-<div class="callout-content">
-<p>Do 2 times in a row:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo I said hi! <span class="op">&gt;</span> echofile1.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Now do twice (notice <code>&gt;&gt;</code>!)</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo I said hi! <span class="op">&gt;&gt;</span> echofile2.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li>What’s happening?</li>
-</ul>
-</div>
-</div>
-</div>
-</section>
-<section id="appending-to-files" class="slide level2">
-<h2>Appending to Files</h2>
-<div class="callout callout-important callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Challenge</strong></p>
-</div>
-<div class="callout-content">
-<p>Consider the file <code>shell-lesson-data/exercise-data/animal-counts/animals.csv</code>. What is result of this:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> head <span class="at">-n</span> 3 animals.csv <span class="op">&gt;</span> animals-subset.csv</span>
-<span id="cb10-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> tail <span class="at">-n</span> 2 animals.csv <span class="op">&gt;&gt;</span> animals-subset.csv</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ol type="1">
-<li>The first three lines of animals.csv?</li>
-<li>The last two lines of animals.csv?</li>
-<li>The first three lines and the last two lines of animals.csv?</li>
-<li>The second and third lines of animals.csv?</li>
-</ol>
-</div>
-</div>
-</div>
-<details>
-<summary>
-Show Solution
-</summary>
+<p>Today’s question: <strong>what does any of this actually cost</strong>, and how do you decide, in advance, whether a given model/approach is worth it for a given task?</p>
 <div class="callout callout-note callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<p><strong>Solution</strong></p>
+<p><strong>Question</strong></p>
 </div>
 <div class="callout-content">
-<p>Option 3 is correct.</p>
+<p>If your S6 pipeline took 30 seconds and a few cents of API calls on a toy dataset, what happens when the real dataset is 100x bigger? Is the answer “100x the cost”, or something else?</p>
 </div>
 </div>
 </div>
-</details>
 </section>
-<section id="filtering-files-with-sort" class="slide level2">
-<h2>Filtering Files with <code>sort</code></h2>
+<section id="why-this-matters-for-you-as-a-researcher" class="slide level2">
+<h2>Why this matters for you as a researcher</h2>
 <ul>
-<li><code>sort</code> reads a file and <em>sorts</em> it’s content to screen</li>
-<li>it does not change the file.</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sort <span class="at">-n</span> lengths.txt </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>   9 methane.pdb
-  12 ethane.pdb
-  15 propane.pdb
-  20 cubane.pdb
-  21 pentane.pdb
-  30 octane.pdb
- 107 total</code></pre>
-</section>
-<section id="filtering-files-and-using-the-result" class="slide level2">
-<h2>Filtering Files and using the result</h2>
-<ul>
-<li>Cool 😎 but now we want to use this list.</li>
-<li>Could save it to a new file?</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sort <span class="at">-n</span> lengths.txt <span class="op">&gt;</span> sorted_lengths.txt</span>
-<span id="cb13-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> head <span class="at">-n</span> 2 sorted_lengths.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>   9 methane.pdb
-  12 ethane.pdb</code></pre>
-</section>
-<section id="filtering-files-and-the-pipe" class="slide level2">
-<h2>Filtering Files and <strong>the pipe</strong></h2>
-<ul>
-<li>We call <code>|</code> the pipe. It takes output from a command and gives it to another command.</li>
-<li>Modern languages use their own version of this (R has a package and now also a native pipe, julia has of course a pipe etc. Stata not sure 😜)</li>
-<li>The <strong>pipe</strong> allows us to do this <em>without</em> storing intermediate results.</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sort <span class="at">-n</span> lengths.txt <span class="kw">|</span> <span class="fu">head</span> <span class="at">-n</span> 1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code> 9 methane.pdb</code></pre>
-<ul>
-<li>But, wait 🤔. Then we don’t even need <code>lengths.txt</code>:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> wc <span class="at">-l</span> <span class="pp">*</span>.pdb <span class="kw">|</span> <span class="fu">sort</span> <span class="at">-n</span> <span class="kw">|</span> <span class="fu">head</span> <span class="at">-n</span> 1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code> 9 methane.pdb</code></pre>
-<ul>
-<li>That’s a <em>pipeline</em>. 🤯</li>
+<li>Agent-driven work has a <em>marginal cost per run</em>, unlike a script you write once and run for free forever.</li>
+<li>Grant budgets, RA time, and compute credits are finite — “just ask the agent again” is not free.</li>
+<li>As Data Editor of a journal, I see replication packages that quietly assume unlimited API budget. That assumption doesn’t survive contact with a reviewer re-running your pipeline on their own key.</li>
+<li>The skill here isn’t memorizing prices (they change monthly) — it’s building the <em>habit of estimating before running</em>.</li>
 </ul>
 </section>
-<section id="piping-away" class="slide level2">
-<h2>Piping Away</h2>
-<ul>
-<li>Make sure we are still in <code>~/shell-lesson-data/exercise-data/proteins</code></li>
-</ul>
-<div class="callout callout-important callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Pipe Dreams</strong></p>
-</div>
-<div class="callout-content">
-<p>Which of the following commands shows us the 3 files with the least number of lines in the current directory? Build the pipeline up from left to right to check!</p>
-<ol type="1">
-<li><code>wc -l * &gt; sort -n &gt; head -n 3</code></li>
-<li><code>wc -l * | sort -n | head -n 1-3</code></li>
-<li><code>wc -l * | sort -n | tail -n 4 | head -n 3</code></li>
-<li><code>wc -l * | sort -n | head -n 3</code></li>
-</ol>
-</div>
-</div>
-</div>
-</section>
-<section id="piping-away-1" class="slide level2">
-<h2>Piping Away</h2>
-<ul>
-<li>Make sure we are still in <code>~/shell-lesson-data/exercise-data/proteins</code></li>
-</ul>
-<details>
-<summary>
-Show Solution
-</summary>
-<div class="callout callout-note callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Solution</strong></p>
-</div>
-<div class="callout-content">
-<p>Option 4 is correct. Option 3 finds the ones with <em>most</em> lines.</p>
-</div>
-</div>
-</div>
-</details>
-</section>
-<section id="cutting-and-piping" class="slide level2">
-<h2>Cutting and Piping</h2>
-<ul>
-<li>We have a <code>.csv</code> file here: <code>shell-lesson-data/exercise-data/animal-counts</code></li>
-<li>Let’s use the <code>cut</code> command to get parts of it.</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/shell-lesson-data/exercise-data/animal-counts</span>
-<span id="cb19-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cut <span class="at">-d</span> , <span class="at">-f</span> 2 animals.csv</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="callout callout-important callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Building a Pipe</strong></p>
-</div>
-<div class="callout-content">
-<ul>
-<li><code>uniq</code> filters <strong>adjacent</strong> matching lines in a file.</li>
-<li>Can you extend the above command with <code>uniq</code> (and another command?) such that we get the list of unique animal names?</li>
-<li>Add the <code>-c</code> flag to <code>uniq</code> to get a contingency table.</li>
-</ul>
-</div>
-</div>
-</div>
-</section>
-<section id="building-a-pipe-1" class="slide level2">
-<h2>Building a Pipe</h2>
-<details>
-<summary>
-Show Solution
-</summary>
-<div class="callout callout-note callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Solution</strong></p>
-</div>
-<div class="callout-content">
-<ol type="1">
-<li><code>cut -d , -f 2 animals.csv | sort | uniq</code></li>
-<li><code>cut -d , -f 2 animals.csv | sort | uniq -c</code></li>
-</ol>
-</div>
-</div>
-</div>
-</details>
-</section>
-<section id="house-prices-in-france" class="slide level2">
-<h2>House Prices in France</h2>
-<p>The below dataset contains information on house sales (price, location, type of house etc). We call one record a <em>housing transaction</em>.</p>
-<p>Using the shell:</p>
-<ol type="1">
-<li>Use <code>wget</code> to download data to <a href="https://static.data.gouv.fr/resources/demandes-de-valeurs-foncieres/20240408-125738/valeursfoncieres-2023.txt">from here</a> to your downloads folder as <code>carburants.csv</code>: <code>wget https://static.data.gouv.fr/resources/demandes-de-valeurs-foncieres/20240408-125738/valeursfoncieres-2023.txt</code></li>
-<li>use <code>wc -l</code> to count how many rows (<em>lines</em>) there are</li>
-<li>use <code>head -n 2</code> to see the first two rows (the <em>header</em>)</li>
-<li>Use the above solution to build a contingency table that tells us the number of housing transactions per <em>commune</em>. Show the 10 cities with most housing transactions.</li>
-<li>Compute the average of variable <code>Valeur fonciere</code>. You should use the <code>awk</code> command like this : <code>awk 'BEGIN{s=0;}{s+=$1;}END{print s/(NR);} your_file.txt'</code></li>
-</ol>
-</section>
-<section id="house-prices-in-france-1" class="slide level2">
-<h2>House Prices in France</h2>
-<p>The below dataset contains information on house sales (price, location, type of house etc). We call one record a <em>housing transaction</em>.</p>
-<p>Using the shell:</p>
-<ol start="5" type="1">
-<li>Compute the average of variable <code>Valeur fonciere</code>. You should use the <code>awk</code> command like this : <code>awk 'BEGIN{s=0;}{s+=$1;}END{print s/(NR);} your_file.txt'</code></li>
-</ol>
-</section>
-<section id="real-data" class="slide level2">
-<h2>Real Data</h2>
-<details>
-<summary>
-Show Solution
-</summary>
-<ol type="1">
-<li><code>wget https://static.data.gouv.fr/resources/demandes-de-valeurs-foncieres/20240408-125738/valeursfoncieres-2023.txt</code></li>
-<li><code>wc -l valeursfoncieres-2023.txt</code></li>
-<li><code>head -n 2 valeursfoncieres-2023.txt</code></li>
-<li><code>cut -d '|' -f 18 valeursfoncieres-2023.txt | sort | uniq -c | sort -r | head -n 10</code></li>
-<li><code>cut -d '|' -f 11 valeursfoncieres-2023.txt | cut -d , -f 1 | awk 'BEGIN{s=0;}{s+=$1;}END{print s/(NR);}'</code></li>
-<li>If you have R installed you can check whether this is the same as reading this column into it (it’s not! odd.)</li>
-</ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">'x = data.table::fread(cmd = "cut -d \'</span><span class="kw">|</span><span class="ex">\'</span> <span class="at">-f</span> 11 valeursfoncieres-2023.txt <span class="kw">|</span> <span class="fu">cut</span> <span class="at">-d</span> , <span class="at">-f</span> 1<span class="st">"); x[, mean(</span><span class="kw">`</span><span class="ex">Valeur</span> fonciere<span class="kw">`</span><span class="st">,na.rm = TRUE)]'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-
+<section>
+<section id="part-1-how-llm-pricing-actually-works" class="title-slide slide level1 center">
+<h1>Part 1 — How LLM pricing actually works</h1>
 
 </section>
+<section id="tokens-not-characters-or-words" class="slide level2">
+<h2>Tokens, not characters or words</h2>
+<ul>
+<li>Providers bill per <strong>token</strong>, not per word or character.</li>
+<li>A token is roughly 3/4 of an English word on average, but code, non-English text, and unusual formatting tokenize less efficiently.</li>
+<li>Almost all providers separate:
+<ul>
+<li><strong>input tokens</strong> (prompt: your instructions + context + tool outputs fed back in)</li>
+<li><strong>output tokens</strong> (what the model generates)</li>
+</ul></li>
+<li>Output tokens are typically priced <strong>higher</strong> than input tokens (often 3-5x) — generation is more expensive than reading.</li>
+</ul>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Try it</strong></p>
+</div>
+<div class="callout-content">
+<p>Paste a paragraph of your own writing into a tokenizer (e.g.&nbsp;the OpenAI tokenizer playground, or run <code>opencode</code> with a verbose/debug flag if it reports token counts) and compare token count to word count.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="why-agent-loops-cost-more-than-one-prompt" class="slide level2">
+<h2>Why agent loops cost more than “one prompt”</h2>
+<p>A single chat message is cheap. An <strong>agent</strong> doing a multi-step task is not one call — it’s many:</p>
+<ol type="1">
+<li>system prompt + your instructions (input)</li>
+<li>tool definitions available to the agent (input, every single call)</li>
+<li>tool call output — e.g.&nbsp;file contents, command output, error messages (input, fed back in)</li>
+<li>the model’s reasoning/response (output)</li>
+<li>repeat for every tool call in the loop</li>
+</ol>
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>The key fact</strong></p>
+</div>
+<div class="callout-content">
+<p>Context accumulates. By the 10th tool call in a session, you are re-paying for the <em>entire conversation history so far</em> as input tokens on every single subsequent call, unless the harness does something (compaction, caching) to reduce it.</p>
+</div>
+</div>
+</div>
+<p>This is why a “quick fix” that takes an agent 20 tool calls to find can cost far more than the size of the final diff suggests.</p>
+</section>
+<section id="model-tiers-roughly" class="slide level2">
+<h2>Model tiers, roughly</h2>
+<p>Pricing and capability move fast — don’t memorize numbers, memorize the <em>shape</em> of the landscape:</p>
+<table class="caption-top">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tier</th>
+<th>Examples (illustrative, check current pricing)</th>
+<th>Cost</th>
+<th>Typical use</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Free / rate-limited</td>
+<td>Gemini Flash free tier, OpenRouter <code>:free</code> models</td>
+<td>$0 (rate-limited)</td>
+<td>learning, low-stakes drafts, this course</td>
+</tr>
+<tr class="even">
+<td>Cheap / fast</td>
+<td>small open-weight models, “mini”/“flash” tiers</td>
+<td>fractions of a cent per 1K tokens</td>
+<td>high-volume, simple, well-specified tasks</td>
+</tr>
+<tr class="odd">
+<td>Frontier / expensive</td>
+<td>top-tier proprietary models</td>
+<td>10-50x the cheap tier</td>
+<td>hard reasoning, ambiguous specs, high-stakes code</td>
+</tr>
+<tr class="even">
+<td>Local / self-hosted</td>
+<td>Llama, Qwen, DeepSeek run on your own GPU</td>
+<td>$0 marginal, but hardware + electricity + your time</td>
+<td>privacy-sensitive data, offline, high-volume repeated tasks</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="free-tier-vs-paying-a-question" class="slide level2">
+<h2>Free tier vs paying: a question</h2>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Question</strong></p>
+</div>
+<div class="callout-content">
+<p>Why might the <em>free</em> tier be exactly the right choice for a course exercise, but the <em>wrong</em> choice for a paper you’re submitting to a journal with a two-week reviewer deadline?</p>
+</div>
+</div>
+</div>
+</section>
+<section id="when-is-cheap-enough-actually-good-enough" class="slide level2">
+<h2>When is “cheap enough” actually good enough?</h2>
+<p>Ask three questions before reaching for the expensive model:</p>
+<ol type="1">
+<li><strong>Is the task well-specified?</strong> (“rename this column”, “write a regex for X”) — cheap models are fine.</li>
+<li><strong>Is the task ambiguous or high-stakes?</strong> (interpreting a messy codebook, writing the core estimation routine) — pay for the better model, the time you save debugging usually exceeds the price difference.</li>
+<li><strong>Can you verify the output cheaply?</strong> If you have a fast, reliable test (S7/S8!), you can afford to let a cheap model guess and check — verification cost is what makes cheap models viable at all. Without tests, you’re trusting a cheap model’s output on faith, which is a bad trade.</li>
+</ol>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>This connects back to S7/S8</strong></p>
+</div>
+<div class="callout-content">
+<p>A good test suite doesn’t just catch bugs — it changes the economics of which model tier you can afford to use.</p>
+</div>
+</div>
+</div>
+</section></section>
+<section>
+<section id="part-2-local-vs-api" class="title-slide slide level1 center">
+<h1>Part 2 — Local vs API</h1>
+
+</section>
+<section id="api-models-pros-and-cons" class="slide level2">
+<h2>API models: pros and cons</h2>
+<p><strong>Pros</strong></p>
+<ul>
+<li>No hardware to buy or maintain</li>
+<li>Always the current best model, no fine-tuning needed</li>
+<li>Pay only for what you use</li>
+</ul>
+<p><strong>Cons</strong></p>
+<ul>
+<li>Marginal cost scales with usage — no ceiling unless you set one</li>
+<li>Your data (prompts, tool outputs, sometimes whole files) leaves your machine</li>
+<li>Provider outages, rate limits, deprecations are outside your control</li>
+<li>Costs are close to impossible to predict exactly in advance for agentic (multi-step) workflows</li>
+</ul>
+</section>
+<section id="local-models-pros-and-cons" class="slide level2">
+<h2>Local models: pros and cons</h2>
+<p><strong>Pros</strong></p>
+<ul>
+<li>Zero marginal cost per call once you have the hardware</li>
+<li>Data never leaves your machine — relevant for sensitive survey data, embargoed data, IRB constraints</li>
+<li>No rate limits, no outages, fully reproducible (pin the exact model weights)</li>
+</ul>
+<p><strong>Cons</strong></p>
+<ul>
+<li>Upfront hardware cost (GPU with enough VRAM) or cloud rental cost</li>
+<li>Local open-weight models currently lag frontier proprietary models on hard reasoning tasks</li>
+<li>You maintain the stack (drivers, quantization, serving software)</li>
+<li>Your own electricity and setup time are real costs, just not itemized on an invoice</li>
+</ul>
+</section>
+<section id="local-vs-api-a-question" class="slide level2">
+<h2>Local vs API: a question</h2>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Question</strong></p>
+</div>
+<div class="callout-content">
+<p>For a research pipeline you’ll run <strong>once</strong> on a 500-row dataset, is local worth the setup cost? What changes if you’ll run it <strong>10,000 times</strong> on similarly-sized batches?</p>
+</div>
+</div>
+</div>
+</section>
+<section id="the-break-even-intuition" class="slide level2">
+<h2>The break-even intuition</h2>
+<p>Local hardware has a fixed upfront cost; API calls have a cost that scales with volume. There’s a break-even usage volume above which local is cheaper.</p>
+<p><span class="math display">\[
+\text{break-even calls} = \frac{\text{hardware cost}}{\text{API cost per call}}
+\]</span></p>
+<p>This is deliberately naive (ignoring electricity, your time, and quality differences) but it’s the right first-order question to ask before deciding.</p>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Try it</strong></p>
+</div>
+<div class="callout-content">
+<p>Pick a rough GPU rental price (e.g.&nbsp;$0.50-$2/hour on a cloud provider) and a rough API cost per call for your S6-style task. At what call volume does renting a GPU for the day beat paying per call?</p>
+</div>
+</div>
+</div>
+</section></section>
+<section>
+<section id="part-3-budgeting-a-real-pipeline" class="title-slide slide level1 center">
+<h1>Part 3 — Budgeting a real pipeline</h1>
+
+</section>
+<section id="the-four-numbers-you-need-per-run" class="slide level2">
+<h2>The four numbers you need per run</h2>
+<p>For any agent-driven step in a pipeline, you can estimate:</p>
+<ol type="1">
+<li><strong>Input tokens per call</strong> — roughly: prompt + system prompt + accumulated context + any file/data content fed in</li>
+<li><strong>Output tokens per call</strong> — roughly: length of the expected response (code, summary, analysis)</li>
+<li><strong>Number of calls</strong> — how many agent turns/tool calls does the task realistically take? (Look at a real transcript from S6/S7/S8 — don’t guess blind.)</li>
+<li><strong>Price per token</strong> — for input and output separately, for the model tier you plan to use</li>
+</ol>
+<p><span class="math display">\[
+\text{cost per run} \approx \sum_{\text{calls}} \big(\text{input tokens} \times \text{price}_{\text{in}} + \text{output tokens} \times \text{price}_{\text{out}}\big)
+\]</span></p>
+</section>
+<section id="scaling-assumptions-matter-more-than-the-price" class="slide level2">
+<h2>Scaling assumptions matter more than the price</h2>
+<p>The naive instinct is “10x the data, 10x the cost.” That’s often wrong in both directions:</p>
+<ul>
+<li><strong>Sub-linear</strong>: if the agent writes one query/script that then runs over the full dataset without further agent involvement, the <em>agent cost</em> barely changes — only the compute cost of running the resulting code changes (and that’s not an LLM cost at all).</li>
+<li><strong>Super-linear</strong>: if bigger data means more edge cases, more debugging turns, more back-and-forth with the agent to fix things that only show up at scale, cost can grow faster than data size.</li>
+</ul>
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>The habit</strong></p>
+</div>
+<div class="callout-content">
+<p>Before scaling up, ask: “does the agent do more <em>work</em> at 10x scale, or does my <em>existing code</em> just process more rows?” Those have wildly different cost profiles.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="time-is-a-cost-too" class="slide level2">
+<h2>Time is a cost too</h2>
+<p>Token cost is one axis. Wall-clock time is another, and they don’t always move together:</p>
+<ul>
+<li>A cheap model may be slow (long queue times on free tiers) — fine for homework, bad the night before a deadline.</li>
+<li>A frontier model may be fast but rate-limited on your account tier.</li>
+<li>Local models remove queueing but add your own compute time.</li>
+</ul>
+<p>When budgeting a pipeline for a real deadline, estimate <em>time</em> separately from <em>money</em> — a run that’s cheap but takes 6 hours may not be the right choice for a task due in 2.</p>
+</section></section>
+<section>
+<section id="exercise-cost-estimate-for-your-own-pipeline" class="title-slide slide level1 center">
+<h1>Exercise: cost estimate for your own pipeline</h1>
+
+</section>
+<section id="what-youll-produce-12" class="slide level2">
+<h2>What you’ll produce (1/2)</h2>
+<p>Using <strong>your own S6 pipeline</strong> (the DuckDB pipeline you built, tested in S7/S8), produce a short written cost estimate covering:</p>
+<ol type="1">
+<li><strong>Baseline run</strong>: at your current (toy) data scale, how many agent calls did it take to get the pipeline working? Pull actual token counts from your OpenCode session logs/transcript if available, or estimate from prompt/response lengths.</li>
+<li><strong>10x scale estimate</strong>: would you need to re-run the agent at all, or does your existing code just process more rows? If more agent involvement is needed (e.g.&nbsp;new edge cases), estimate how much.</li>
+<li><strong>100x scale estimate</strong>: same question. At what point (if any) would you switch model tier, or consider a local model?</li>
+</ol>
+</section>
+<section id="what-youll-produce-22" class="slide level2">
+<h2>What you’ll produce (2/2)</h2>
+<ol start="4" type="1">
+<li><strong>Dollar and time figures</strong>: give an actual $ estimate (using a real, current price for the model tier you’d use) and a rough wall-clock time estimate, for both the 10x and 100x scenarios.</li>
+<li><strong>One paragraph</strong>: would you use the same model for all three scales, or would your choice change? Why?</li>
+</ol>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Where to find real prices</strong></p>
+</div>
+<div class="callout-content">
+<p>Check the current pricing page for whichever provider you used in S6/S7/S8 (OpenRouter, Google AI Studio, Anthropic, etc.) — prices change often, always use the number as of the day you write the estimate, and cite the date.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="submission" class="slide level2">
+<h2>Submission</h2>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Submission</strong></p>
+</div>
+<div class="callout-content">
+<p>A short written note (half a page to a page is plenty) alongside your S6/S7/S8 repo — this is not a slide deck, it’s a budgeting memo you could actually hand to a PI or grant officer.</p>
+</div>
+</div>
+</div>
+
+
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <p><img src="./images/ScPo-logo.png" class="slide-logo"></p>

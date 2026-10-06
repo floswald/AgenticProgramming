@@ -10,8 +10,8 @@
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-597958c53c93a607afca12fd375c57ed.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.8.26">
 
-  <meta name="author" content="Florian Oswald and The Software Carpentry">
-  <title>Intro To Programming – Pipes and Filters</title>
+  <meta name="author" content="Florian Oswald">
+  <title>Intro To Programming – S4 — How Do LLMs Actually Work?</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -29,72 +29,6 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
-    /* CSS for syntax highlighting */
-    html { -webkit-text-size-adjust: 100%; }
-    pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-    pre > code.sourceCode > span:empty { height: 1.2em; }
-    .sourceCode { overflow: visible; }
-    code.sourceCode > span { color: inherit; text-decoration: inherit; }
-    div.sourceCode { margin: 1em 0; }
-    pre.sourceCode { margin: 0; }
-    @media screen {
-    div.sourceCode { overflow: auto; }
-    }
-    @media print {
-    pre > code.sourceCode { white-space: pre-wrap; }
-    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-    }
-    pre.numberSource code
-      { counter-reset: source-line 0; }
-    pre.numberSource code > span
-      { position: relative; left: -4em; counter-increment: source-line; }
-    pre.numberSource code > span > a:first-child::before
-      { content: counter(source-line);
-        position: relative; left: -1em; text-align: right; vertical-align: baseline;
-        border: none; display: inline-block;
-        -webkit-touch-callout: none; -webkit-user-select: none;
-        -khtml-user-select: none; -moz-user-select: none;
-        -ms-user-select: none; user-select: none;
-        padding: 0 4px; width: 4em;
-      }
-    pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-    div.sourceCode
-      { color: #24292e;  }
-    @media screen {
-    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-    }
-    code span { color: #24292e; } /* Normal */
-    code span.al { color: #ff5555; font-weight: bold; } /* Alert */
-    code span.an { color: #6a737d; } /* Annotation */
-    code span.at { color: #d73a49; } /* Attribute */
-    code span.bn { color: #005cc5; } /* BaseN */
-    code span.bu { color: #d73a49; } /* BuiltIn */
-    code span.cf { color: #d73a49; } /* ControlFlow */
-    code span.ch { color: #032f62; } /* Char */
-    code span.cn { color: #005cc5; } /* Constant */
-    code span.co { color: #6a737d; } /* Comment */
-    code span.cv { color: #6a737d; } /* CommentVar */
-    code span.do { color: #6a737d; } /* Documentation */
-    code span.dt { color: #d73a49; } /* DataType */
-    code span.dv { color: #005cc5; } /* DecVal */
-    code span.er { color: #ff5555; text-decoration: underline; } /* Error */
-    code span.ex { color: #d73a49; font-weight: bold; } /* Extension */
-    code span.fl { color: #005cc5; } /* Float */
-    code span.fu { color: #6f42c1; } /* Function */
-    code span.im { color: #032f62; } /* Import */
-    code span.in { color: #6a737d; } /* Information */
-    code span.kw { color: #d73a49; } /* Keyword */
-    code span.op { color: #24292e; } /* Operator */
-    code span.ot { color: #6f42c1; } /* Other */
-    code span.pp { color: #d73a49; } /* Preprocessor */
-    code span.re { color: #6a737d; } /* RegionMarker */
-    code span.sc { color: #005cc5; } /* SpecialChar */
-    code span.ss { color: #032f62; } /* SpecialString */
-    code span.st { color: #032f62; } /* String */
-    code span.va { color: #e36209; } /* Variable */
-    code span.vs { color: #032f62; } /* VerbatimString */
-    code span.wa { color: #ff5555; } /* Warning */
   </style>
   <link rel="stylesheet" href="site_libs/revealjs/dist/theme/quarto-0d18aec1b1fcaaff7478d59d00932c06.css">
   <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-TQGG8QBSRH"></script>
@@ -199,7 +133,7 @@
       margin-right: 0; 
     }
   </style>
-<meta name="twitter:title" content="Pipes and Filters – Intro To Programming">
+<meta name="twitter:title" content="S4 — How Do LLMs Actually Work? – Intro To Programming">
 <meta name="twitter:description" content="Agentic Programming">
 <meta name="twitter:card" content="summary">
 </head>
@@ -208,325 +142,277 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Pipes and Filters</h1>
+  <h1 class="title">S4 — How Do LLMs Actually Work?</h1>
   <p class="subtitle"><a href="https://floswald.github.io/AgenticProgramming/">Agentic Programming</a></p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-Florian Oswald and The Software Carpentry 
+Florian Oswald 
 </div>
 </div>
 </div>
 
   <p class="date">6 October, 2026</p>
 </section>
-<section id="combining-commands" class="slide level2">
-<h2>Combining Commands</h2>
+<section id="where-we-are" class="slide level2">
+<h2>Where we are</h2>
 <ul>
-<li><p>We are now ready to combine some of the commands we learned.</p></li>
-<li><p>You will see that here is where the real power lies.</p></li>
-<li><p>Let’s navigate into our exercise data folder first.</p></li>
+<li>S1–S3: you’ve been <em>using</em> an agent — shell, git, project config.</li>
+<li>Before we go deeper into <em>how agents operate</em> (S5: context windows, tool calls, harnesses), we need to understand the thing underneath the agent.</li>
+<li>Today: <strong>no code</strong>. Just enough of the machinery to reason correctly about what an LLM can and cannot do.</li>
 </ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/shell-lesson-data/exercise-data/proteins</span>
-<span id="cb1-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ls</span>
-<span id="cb1-3"><a aria-hidden="true" tabindex="-1"></a><span class="ex">cubane.pdb</span>   ethane.pdb   methane.pdb  octane.pdb   pentane.pdb  propane.pdb</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li>Those are <em>protein data bank</em> files.</li>
-</ul>
-</section>
-<section id="capturing-output" class="slide level2">
-<h2>Capturing Output</h2>
-<ul>
-<li>Introducing the <code>wc</code> word count command.</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">wc</span> cubane.pdb</span>
-<span id="cb2-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">20</span>     156    1158 cubane.pdb</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>29 lines, 156 words, 1158 characters.</p>
-<ul>
-<li>Let’s <strong>redirect</strong> the output of <code>wc</code> to a file instead with <code>&gt;</code>:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">wc</span> <span class="at">-l</span> <span class="pp">*</span>.pdb <span class="op">&gt;</span> lengths.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li>no ouput on screen, you see? but now there is a new file: <code>lengths.txt</code>.</li>
-<li>Let’s <em>concatenate</em> its content (i.e.&nbsp;join together) and print to screen:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat lengths.txt </span>
-<span id="cb4-2"><a aria-hidden="true" tabindex="-1"></a>      <span class="ex">20</span> cubane.pdb</span>
-<span id="cb4-3"><a aria-hidden="true" tabindex="-1"></a>      <span class="ex">12</span> ethane.pdb</span>
-<span id="cb4-4"><a aria-hidden="true" tabindex="-1"></a>       <span class="ex">9</span> methane.pdb</span>
-<span id="cb4-5"><a aria-hidden="true" tabindex="-1"></a>      <span class="ex">30</span> octane.pdb</span>
-<span id="cb4-6"><a aria-hidden="true" tabindex="-1"></a>      <span class="ex">21</span> pentane.pdb</span>
-<span id="cb4-7"><a aria-hidden="true" tabindex="-1"></a>      <span class="ex">15</span> propane.pdb</span>
-<span id="cb4-8"><a aria-hidden="true" tabindex="-1"></a>     <span class="ex">107</span> total</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="reading-text-files" class="slide level2">
-<h2>Reading Text Files</h2>
-<ul>
-<li><code>cat</code> prints the entire thing to screen.</li>
-<li><code>tail</code> only the end</li>
-<li><code>head</code> only the beginning</li>
-<li><code>less</code> lets you scroll and read (arrows up/down or <code>j</code> (up) and <code>k</code> (down), <code>q</code> exits.)</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> head <span class="at">-n</span> 3 ../animal-counts/animals.csv</span>
-<span id="cb5-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> tail <span class="at">-n</span> 2 ../animal-counts/animals.csv</span>
-<span id="cb5-3"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> less ../../north-pacific-gyre/NENE01729A.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="printing-text-with-echo" class="slide level2">
-<h2>Printing Text with <code>echo</code></h2>
-<ul>
-<li>The <code>echo</code> function prints text - by default to screen:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo hi</span>
-<span id="cb6-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">hi</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li>But you can redirect it to a file as well:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo I said hi! <span class="op">&gt;</span> echofile1.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout callout-tip callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<p><strong>Challenge</strong></p>
+<p><strong>Goal for today</strong></p>
 </div>
 <div class="callout-content">
-<p>Do 2 times in a row:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo I said hi! <span class="op">&gt;</span> echofile1.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Now do twice (notice <code>&gt;&gt;</code>!)</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo I said hi! <span class="op">&gt;&gt;</span> echofile2.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li>What’s happening?</li>
-</ul>
+<p>By the end, you can explain — at a dinner party, without hand-waving — <strong>why an LLM can state a wrong number with total confidence.</strong></p>
 </div>
 </div>
 </div>
 </section>
-<section id="appending-to-files" class="slide level2">
-<h2>Appending to Files</h2>
-<div class="callout callout-important callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Challenge</strong></p>
-</div>
-<div class="callout-content">
-<p>Consider the file <code>shell-lesson-data/exercise-data/animal-counts/animals.csv</code>. What is result of this:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> head <span class="at">-n</span> 3 animals.csv <span class="op">&gt;</span> animals-subset.csv</span>
-<span id="cb10-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> tail <span class="at">-n</span> 2 animals.csv <span class="op">&gt;&gt;</span> animals-subset.csv</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ol type="1">
-<li>The first three lines of animals.csv?</li>
-<li>The last two lines of animals.csv?</li>
-<li>The first three lines and the last two lines of animals.csv?</li>
-<li>The second and third lines of animals.csv?</li>
-</ol>
-</div>
-</div>
-</div>
-<details>
-<summary>
-Show Solution
-</summary>
-<div class="callout callout-note callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Solution</strong></p>
-</div>
-<div class="callout-content">
-<p>Option 3 is correct.</p>
-</div>
-</div>
-</div>
-</details>
-</section>
-<section id="filtering-files-with-sort" class="slide level2">
-<h2>Filtering Files with <code>sort</code></h2>
+<section id="the-claim-were-testing" class="slide level2">
+<h2>The claim we’re testing</h2>
+<blockquote>
+<p>“The model said the paper was published in 2019. It’s actually 2017. Why would it just <em>make that up</em>?”</p>
+</blockquote>
 <ul>
-<li><code>sort</code> reads a file and <em>sorts</em> it’s content to screen</li>
-<li>it does not change the file.</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sort <span class="at">-n</span> lengths.txt </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>   9 methane.pdb
-  12 ethane.pdb
-  15 propane.pdb
-  20 cubane.pdb
-  21 pentane.pdb
-  30 octane.pdb
- 107 total</code></pre>
-</section>
-<section id="filtering-files-and-using-the-result" class="slide level2">
-<h2>Filtering Files and using the result</h2>
-<ul>
-<li>Cool 😎 but now we want to use this list.</li>
-<li>Could save it to a new file?</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sort <span class="at">-n</span> lengths.txt <span class="op">&gt;</span> sorted_lengths.txt</span>
-<span id="cb13-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> head <span class="at">-n</span> 2 sorted_lengths.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>   9 methane.pdb
-  12 ethane.pdb</code></pre>
-</section>
-<section id="filtering-files-and-the-pipe" class="slide level2">
-<h2>Filtering Files and <strong>the pipe</strong></h2>
-<ul>
-<li>We call <code>|</code> the pipe. It takes output from a command and gives it to another command.</li>
-<li>Modern languages use their own version of this (R has a package and now also a native pipe, julia has of course a pipe etc. Stata not sure 😜)</li>
-<li>The <strong>pipe</strong> allows us to do this <em>without</em> storing intermediate results.</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sort <span class="at">-n</span> lengths.txt <span class="kw">|</span> <span class="fu">head</span> <span class="at">-n</span> 1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code> 9 methane.pdb</code></pre>
-<ul>
-<li>But, wait 🤔. Then we don’t even need <code>lengths.txt</code>:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> wc <span class="at">-l</span> <span class="pp">*</span>.pdb <span class="kw">|</span> <span class="fu">sort</span> <span class="at">-n</span> <span class="kw">|</span> <span class="fu">head</span> <span class="at">-n</span> 1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code> 9 methane.pdb</code></pre>
-<ul>
-<li>That’s a <em>pipeline</em>. 🤯</li>
+<li>This is the single most common failure mode you’ll hit using agents in this course.</li>
+<li>It is <strong>not</strong> a bug that a future model version will “fix.”</li>
+<li>It is a direct, structural consequence of what these models are and how they’re trained.</li>
+<li>Today’s lecture is entirely in service of justifying that last sentence.</li>
 </ul>
 </section>
-<section id="piping-away" class="slide level2">
-<h2>Piping Away</h2>
-<ul>
-<li>Make sure we are still in <code>~/shell-lesson-data/exercise-data/proteins</code></li>
-</ul>
-<div class="callout callout-important callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Pipe Dreams</strong></p>
-</div>
-<div class="callout-content">
-<p>Which of the following commands shows us the 3 files with the least number of lines in the current directory? Build the pipeline up from left to right to check!</p>
-<ol type="1">
-<li><code>wc -l * &gt; sort -n &gt; head -n 3</code></li>
-<li><code>wc -l * | sort -n | head -n 1-3</code></li>
-<li><code>wc -l * | sort -n | tail -n 4 | head -n 3</code></li>
-<li><code>wc -l * | sort -n | head -n 3</code></li>
-</ol>
-</div>
-</div>
-</div>
-</section>
-<section id="piping-away-1" class="slide level2">
-<h2>Piping Away</h2>
-<ul>
-<li>Make sure we are still in <code>~/shell-lesson-data/exercise-data/proteins</code></li>
-</ul>
-<details>
-<summary>
-Show Solution
-</summary>
-<div class="callout callout-note callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Solution</strong></p>
-</div>
-<div class="callout-content">
-<p>Option 4 is correct. Option 3 finds the ones with <em>most</em> lines.</p>
-</div>
-</div>
-</div>
-</details>
-</section>
-<section id="cutting-and-piping" class="slide level2">
-<h2>Cutting and Piping</h2>
-<ul>
-<li>We have a <code>.csv</code> file here: <code>shell-lesson-data/exercise-data/animal-counts</code></li>
-<li>Let’s use the <code>cut</code> command to get parts of it.</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/shell-lesson-data/exercise-data/animal-counts</span>
-<span id="cb19-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cut <span class="at">-d</span> , <span class="at">-f</span> 2 animals.csv</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="callout callout-important callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Building a Pipe</strong></p>
-</div>
-<div class="callout-content">
-<ul>
-<li><code>uniq</code> filters <strong>adjacent</strong> matching lines in a file.</li>
-<li>Can you extend the above command with <code>uniq</code> (and another command?) such that we get the list of unique animal names?</li>
-<li>Add the <code>-c</code> flag to <code>uniq</code> to get a contingency table.</li>
-</ul>
-</div>
-</div>
-</div>
-</section>
-<section id="building-a-pipe-1" class="slide level2">
-<h2>Building a Pipe</h2>
-<details>
-<summary>
-Show Solution
-</summary>
-<div class="callout callout-note callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Solution</strong></p>
-</div>
-<div class="callout-content">
-<ol type="1">
-<li><code>cut -d , -f 2 animals.csv | sort | uniq</code></li>
-<li><code>cut -d , -f 2 animals.csv | sort | uniq -c</code></li>
-</ol>
-</div>
-</div>
-</div>
-</details>
-</section>
-<section id="house-prices-in-france" class="slide level2">
-<h2>House Prices in France</h2>
-<p>The below dataset contains information on house sales (price, location, type of house etc). We call one record a <em>housing transaction</em>.</p>
-<p>Using the shell:</p>
-<ol type="1">
-<li>Use <code>wget</code> to download data to <a href="https://static.data.gouv.fr/resources/demandes-de-valeurs-foncieres/20240408-125738/valeursfoncieres-2023.txt">from here</a> to your downloads folder as <code>carburants.csv</code>: <code>wget https://static.data.gouv.fr/resources/demandes-de-valeurs-foncieres/20240408-125738/valeursfoncieres-2023.txt</code></li>
-<li>use <code>wc -l</code> to count how many rows (<em>lines</em>) there are</li>
-<li>use <code>head -n 2</code> to see the first two rows (the <em>header</em>)</li>
-<li>Use the above solution to build a contingency table that tells us the number of housing transactions per <em>commune</em>. Show the 10 cities with most housing transactions.</li>
-<li>Compute the average of variable <code>Valeur fonciere</code>. You should use the <code>awk</code> command like this : <code>awk 'BEGIN{s=0;}{s+=$1;}END{print s/(NR);} your_file.txt'</code></li>
-</ol>
-</section>
-<section id="house-prices-in-france-1" class="slide level2">
-<h2>House Prices in France</h2>
-<p>The below dataset contains information on house sales (price, location, type of house etc). We call one record a <em>housing transaction</em>.</p>
-<p>Using the shell:</p>
-<ol start="5" type="1">
-<li>Compute the average of variable <code>Valeur fonciere</code>. You should use the <code>awk</code> command like this : <code>awk 'BEGIN{s=0;}{s+=$1;}END{print s/(NR);} your_file.txt'</code></li>
-</ol>
-</section>
-<section id="real-data" class="slide level2">
-<h2>Real Data</h2>
-<details>
-<summary>
-Show Solution
-</summary>
-<ol type="1">
-<li><code>wget https://static.data.gouv.fr/resources/demandes-de-valeurs-foncieres/20240408-125738/valeursfoncieres-2023.txt</code></li>
-<li><code>wc -l valeursfoncieres-2023.txt</code></li>
-<li><code>head -n 2 valeursfoncieres-2023.txt</code></li>
-<li><code>cut -d '|' -f 18 valeursfoncieres-2023.txt | sort | uniq -c | sort -r | head -n 10</code></li>
-<li><code>cut -d '|' -f 11 valeursfoncieres-2023.txt | cut -d , -f 1 | awk 'BEGIN{s=0;}{s+=$1;}END{print s/(NR);}'</code></li>
-<li>If you have R installed you can check whether this is the same as reading this column into it (it’s not! odd.)</li>
-</ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">'x = data.table::fread(cmd = "cut -d \'</span><span class="kw">|</span><span class="ex">\'</span> <span class="at">-f</span> 11 valeursfoncieres-2023.txt <span class="kw">|</span> <span class="fu">cut</span> <span class="at">-d</span> , <span class="at">-f</span> 1<span class="st">"); x[, mean(</span><span class="kw">`</span><span class="ex">Valeur</span> fonciere<span class="kw">`</span><span class="st">,na.rm = TRUE)]'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-
+<section>
+<section id="part-1-tokenization" class="title-slide slide level1 center">
+<h1>Part 1 — Tokenization</h1>
 
 </section>
+<section id="text-isnt-the-input" class="slide level2">
+<h2>Text isn’t the input</h2>
+<ul>
+<li>You type words. The model never sees words.</li>
+<li>Text is first chopped into <strong>tokens</strong> — sub-word chunks from a fixed vocabulary (tens of thousands of entries), typically learned from a large text corpus so common chunks (like <code>ing</code>, <code>tion</code>, whole common words) each get their own token.</li>
+<li>Example, roughly how a tokenizer might split a sentence:</li>
+</ul>
+<pre><code>"Unbelievable coincidences happen."
+→ ["Un", "believ", "able", " coincid", "ences", " happen", "."]</code></pre>
+<ul>
+<li>Rare words get split into several tokens; common words often are one token. Numbers are frequently split in unintuitive ways.</li>
+</ul>
+</section>
+<section id="why-this-matters-already" class="slide level2">
+<h2>Why this matters already</h2>
+<ul>
+<li>A model doesn’t “see” the number <code>47293</code> as one thing. It might see it as tokens <code>["472", "93"]</code> or <code>["47", "293"]</code> depending on the tokenizer.</li>
+<li>Arithmetic, character counts (“how many r’s in strawberry?”), and precise quoting are all harder than they look <em>because of tokenization</em>, before we’ve even gotten to prediction or training.</li>
+<li>Everything downstream operates on tokens, not characters, not words, not “meaning” in any human sense — yet.</li>
+</ul>
+</section></section>
+<section>
+<section id="part-2-next-token-prediction" class="title-slide slide level1 center">
+<h1>Part 2 — Next-token prediction</h1>
+
+</section>
+<section id="the-one-task" class="slide level2">
+<h2>The one task</h2>
+<ul>
+<li>An LLM is trained to do exactly one thing: given a sequence of tokens, <strong>predict a probability distribution over the next token</strong>.</li>
+</ul>
+<p><span class="math display">\[
+P(\text{next token} \mid \text{all tokens so far})
+\]</span></p>
+<ul>
+<li>That’s it. Not “understand,” not “reason,” not “know facts.” Predict what token comes next, given everything that came before.</li>
+<li>Generating a whole response is just: predict one token, append it, predict the next one, repeat — over and over, one token at a time.</li>
+</ul>
+</section>
+<section id="from-distribution-to-text" class="slide level2">
+<h2>From distribution to text</h2>
+<ul>
+<li>At each step the model outputs a probability over the <em>entire vocabulary</em> — not a single answer.</li>
+<li>A <strong>sampling strategy</strong> picks the actual next token:
+<ul>
+<li><em>Greedy</em>: always pick the single most likely token.</li>
+<li><em>Sampling with temperature</em>: pick randomly, weighted by probability; higher temperature → more randomness/variety, lower → more deterministic and repetitive.</li>
+</ul></li>
+<li>This is why asking the same question twice can give you different (but both fluent) answers — you’re sampling from a distribution, not looking up a stored fact.</li>
+</ul>
+</section>
+<section id="a-key-consequence-stated-plainly" class="slide level2">
+<h2>A key consequence, stated plainly</h2>
+<ul>
+<li>The model is not consulting a database and reporting what it finds.</li>
+<li>It is producing <strong>the most statistically plausible continuation of the text so far</strong>, token by token.</li>
+<li>Plausible-sounding and true are correlated (because true things are usually written down more, and in more consistent ways) — but they are not the same property, and nothing in the mechanism <em>guarantees</em> they coincide.</li>
+</ul>
+</section></section>
+<section>
+<section id="part-3-transformer-architecture-conceptually" class="title-slide slide level1 center">
+<h1>Part 3 — Transformer architecture (conceptually)</h1>
+
+</section>
+<section id="the-problem-it-solves" class="slide level2">
+<h2>The problem it solves</h2>
+<ul>
+<li>To predict the next token well, the model needs to weigh <em>which earlier tokens matter</em> for this particular prediction.</li>
+<li>In “The trophy didn’t fit in the suitcase because <strong>it</strong> was too big” — what does “it” refer to? You need to relate a token to other tokens far away in the sentence, and the relevant one changes depending on context.</li>
+</ul>
+</section>
+<section id="attention-the-conceptual-version" class="slide level2">
+<h2>Attention, the conceptual version</h2>
+<ul>
+<li>Every token, at every layer, gets to “look back” at every token that came <em>before</em> it (never ahead — this is a one-directional, left-to-right model) and ask: <em>how relevant are you to me, right now?</em></li>
+<li>That one-directional constraint is exactly why generation happens left-to-right, one token at a time: the model was built and trained to only ever condition on what’s already there.</li>
+<li>This produces a weighted blend: each token’s representation gets updated using information pulled from the tokens most relevant to it.</li>
+<li>Stack many of these attention layers on top of each other (this is the “transformer” — dozens of layers is typical), each one refining the representation a bit further, mixing local grammar-level patterns in early layers with more abstract, longer-range relationships in later ones.</li>
+<li><strong>No memory, no lookup table, no symbolic reasoning module.</strong> Just repeated rounds of “which other tokens should influence how I update this one,” turned into more predictive representations for the final next-token-probability step.</li>
+</ul>
+</section>
+<section id="why-conceptual-level-is-the-right-level" class="slide level2">
+<h2>Why “conceptual level” is the right level</h2>
+<ul>
+<li>You do not need the matrix algebra to reason correctly about LLM behavior in this course.</li>
+<li>You do need to internalize: the model is a very large, learned function that transforms a sequence of tokens into a probability distribution over the next token, by repeatedly mixing information across positions.</li>
+<li>There is no separate “fact-checking module,” no “I don’t know this” circuit, no built-in notion of source or citation. Whatever behavior looks like those things is <em>emergent from</em> next-token prediction, not a distinct mechanism bolted on.</li>
+</ul>
+</section></section>
+<section>
+<section id="part-4-training-and-rlhf" class="title-slide slide level1 center">
+<h1>Part 4 — Training and RLHF</h1>
+
+</section>
+<section id="stage-1-pretraining" class="slide level2">
+<h2>Stage 1: pretraining</h2>
+<ul>
+<li>Train the next-token-prediction task on an enormous corpus of text (a large fraction of the public internet, books, code, etc.).</li>
+<li>The model has no notion of “this document is reliable” and “this one is not” — it’s fitting probability to <em>co-occurrence patterns in text</em>, at massive scale.</li>
+<li>Result: a model that is very good at producing fluent, plausible continuations of almost any text — but has no built-in preference for “true” over “plausible,” and no mechanism forcing it to say “I don’t know.”</li>
+</ul>
+</section>
+<section id="stage-2-instruction-tuning-rlhf" class="slide level2">
+<h2>Stage 2: instruction tuning + RLHF</h2>
+<ul>
+<li>Raw pretrained models complete text; they don’t naturally “answer a question” or “follow an instruction” the way a chat assistant does.</li>
+<li><strong>Instruction tuning</strong>: further training on examples of (instruction → good response) pairs, so the model learns the <em>chat assistant</em> behavior pattern.</li>
+<li><strong>RLHF</strong> (Reinforcement Learning from Human Feedback): humans (or another model trained to imitate human preferences) rank candidate responses; the model is further nudged to produce outputs that raters <em>prefer</em>.</li>
+</ul>
+</section>
+<section id="what-rlhf-optimizes-for-and-what-it-doesnt" class="slide level2">
+<h2>What RLHF optimizes for — and what it doesn’t</h2>
+<ul>
+<li>Raters tend to prefer answers that are confident, complete, well-formatted, and decisive over answers that hedge, refuse, or say “I’m not sure.”</li>
+<li>This creates real pressure toward <strong>fluent, confident-sounding output</strong>, independent of the pressure toward <em>correct</em> output.</li>
+<li>Nothing in this pipeline directly optimizes for “calibrated uncertainty” unless it is specifically and carefully trained for — and even then, imperfectly.</li>
+<li>Put bluntly: the training process rewards sounding right at least as much as being right.</li>
+</ul>
+</section>
+<section id="live-demo-watch-it-happen" class="slide level2">
+<h2>Live demo — watch it happen</h2>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Instructor demo, no student setup needed</strong></p>
+</div>
+<div class="callout-content">
+<p>Open OpenCode with the free-tier model and ask it a question with a precise, checkable answer in an area we know cold — e.g.&nbsp;“give me the exact page number and DOI for [a specific paper],” or “what was the exact closing value of [some index] on [a specific past date].”</p>
+</div>
+</div>
+</div>
+<ul>
+<li>Watch it answer <em>immediately</em>, <em>confidently</em>, and <em>specifically</em> — a real-looking DOI, a real-looking page number.</li>
+<li>Then check it. It’s very likely wrong, but phrased exactly like a right answer would be phrased.</li>
+<li>Keep this moment in mind — Part 5 is the explanation for what you just watched.</li>
+</ul>
+</section></section>
+<section>
+<section id="part-5-why-hallucination-is-structural" class="title-slide slide level1 center">
+<h1>Part 5 — Why hallucination is structural</h1>
+
+</section>
+<section id="putting-the-pieces-together" class="slide level2">
+<h2>Putting the pieces together</h2>
+<ol type="1">
+<li>The model’s only job, at the mechanical level, is next-token prediction — a plausibility judgment, not a truth judgment.</li>
+<li>It has no lookup table or citation mechanism; “knowledge” is encoded implicitly as statistical patterns compressed across billions of parameters, not stored as retrievable facts with sources attached.</li>
+<li>RLHF further rewards confident, fluent, complete-sounding answers.</li>
+<li>Sampling introduces genuine randomness into which plausible continuation gets picked.</li>
+</ol>
+</section>
+<section id="the-structural-conclusion" class="slide level2">
+<h2>The structural conclusion</h2>
+<ul>
+<li>When the true answer and a plausible-sounding wrong answer are both consistent with the patterns the model has seen, <strong>the model has no internal mechanism that reliably tells the difference</strong> — because “look up whether this is true” was never the task it was trained on.</li>
+<li>A model producing a wrong number with total confidence is not “malfunctioning.” It is doing exactly what it was built and trained to do: emit the most probable-sounding continuation, phrased the way confident answers are usually phrased.</li>
+<li>This is why “wait for the next model version to fix hallucination” is the wrong mental model. Bigger and better-trained models hallucinate <em>less often</em>, and about narrower categories of things — but the mechanism guaranteeing it can’t happen doesn’t exist and can’t be patched in without changing what the model fundamentally is.</li>
+</ul>
+</section>
+<section id="what-actually-reduces-hallucination-preview" class="slide level2">
+<h2>What actually reduces hallucination (preview)</h2>
+<ul>
+<li>These are compensating strategies bolted on around the model, not fixes to the model itself:
+<ul>
+<li>Giving the model the actual source in context, so it can “quote” rather than “recall” (retrieval-augmented generation) — this is one reason context windows matter, which we pick up in S5.</li>
+<li>Tool use: letting the model call a calculator, a search engine, or code execution instead of predicting the answer token-by-token (also S5).</li>
+<li>Verification: the student/researcher checks claims rather than trusting fluency — this is the whole point of S7/S8 in this course.</li>
+</ul></li>
+<li>None of these make the underlying mechanism “know” things. They change what information is available to condition the next-token prediction on, or add an external check the model itself doesn’t have.</li>
+</ul>
+</section>
+<section id="take-home-the-dinner-party-version" class="slide level2">
+<h2>Take-home (the dinner-party version)</h2>
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>The one paragraph you should be able to say out loud</strong></p>
+</div>
+<div class="callout-content">
+<p>An LLM doesn’t look anything up — it predicts, one chunk of text at a time, whatever continuation is statistically most plausible given everything written before it, based on patterns learned from huge amounts of text. Its training additionally rewards sounding confident and complete. So when it doesn’t actually “know” a fact, nothing stops it from generating a wrong one that’s phrased exactly like a right one — because from the model’s point of view, both are just “plausible next tokens.” That’s why you always verify, especially numbers, dates, and citations.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="your-turn" class="slide level2">
+<h2>Your turn</h2>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>60 seconds, then say it out loud</strong></p>
+</div>
+<div class="callout-content">
+<p>Turn to your neighbour. Using the demo you just watched, explain in your own words why the model gave a confident, specific, wrong answer. Don’t read the callout above — try it cold.</p>
+</div>
+</div>
+</div>
+<ul>
+<li>Two volunteers explain it to the room.</li>
+<li>If your explanation mentions “the model looked it up and got it wrong,” that’s the misconception this lecture exists to correct — try again using “predict” instead of “look up.”</li>
+</ul>
+</section>
+<section id="where-this-leads-next" class="slide level2">
+<h2>Where this leads next</h2>
+<ul>
+<li><strong>S5</strong>: given this picture of the model, how does an <em>agent</em> built on top of it work — context windows, tool calling, system prompts?</li>
+<li><strong>S7/S8</strong>: given that hallucination is structural, how do you build habits and tests that catch it, systematically, rather than by luck?</li>
+<li><strong>S11</strong>: a running catalogue, across the whole course, of every place this bit you — and what caught it.</li>
+</ul>
+
+
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <p><img src="./images/ScPo-logo.png" class="slide-logo"></p>

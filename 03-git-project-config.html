@@ -10,8 +10,8 @@
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-597958c53c93a607afca12fd375c57ed.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.8.26">
 
-  <meta name="author" content="Florian Oswald and The Software Carpentry">
-  <title>Intro To Programming – Pipes and Filters</title>
+  <meta name="author" content="Florian Oswald">
+  <title>Intro To Programming – Git + Project Config</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -199,7 +199,7 @@
       margin-right: 0; 
     }
   </style>
-<meta name="twitter:title" content="Pipes and Filters – Intro To Programming">
+<meta name="twitter:title" content="Git + Project Config – Intro To Programming">
 <meta name="twitter:description" content="Agentic Programming">
 <meta name="twitter:card" content="summary">
 </head>
@@ -208,322 +208,359 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Pipes and Filters</h1>
+  <h1 class="title">Git + Project Config</h1>
   <p class="subtitle"><a href="https://floswald.github.io/AgenticProgramming/">Agentic Programming</a></p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-Florian Oswald and The Software Carpentry 
+Florian Oswald 
 </div>
 </div>
 </div>
 
   <p class="date">6 October, 2026</p>
 </section>
-<section id="combining-commands" class="slide level2">
-<h2>Combining Commands</h2>
+<section id="where-we-are" class="slide level2">
+<h2>Where we are</h2>
+<p>By S1 you already have:</p>
 <ul>
-<li><p>We are now ready to combine some of the commands we learned.</p></li>
-<li><p>You will see that here is where the real power lies.</p></li>
-<li><p>Let’s navigate into our exercise data folder first.</p></li>
+<li>a git repo with a trivial script, committed</li>
+<li>one completed OpenCode session</li>
 </ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/shell-lesson-data/exercise-data/proteins</span>
-<span id="cb1-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ls</span>
-<span id="cb1-3"><a aria-hidden="true" tabindex="-1"></a><span class="ex">cubane.pdb</span>   ethane.pdb   methane.pdb  octane.pdb   pentane.pdb  propane.pdb</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>By S2 you have:</p>
 <ul>
-<li>Those are <em>protein data bank</em> files.</li>
+<li>a small set of R/Python scripts (same task, both languages)</li>
+<li>a hand-written test for each, catching a bug the agent introduced</li>
 </ul>
-</section>
-<section id="capturing-output" class="slide level2">
-<h2>Capturing Output</h2>
-<ul>
-<li>Introducing the <code>wc</code> word count command.</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">wc</span> cubane.pdb</span>
-<span id="cb2-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">20</span>     156    1158 cubane.pdb</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>29 lines, 156 words, 1158 characters.</p>
-<ul>
-<li>Let’s <strong>redirect</strong> the output of <code>wc</code> to a file instead with <code>&gt;</code>:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">wc</span> <span class="at">-l</span> <span class="pp">*</span>.pdb <span class="op">&gt;</span> lengths.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li>no ouput on screen, you see? but now there is a new file: <code>lengths.txt</code>.</li>
-<li>Let’s <em>concatenate</em> its content (i.e.&nbsp;join together) and print to screen:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat lengths.txt </span>
-<span id="cb4-2"><a aria-hidden="true" tabindex="-1"></a>      <span class="ex">20</span> cubane.pdb</span>
-<span id="cb4-3"><a aria-hidden="true" tabindex="-1"></a>      <span class="ex">12</span> ethane.pdb</span>
-<span id="cb4-4"><a aria-hidden="true" tabindex="-1"></a>       <span class="ex">9</span> methane.pdb</span>
-<span id="cb4-5"><a aria-hidden="true" tabindex="-1"></a>      <span class="ex">30</span> octane.pdb</span>
-<span id="cb4-6"><a aria-hidden="true" tabindex="-1"></a>      <span class="ex">21</span> pentane.pdb</span>
-<span id="cb4-7"><a aria-hidden="true" tabindex="-1"></a>      <span class="ex">15</span> propane.pdb</span>
-<span id="cb4-8"><a aria-hidden="true" tabindex="-1"></a>     <span class="ex">107</span> total</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="reading-text-files" class="slide level2">
-<h2>Reading Text Files</h2>
-<ul>
-<li><code>cat</code> prints the entire thing to screen.</li>
-<li><code>tail</code> only the end</li>
-<li><code>head</code> only the beginning</li>
-<li><code>less</code> lets you scroll and read (arrows up/down or <code>j</code> (up) and <code>k</code> (down), <code>q</code> exits.)</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> head <span class="at">-n</span> 3 ../animal-counts/animals.csv</span>
-<span id="cb5-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> tail <span class="at">-n</span> 2 ../animal-counts/animals.csv</span>
-<span id="cb5-3"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> less ../../north-pacific-gyre/NENE01729A.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="printing-text-with-echo" class="slide level2">
-<h2>Printing Text with <code>echo</code></h2>
-<ul>
-<li>The <code>echo</code> function prints text - by default to screen:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo hi</span>
-<span id="cb6-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">hi</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li>But you can redirect it to a file as well:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo I said hi! <span class="op">&gt;</span> echofile1.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout callout-tip callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<p><strong>Challenge</strong></p>
+<p><strong>Objective</strong></p>
 </div>
 <div class="callout-content">
-<p>Do 2 times in a row:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo I said hi! <span class="op">&gt;</span> echofile1.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Now do twice (notice <code>&gt;&gt;</code>!)</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> echo I said hi! <span class="op">&gt;&gt;</span> echofile2.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ul>
-<li>What’s happening?</li>
-</ul>
+<p>Your repo currently works for <em>you</em>, on <em>your</em> machine, today. Make it work for an agent, a stranger, and future-you — on a different machine, next year.</p>
 </div>
 </div>
 </div>
-</section>
-<section id="appending-to-files" class="slide level2">
-<h2>Appending to Files</h2>
-<div class="callout callout-important callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Challenge</strong></p>
-</div>
-<div class="callout-content">
-<p>Consider the file <code>shell-lesson-data/exercise-data/animal-counts/animals.csv</code>. What is result of this:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> head <span class="at">-n</span> 3 animals.csv <span class="op">&gt;</span> animals-subset.csv</span>
-<span id="cb10-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> tail <span class="at">-n</span> 2 animals.csv <span class="op">&gt;&gt;</span> animals-subset.csv</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<ol type="1">
-<li>The first three lines of animals.csv?</li>
-<li>The last two lines of animals.csv?</li>
-<li>The first three lines and the last two lines of animals.csv?</li>
-<li>The second and third lines of animals.csv?</li>
-</ol>
-</div>
-</div>
-</div>
-<details>
-<summary>
-Show Solution
-</summary>
+<p>We won’t re-teach <code>git init</code> / <code>add</code> / <code>commit</code> — you did that in S1. This session is about the parts of git and project structure that make a repo <strong>portable and legible to an agent</strong>, not just to you.</p>
 <div class="callout callout-note callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<p><strong>Solution</strong></p>
+<p><strong>Want more git basics?</strong></p>
 </div>
 <div class="callout-content">
-<p>Option 3 is correct.</p>
+<p>The old, longer walk-through — <a href="./05-git.html">Git Version Control</a> — is still in the repo as optional reference material if you want more drills on branches, merges, and conflict resolution.</p>
 </div>
 </div>
 </div>
-</details>
 </section>
-<section id="filtering-files-with-sort" class="slide level2">
-<h2>Filtering Files with <code>sort</code></h2>
+<section id="why-hardcoded-paths-break-agent-workflows" class="slide level2">
+<h2>Why hardcoded paths break agent workflows</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># R</span></span>
+<span id="cb1-2"><a aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"/Users/yourname/Desktop/econ-course/data/houses.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Python</span></span>
+<span id="cb2-2"><a aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">"/home/yourname/Desktop/econ-course/data/houses.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>This works exactly once: on your machine, in that exact location. It breaks the moment:</p>
 <ul>
-<li><code>sort</code> reads a file and <em>sorts</em> it’s content to screen</li>
-<li>it does not change the file.</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sort <span class="at">-n</span> lengths.txt </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>   9 methane.pdb
-  12 ethane.pdb
-  15 propane.pdb
-  20 cubane.pdb
-  21 pentane.pdb
-  30 octane.pdb
- 107 total</code></pre>
-</section>
-<section id="filtering-files-and-using-the-result" class="slide level2">
-<h2>Filtering Files and using the result</h2>
-<ul>
-<li>Cool 😎 but now we want to use this list.</li>
-<li>Could save it to a new file?</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sort <span class="at">-n</span> lengths.txt <span class="op">&gt;</span> sorted_lengths.txt</span>
-<span id="cb13-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> head <span class="at">-n</span> 2 sorted_lengths.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code>   9 methane.pdb
-  12 ethane.pdb</code></pre>
-</section>
-<section id="filtering-files-and-the-pipe" class="slide level2">
-<h2>Filtering Files and <strong>the pipe</strong></h2>
-<ul>
-<li>We call <code>|</code> the pipe. It takes output from a command and gives it to another command.</li>
-<li>Modern languages use their own version of this (R has a package and now also a native pipe, julia has of course a pipe etc. Stata not sure 😜)</li>
-<li>The <strong>pipe</strong> allows us to do this <em>without</em> storing intermediate results.</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> sort <span class="at">-n</span> lengths.txt <span class="kw">|</span> <span class="fu">head</span> <span class="at">-n</span> 1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code> 9 methane.pdb</code></pre>
-<ul>
-<li>But, wait 🤔. Then we don’t even need <code>lengths.txt</code>:</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> wc <span class="at">-l</span> <span class="pp">*</span>.pdb <span class="kw">|</span> <span class="fu">sort</span> <span class="at">-n</span> <span class="kw">|</span> <span class="fu">head</span> <span class="at">-n</span> 1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<pre><code> 9 methane.pdb</code></pre>
-<ul>
-<li>That’s a <em>pipeline</em>. 🤯</li>
+<li>you move the folder</li>
+<li>a classmate clones your repo</li>
+<li>an agent is asked to “run this project” from a fresh checkout</li>
+<li>you run it from a server that has never seen your filesystem</li>
 </ul>
 </section>
-<section id="piping-away" class="slide level2">
-<h2>Piping Away</h2>
-<ul>
-<li>Make sure we are still in <code>~/shell-lesson-data/exercise-data/proteins</code></li>
-</ul>
-<div class="callout callout-important callout-titled callout-style-default">
+<section id="the-agent-angle-specifically" class="slide level2">
+<h2>The agent angle specifically</h2>
+<div class="callout callout-warning callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<p><strong>Pipe Dreams</strong></p>
+<p><strong>Why this matters more with agents</strong></p>
 </div>
 <div class="callout-content">
-<p>Which of the following commands shows us the 3 files with the least number of lines in the current directory? Build the pipeline up from left to right to check!</p>
-<ol type="1">
-<li><code>wc -l * &gt; sort -n &gt; head -n 3</code></li>
-<li><code>wc -l * | sort -n | head -n 1-3</code></li>
-<li><code>wc -l * | sort -n | tail -n 4 | head -n 3</code></li>
-<li><code>wc -l * | sort -n | head -n 3</code></li>
-</ol>
+<p>When you hand a repo to an agent and say “run the pipeline,” it infers structure from what it can see: file names, relative paths, a README. A hardcoded absolute path isn’t just non-portable — it’s context the agent cannot reconstruct from the repo alone. It has to fail, notice the failure, and ask where the data really is. That’s a wasted round trip you can eliminate for free.</p>
 </div>
 </div>
 </div>
 </section>
-<section id="piping-away-1" class="slide level2">
-<h2>Piping Away</h2>
-<ul>
-<li>Make sure we are still in <code>~/shell-lesson-data/exercise-data/proteins</code></li>
-</ul>
-<details>
-<summary>
-Show Solution
-</summary>
+<section id="the-fix-resolve-paths-relative-to-project-root" class="slide level2">
+<h2>The fix: resolve paths relative to project root</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># R: `here::here()` finds project root via .Rproj / .git,</span></span>
+<span id="cb3-2"><a aria-hidden="true" tabindex="-1"></a><span class="co"># regardless of your working directory</span></span>
+<span id="cb3-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span>
+<span id="cb3-4"><a aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">"data"</span>, <span class="st">"houses.csv"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a aria-hidden="true" tabindex="-1"></a><span class="co"># Python: build paths relative to the file's own location</span></span>
+<span id="cb4-2"><a aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb4-3"><a aria-hidden="true" tabindex="-1"></a>DATA_DIR <span class="op">=</span> Path(<span class="va">__file__</span>).resolve().parent.parent <span class="op">/</span> <span class="st">"data"</span></span>
+<span id="cb4-4"><a aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(DATA_DIR <span class="op">/</span> <span class="st">"houses.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-note callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<p><strong>Solution</strong></p>
+<p><strong>Exercise 1</strong></p>
 </div>
 <div class="callout-content">
-<p>Option 4 is correct. Option 3 finds the ones with <em>most</em> lines.</p>
-</div>
-</div>
-</div>
-</details>
-</section>
-<section id="cutting-and-piping" class="slide level2">
-<h2>Cutting and Piping</h2>
-<ul>
-<li>We have a <code>.csv</code> file here: <code>shell-lesson-data/exercise-data/animal-counts</code></li>
-<li>Let’s use the <code>cut</code> command to get parts of it.</li>
-</ul>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~/shell-lesson-data/exercise-data/animal-counts</span>
-<span id="cb19-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cut <span class="at">-d</span> , <span class="at">-f</span> 2 animals.csv</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="callout callout-important callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Building a Pipe</strong></p>
-</div>
-<div class="callout-content">
-<ul>
-<li><code>uniq</code> filters <strong>adjacent</strong> matching lines in a file.</li>
-<li>Can you extend the above command with <code>uniq</code> (and another command?) such that we get the list of unique animal names?</li>
-<li>Add the <code>-c</code> flag to <code>uniq</code> to get a contingency table.</li>
-</ul>
+<p>Ask your agent to grep your repo for absolute paths (<code>/Users</code>, <code>/home</code>, <code>C:\</code>) and fix every hit using one of the patterns above. Verify by running the scripts from a <strong>different working directory</strong> than usual.</p>
 </div>
 </div>
 </div>
 </section>
-<section id="building-a-pipe-1" class="slide level2">
-<h2>Building a Pipe</h2>
-<details>
-<summary>
-Show Solution
-</summary>
+<section id="standard-project-layout" class="slide level2">
+<h2>Standard project layout</h2>
+<pre><code>your-project/
+├── README.md          # what this is, how to run it, what to expect
+├── AGENTS.md           # rules file for coding agents
+├── .gitignore
+├── data/               # raw + intermediate data
+├── R/  or  src/         # source code — functions, not just scripts
+├── scripts/            # top-level "run this" entry points
+├── tests/              # your S2 tests live here now
+├── output/             # figures, tables — generated, not hand-edited
+└── prompts/            # archived prompts/sessions</code></pre>
+<p>An agent that sees a <code>tests/</code> folder looks there first, and is more likely to run the existing suite before declaring success. An agent that sees everything dumped flat in the repo root has no such signal — and will guess.</p>
 <div class="callout callout-note callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<p><strong>Solution</strong></p>
+<p><strong>Exercise 2 — restructure your S2 repo</strong></p>
 </div>
 <div class="callout-content">
-<ol type="1">
-<li><code>cut -d , -f 2 animals.csv | sort | uniq</code></li>
-<li><code>cut -d , -f 2 animals.csv | sort | uniq -c</code></li>
-</ol>
+<p>Move your S2 scripts and tests into this layout. Ask your agent to propose the move, then check its work: do scripts still run? Do tests still pass? Did any path silently break?</p>
 </div>
 </div>
 </div>
-</details>
 </section>
-<section id="house-prices-in-france" class="slide level2">
-<h2>House Prices in France</h2>
-<p>The below dataset contains information on house sales (price, location, type of house etc). We call one record a <em>housing transaction</em>.</p>
-<p>Using the shell:</p>
+<section id="readme-discipline" class="slide level2">
+<h2>README discipline</h2>
+<p>A README is the first (and sometimes only) context an agent — or a stranger, or you in eight months — gets before touching your code. A good README for this course answers, in order:</p>
 <ol type="1">
-<li>Use <code>wget</code> to download data to <a href="https://static.data.gouv.fr/resources/demandes-de-valeurs-foncieres/20240408-125738/valeursfoncieres-2023.txt">from here</a> to your downloads folder as <code>carburants.csv</code>: <code>wget https://static.data.gouv.fr/resources/demandes-de-valeurs-foncieres/20240408-125738/valeursfoncieres-2023.txt</code></li>
-<li>use <code>wc -l</code> to count how many rows (<em>lines</em>) there are</li>
-<li>use <code>head -n 2</code> to see the first two rows (the <em>header</em>)</li>
-<li>Use the above solution to build a contingency table that tells us the number of housing transactions per <em>commune</em>. Show the 10 cities with most housing transactions.</li>
-<li>Compute the average of variable <code>Valeur fonciere</code>. You should use the <code>awk</code> command like this : <code>awk 'BEGIN{s=0;}{s+=$1;}END{print s/(NR);} your_file.txt'</code></li>
+<li><strong>What is this?</strong> One or two sentences.</li>
+<li><strong>How do I run it?</strong> The literal commands, in order, from a clean checkout.</li>
+<li><strong>What should I see?</strong> Expected output — so a wrong result is recognizable as wrong.</li>
+<li><strong>What are the parts?</strong> A one-line map of the folders, if not obvious.</li>
+<li><strong>What does this depend on?</strong> R/Python version, packages, any external data.</li>
 </ol>
+<p>What a README is <strong>not</strong>: a changelog, a diary of what you tried, or a copy of your code comments. Keep it short enough that an agent’s context window doesn’t have to spend most of its budget reading prose to find the one command it needs.</p>
 </section>
-<section id="house-prices-in-france-1" class="slide level2">
-<h2>House Prices in France</h2>
-<p>The below dataset contains information on house sales (price, location, type of house etc). We call one record a <em>housing transaction</em>.</p>
-<p>Using the shell:</p>
-<ol start="5" type="1">
-<li>Compute the average of variable <code>Valeur fonciere</code>. You should use the <code>awk</code> command like this : <code>awk 'BEGIN{s=0;}{s+=$1;}END{print s/(NR);} your_file.txt'</code></li>
-</ol>
+<section id="test-your-readme-like-an-agent-would" class="slide level2">
+<h2>Test your README like an agent would</h2>
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Try it</strong></p>
+</div>
+<div class="callout-content">
+<p>Ask your agent — in a <strong>fresh session</strong>, with no prior context of this project — to read only your README and try to run your pipeline.</p>
+</div>
+</div>
+</div>
+<p>If it gets stuck, your README has a gap, not the agent. This is the only reliable way to check “could a stranger pick this up cold” — you already know how your own project works, so you can’t self-assess this one.</p>
 </section>
-<section id="real-data" class="slide level2">
-<h2>Real Data</h2>
-<details>
-<summary>
-Show Solution
-</summary>
-<ol type="1">
-<li><code>wget https://static.data.gouv.fr/resources/demandes-de-valeurs-foncieres/20240408-125738/valeursfoncieres-2023.txt</code></li>
-<li><code>wc -l valeursfoncieres-2023.txt</code></li>
-<li><code>head -n 2 valeursfoncieres-2023.txt</code></li>
-<li><code>cut -d '|' -f 18 valeursfoncieres-2023.txt | sort | uniq -c | sort -r | head -n 10</code></li>
-<li><code>cut -d '|' -f 11 valeursfoncieres-2023.txt | cut -d , -f 1 | awk 'BEGIN{s=0;}{s+=$1;}END{print s/(NR);}'</code></li>
-<li>If you have R installed you can check whether this is the same as reading this column into it (it’s not! odd.)</li>
-</ol>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">Rscript</span> <span class="at">-e</span> <span class="st">'x = data.table::fread(cmd = "cut -d \'</span><span class="kw">|</span><span class="ex">\'</span> <span class="at">-f</span> 11 valeursfoncieres-2023.txt <span class="kw">|</span> <span class="fu">cut</span> <span class="at">-d</span> , <span class="at">-f</span> 1<span class="st">"); x[, mean(</span><span class="kw">`</span><span class="ex">Valeur</span> fonciere<span class="kw">`</span><span class="st">,na.rm = TRUE)]'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
+<section id="gitignore-discipline" class="slide level2">
+<h2><code>.gitignore</code> discipline</h2>
+<p>Not everything belongs in version control. Three categories that must <strong>never</strong> be committed:</p>
+<ul>
+<li><strong>Secrets</strong> — your S0 LLM API key, any credential. Committing it once means it’s in history forever, even after you delete it.</li>
+<li><strong>Large/regenerable data</strong> — raw downloads, caches — bloat the repo and aren’t the point of tracking.</li>
+<li><strong>Machine-local junk</strong> — <code>.DS_Store</code>, <code>.Rproj.user</code>, <code>__pycache__/</code>.</li>
+</ul>
+<pre class="gitignore"><code># secrets
+.env
+*.key
+
+# data (if large / regenerable — document how to get it in README instead)
+data/raw/
+
+# machine/tooling junk
+.DS_Store
+.Rproj.user/
+__pycache__/
+*.pyc</code></pre>
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Check now</strong></p>
+</div>
+<div class="callout-content">
+<p>Run <code>git log --all --full-history -- "*.env"</code> (or search for any key-shaped string) on your S2 repo. If anything comes back, treat that key as compromised — rotate it.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="git-remotes-connecting-to-github" class="slide level2">
+<h2>Git remotes: connecting to GitHub</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ls <span class="at">-la</span> ~/.ssh          <span class="co"># do you already have a keypair?</span></span>
+<span id="cb7-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ssh-keygen <span class="at">-t</span> ed25519 <span class="at">-C</span> <span class="st">"your@email.com"</span>   <span class="co"># if not</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Copy the public key to GitHub → <em>Settings → SSH keys</em>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat ~/.ssh/id_ed25519.pub</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Add the remote and push:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git remote add origin git@github.com:YOUR_USER/YOUR_REPO.git</span>
+<span id="cb9-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git push <span class="at">-u</span> origin main</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>origin</code> is just a name (convention); <code>-u</code> sets <code>main</code> as the tracked upstream so future <code>git push</code> needs no arguments.</p>
+</section>
+<section id="branching-briefly" class="slide level2">
+<h2>Branching, briefly</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git checkout <span class="at">-b</span> restructure   <span class="co"># new branch for the S3 rework</span></span>
+<span id="cb10-2"><a aria-hidden="true" tabindex="-1"></a><span class="co"># ... move files, edit AGENTS.md, fix paths ...</span></span>
+<span id="cb10-3"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git push origin restructure</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Why bother for a solo course project? Because agent-assisted changes can be large and wrong in ways that are hard to spot mid-edit. A branch lets you review the whole diff before merging into <code>main</code> — the same discipline this course’s own repo uses (<code>agentic-redesign</code> → feature branches → review → merge).</p>
+</section>
+<section id="project-level-agent-config-the-rules-file" class="slide level2">
+<h2>Project-level agent config: the rules file</h2>
+<p>OpenCode (and most harnesses) read a project-level instructions file at the repo root — conventionally <code>AGENTS.md</code>. Standing instructions go here instead of being re-typed into every prompt.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb11-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu"># Agent instructions for this repo</span></span>
+<span id="cb11-2"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">## Stack</span></span>
+<span id="cb11-4"><a aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>R (&gt;= 4.3) and Python (&gt;= 3.11), see README for exact deps.</span>
+<span id="cb11-5"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a aria-hidden="true" tabindex="-1"></a><span class="fu">## Conventions</span></span>
+<span id="cb11-7"><a aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>No hardcoded absolute paths. Use <span class="in">`here::here()`</span> in R,</span>
+<span id="cb11-8"><a aria-hidden="true" tabindex="-1"></a>  <span class="in">`Path(__file__)`</span>-relative paths in Python.</span>
+<span id="cb11-9"><a aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Every function in <span class="in">`R/`</span> or <span class="in">`src/`</span> should have a corresponding</span>
+<span id="cb11-10"><a aria-hidden="true" tabindex="-1"></a>  test in <span class="in">`tests/`</span>.</span>
+<span id="cb11-11"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-12"><a aria-hidden="true" tabindex="-1"></a><span class="fu">## Before declaring a task done</span></span>
+<span id="cb11-13"><a aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>Run the test suite (<span class="in">`Rscript tests/run_all.R`</span> or <span class="in">`pytest`</span>) and</span>
+<span id="cb11-14"><a aria-hidden="true" tabindex="-1"></a>  confirm it passes. Do not just say tests would pass.</span>
+<span id="cb11-15"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-16"><a aria-hidden="true" tabindex="-1"></a><span class="fu">## Do not touch</span></span>
+<span id="cb11-17"><a aria-hidden="true" tabindex="-1"></a><span class="ss">- </span><span class="in">`data/raw/`</span> is read-only — never overwrite raw source data.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Exercise 3 — write your AGENTS.md</strong></p>
+</div>
+<div class="callout-content">
+<p>Write one for your S2 repo. Keep it short. Then start a <strong>fresh</strong> agent session and ask for a trivial change. Check whether it actually followed a rule you set (e.g.&nbsp;did it run the tests before saying it was done?).</p>
+</div>
+</div>
+</div>
+</section>
+<section id="model-pinning" class="slide level2">
+<h2>Model pinning</h2>
+<p>“It worked when I tried it” is not reproducible if you don’t know <em>which model</em> you tried it with. Models get updated, deprecated, or silently change behavior server-side.</p>
+<ul>
+<li>Record which model + provider you used to build/validate the pipeline (e.g.&nbsp;<code>openrouter/deepseek-v3.2:free</code>, checked 2026-09-20) in your README or <code>AGENTS.md</code>.</li>
+<li>If your harness supports pinning a specific model version, do that for anything you intend to reproduce later.</li>
+<li>This matters most for S9 (cost) and S11 (reproducibility) — you’re planting the flag now that lets you later answer “did the pipeline change, or did the model change?”</li>
+</ul>
+</section>
+<section id="prompt-archiving" class="slide level2">
+<h2>Prompt archiving</h2>
+<p><code>git log</code> records what your <strong>code</strong> looked like at each commit. It does not record what you <strong>asked the agent</strong> to get there.</p>
+<pre><code>prompts/
+├── 2026-09-20-restructure-layout.md
+└── 2026-09-20-add-agents-md.md</code></pre>
+<p>Each file: the prompt you gave, plus optionally a one-line note on what you had to correct afterward — material you’ll reuse for your S11 checklist.</p>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Why bother</strong></p>
+</div>
+<div class="callout-content">
+<p><code>git log</code> answers “what changed.” A prompt archive answers “why” — in an agent-assisted world, “why” often means “what did I ask for.”</p>
+</div>
+</div>
+</div>
+</section>
+<section id="package-structure-as-a-reproducibility-unit" class="slide level2">
+<h2>Package structure as a reproducibility unit</h2>
+<p><em>(absorbs old <a href="./09-R-packages.html">Building R packages</a> — not “how to publish to CRAN,” but “structure is what makes a project reproducible”)</em></p>
+<p>A package (R) or installable module (Python) is the strict, tooling-enforced version of everything above: declared dependencies, fixed internal layout, a built-in place for tests.</p>
+<p><strong>R — minimal skeleton:</strong></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devtools)</span>
+<span id="cb13-2"><a aria-hidden="true" tabindex="-1"></a><span class="fu">create_package</span>(<span class="st">"~/myproject"</span>)</span>
+<span id="cb13-3"><a aria-hidden="true" tabindex="-1"></a><span class="fu">use_git</span>()</span>
+<span id="cb13-4"><a aria-hidden="true" tabindex="-1"></a><span class="fu">use_r</span>(<span class="st">"clean_data"</span>)       <span class="co"># creates R/clean_data.R</span></span>
+<span id="cb13-5"><a aria-hidden="true" tabindex="-1"></a><span class="fu">use_testthat</span>()</span>
+<span id="cb13-6"><a aria-hidden="true" tabindex="-1"></a><span class="fu">use_test</span>(<span class="st">"clean_data"</span>)    <span class="co"># creates tests/testthat/test-clean_data.R</span></span>
+<span id="cb13-7"><a aria-hidden="true" tabindex="-1"></a><span class="fu">document</span>()</span>
+<span id="cb13-8"><a aria-hidden="true" tabindex="-1"></a><span class="fu">check</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="package-structure-python-side" class="slide level2">
+<h2>Package structure — Python side</h2>
+<pre><code>myproject/
+├── pyproject.toml     # declares deps + build system
+├── src/myproject/
+│   ├── __init__.py
+│   └── clean_data.py
+└── tests/
+    └── test_clean_data.py</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">-e</span> .     <span class="co"># editable install</span></span>
+<span id="cb15-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">pytest</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Common thread: dependencies are <strong>declared</strong>, not just “whatever happened to be installed,” and tests live where a human <em>and an agent</em> will look for them by convention.</p>
+<div class="callout callout-note callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Exercise 4 (optional)</strong></p>
+</div>
+<div class="callout-content">
+<p>Turn one small function from your S2 scripts into a minimal package/module using the skeleton above, with one test. Full package-publishing depth (vignettes, <code>pkgdown</code>, GitHub Actions CI) is in the <a href="https://r-pkgs.org"><code>r-pkgs</code></a> book if you want to go further.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="deliverable" class="slide level2">
+<h2>Deliverable</h2>
+<p>By the end of this session your S2 repo should have:</p>
+<ul>
+<li>no hardcoded absolute paths (verify by running from a different working directory)</li>
+<li>the standard layout (<code>README.md</code>, <code>AGENTS.md</code>, <code>data/</code>, source folder, <code>tests/</code>)</li>
+<li>a <code>.gitignore</code> that keeps secrets and junk out of history</li>
+<li>a README a stranger — or a fresh agent session — could follow cold</li>
+<li>an <code>AGENTS.md</code> with the conventions you actually want enforced</li>
+<li>a note of which model you used to build/validate it</li>
+<li>a <code>prompts/</code> folder with at least one archived prompt from this session</li>
+</ul>
+</section>
+<section id="key-points" class="slide level2">
+<h2>Key points</h2>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Key points</strong></p>
+</div>
+<div class="callout-content">
+<ul>
+<li>Version control only delivers on reproducibility if the <em>project</em>, not just the <em>code</em>, is portable — no hardcoded paths, declared dependencies, discoverable structure.</li>
+<li><code>.gitignore</code> discipline keeps secrets and junk out of a history you can’t rewrite.</li>
+<li>A rules file (<code>AGENTS.md</code>) is durable context: write conventions once, have every agent session read them automatically.</li>
+<li>Model identity and prompts are part of your provenance record — you’ll need them in S9 and S11.</li>
+<li>Package structure is the strict version of “clean project layout,” useful even if you never publish anything.</li>
+</ul>
+</div>
+</div>
+</div>
 
 
 </section>
