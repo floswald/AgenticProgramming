@@ -244,7 +244,7 @@ Agents live and die by chaining exactly these primitives — reading a file, fil
 
 ::: {.callout-note}
 # Want more?
-The old, longer walk-throughs — `01-shell-intro.qmd`, `02-filedir.qmd`, `03-filework.qmd`, `04-pipes.qmd` — are still in the repo as optional reference material with more worked examples and challenges.
+The old, longer walk-throughs — [Shell Intro](01-shell-intro.qmd), [Files and Directories](02-filedir.qmd), [Working with Files and Directories](03-filework.qmd), [Pipes and Filters](04-pipes.qmd) — are still in the repo as optional reference material with more worked examples and challenges.
 :::
 
 # Part 3 — Lab: repo, script, one agent session

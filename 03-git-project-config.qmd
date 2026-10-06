@@ -26,6 +26,11 @@ Your repo currently works for *you*, on *your* machine, today. Make it work for 
 
 We won't re-teach `git init` / `add` / `commit` — you did that in S1. This session is about the parts of git and project structure that make a repo **portable and legible to an agent**, not just to you.
 
+::: {.callout-note}
+# Want more git basics?
+The old, longer walk-through — [Git Version Control](05-git.qmd) — is still in the repo as optional reference material if you want more drills on branches, merges, and conflict resolution.
+:::
+
 ---
 
 ## Why hardcoded paths break agent workflows
@@ -258,7 +263,7 @@ Each file: the prompt you gave, plus optionally a one-line note on what you had 
 
 ## Package structure as a reproducibility unit
 
-*(absorbs old `09-R-packages.qmd` — not "how to publish to CRAN," but "structure is what makes a project reproducible")*
+*(absorbs old [Building R packages](09-R-packages.qmd) — not "how to publish to CRAN," but "structure is what makes a project reproducible")*
 
 A package (R) or installable module (Python) is the strict, tooling-enforced version of everything above: declared dependencies, fixed internal layout, a built-in place for tests.
 
