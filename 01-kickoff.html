@@ -318,24 +318,12 @@ Florian Oswald
 <li><code>-d '{...}'</code> — the request body</li>
 </ul></li>
 </ul>
-<div class="callout callout-tip callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<p><strong>Why this matters</strong></p>
-</div>
-<div class="callout-content">
-<p>A harness like OpenCode is, underneath, making calls shaped exactly like this one — just automated, looped, and wired to tools. <code>opencode run</code> is <em>not</em> this: it’s the harness, already doing more.</p>
-</div>
-</div>
-</div>
 </section>
 <section id="a-bare-model-call---no-harness" class="slide level2">
 <h2>A bare model call - no harness</h2>
 <p>Pull OPENROUTER_API_KEY back out:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">OPENROUTER_API_KEY</span><span class="op">=</span><span class="va">$(</span><span class="ex">jq</span> <span class="at">-r</span> .openrouter.key ~/.local/share/opencode/auth.json<span class="va">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="fragment">
 <p>Now <code>curl</code> to openrouter:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> https://openrouter.ai/api/v1/chat/completions <span class="dt">\</span></span>
 <span id="cb2-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">-H</span> <span class="st">"Authorization: Bearer </span><span class="va">$OPENROUTER_API_KEY</span><span class="st">"</span> <span class="dt">\</span></span>
@@ -344,6 +332,7 @@ Florian Oswald
 <span id="cb2-5"><a aria-hidden="true" tabindex="-1"></a><span class="st">    "model": "google/gemma-4-31b-it:free",</span></span>
 <span id="cb2-6"><a aria-hidden="true" tabindex="-1"></a><span class="st">    "messages": [{"role": "user", "content": "Say hi in 3 words."}]</span></span>
 <span id="cb2-7"><a aria-hidden="true" tabindex="-1"></a><span class="st">  }'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
 </section>
 <section id="a-bare-model-call---no-harness-1" class="slide level2">
 <h2>A bare model call - no harness</h2>
@@ -367,23 +356,38 @@ Florian Oswald
 <li>Nemotron gives back something very different.</li>
 </ul>
 </section>
-<section id="what-actually-comes-back" class="slide level2">
+<section id="what-actually-comes-back" class="slide level2 scrollable">
 <h2>What actually comes back</h2>
-<p>Raw JSON — no harness has prettified anything yet. Trimmed:</p>
+<p>Raw JSON — no harness has prettified anything yet (full reply, scroll to see it all):</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb4-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb4-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="dt">"model"</span><span class="fu">:</span> <span class="st">"nvidia/nemotron-3.5-lightning:free"</span><span class="fu">,</span></span>
-<span id="cb4-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="dt">"choices"</span><span class="fu">:</span> <span class="ot">[</span><span class="fu">{</span></span>
-<span id="cb4-4"><a aria-hidden="true" tabindex="-1"></a>    <span class="dt">"message"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb4-5"><a aria-hidden="true" tabindex="-1"></a>      <span class="dt">"content"</span><span class="fu">:</span> <span class="st">"Hello there friend"</span><span class="fu">,</span></span>
-<span id="cb4-6"><a aria-hidden="true" tabindex="-1"></a>      <span class="dt">"reasoning"</span><span class="fu">:</span> <span class="st">"Here's a thinking process:</span><span class="ch">\n</span><span class="st">1. Analyze User Input... [718 tokens] ..."</span></span>
-<span id="cb4-7"><a aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
-<span id="cb4-8"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span><span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb4-9"><a aria-hidden="true" tabindex="-1"></a>  <span class="dt">"usage"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb4-10"><a aria-hidden="true" tabindex="-1"></a>    <span class="dt">"prompt_tokens"</span><span class="fu">:</span> <span class="dv">23</span><span class="fu">,</span></span>
-<span id="cb4-11"><a aria-hidden="true" tabindex="-1"></a>    <span class="dt">"completion_tokens"</span><span class="fu">:</span> <span class="dv">718</span><span class="fu">,</span></span>
-<span id="cb4-12"><a aria-hidden="true" tabindex="-1"></a>    <span class="dt">"total_tokens"</span><span class="fu">:</span> <span class="dv">741</span></span>
-<span id="cb4-13"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
-<span id="cb4-14"><a aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb4-2"><a aria-hidden="true" tabindex="-1"></a>    <span class="dt">"id"</span><span class="fu">:</span> <span class="st">"gen-1791877333-LPEh3Gr6fZlW2MfHTCJN"</span><span class="fu">,</span></span>
+<span id="cb4-3"><a aria-hidden="true" tabindex="-1"></a>    <span class="dt">"object"</span><span class="fu">:</span> <span class="st">"chat.completion"</span><span class="fu">,</span></span>
+<span id="cb4-4"><a aria-hidden="true" tabindex="-1"></a>    <span class="dt">"created"</span><span class="fu">:</span> <span class="dv">1791877333</span><span class="fu">,</span></span>
+<span id="cb4-5"><a aria-hidden="true" tabindex="-1"></a>    <span class="dt">"model"</span><span class="fu">:</span> <span class="st">"nvidia/nemotron-3.5-lightning:free"</span><span class="fu">,</span></span>
+<span id="cb4-6"><a aria-hidden="true" tabindex="-1"></a>    <span class="dt">"provider"</span><span class="fu">:</span> <span class="st">"Nvidia"</span><span class="fu">,</span></span>
+<span id="cb4-7"><a aria-hidden="true" tabindex="-1"></a>    <span class="dt">"choices"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb4-8"><a aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb4-9"><a aria-hidden="true" tabindex="-1"></a>            <span class="dt">"index"</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb4-10"><a aria-hidden="true" tabindex="-1"></a>            <span class="dt">"finish_reason"</span><span class="fu">:</span> <span class="st">"stop"</span><span class="fu">,</span></span>
+<span id="cb4-11"><a aria-hidden="true" tabindex="-1"></a>            <span class="dt">"message"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb4-12"><a aria-hidden="true" tabindex="-1"></a>                <span class="dt">"role"</span><span class="fu">:</span> <span class="st">"assistant"</span><span class="fu">,</span></span>
+<span id="cb4-13"><a aria-hidden="true" tabindex="-1"></a>                <span class="dt">"content"</span><span class="fu">:</span> <span class="st">"Hello there friend"</span><span class="fu">,</span></span>
+<span id="cb4-14"><a aria-hidden="true" tabindex="-1"></a>                <span class="dt">"reasoning"</span><span class="fu">:</span> <span class="st">"Here's a thinking process:</span><span class="ch">\n\n</span><span class="st">1.  **Analyze User Input:** User says </span><span class="ch">\"</span><span class="st">Say hi in 3 words.</span><span class="ch">\"\n</span><span class="st">2.  **Identify Core Task:** Greet the user, but constrained to exactly 3 words.</span><span class="ch">\n</span><span class="st">3.  **Determine Response Format:** A 3-word greeting.</span><span class="ch">\n</span><span class="st">4.  **Draft Options:** </span><span class="ch">\n</span><span class="st">   - </span><span class="ch">\"</span><span class="st">Hello there, friend!</span><span class="ch">\"</span><span class="st"> (3 words? </span><span class="ch">\"</span><span class="st">Hello there friend</span><span class="ch">\"</span><span class="st"> = 3, but exclamation might count or not. Better keep it simple.)</span><span class="ch">\n</span><span class="st">   - </span><span class="ch">\"</span><span class="st">Hi! How are you?</span><span class="ch">\"</span><span class="st"> (3 words? </span><span class="ch">\"</span><span class="st">Hi how are</span><span class="ch">\"</span><span class="st"> no, </span><span class="ch">\"</span><span class="st">Hi how are you</span><span class="ch">\"</span><span class="st"> = 4)</span><span class="ch">\n</span><span class="st">   - </span><span class="ch">\"</span><span class="st">Hello! Nice to meet.</span><span class="ch">\"</span><span class="st"> (3 words: </span><span class="ch">\"</span><span class="st">Hello nice meet</span><span class="ch">\"</span><span class="st"> no)</span><span class="ch">\n</span><span class="st">   - </span><span class="ch">\"</span><span class="st">Hi there, howdy?</span><span class="ch">\"</span><span class="st"> (3 words? </span><span class="ch">\"</span><span class="st">Hi there howdy</span><span class="ch">\"</span><span class="st"> = 3, but punctuation)</span><span class="ch">\n</span><span class="st">   - </span><span class="ch">\"</span><span class="st">Greetings! Welcome aboard.</span><span class="ch">\"</span><span class="st"> (3 words: </span><span class="ch">\"</span><span class="st">Greetings welcome aboard</span><span class="ch">\"</span><span class="st"> = 3)</span><span class="ch">\n</span><span class="st">   - </span><span class="ch">\"</span><span class="st">Hi! I'm doing well.</span><span class="ch">\"</span><span class="st"> (too long)</span><span class="ch">\n</span><span class="st">   - Simple: </span><span class="ch">\"</span><span class="st">Hello! How are?</span><span class="ch">\"</span><span class="st"> no.</span><span class="ch">\n</span><span class="st">   - Let's count carefully: </span><span class="ch">\n</span><span class="st">     - </span><span class="ch">\"</span><span class="st">Hello there friend</span><span class="ch">\"</span><span class="st"> = 3 words</span><span class="ch">\n</span><span class="st">     - </span><span class="ch">\"</span><span class="st">Hi friend how are</span><span class="ch">\"</span><span class="st"> no</span><span class="ch">\n</span><span class="st">     - </span><span class="ch">\"</span><span class="st">Greetings and salutations</span><span class="ch">\"</span><span class="st"> = 3 words? maybe too formal</span><span class="ch">\n</span><span class="st">     - </span><span class="ch">\"</span><span class="st">Hi there! Welcome</span><span class="ch">\"</span><span class="st"> = 3 words if we count punctuation separately</span><span class="ch">\n</span><span class="st">     - </span><span class="ch">\"</span><span class="st">Hello! Nice to meet</span><span class="ch">\"</span><span class="st"> = 3 words? </span><span class="ch">\"</span><span class="st">Hello nice meet</span><span class="ch">\"</span><span class="st"> = 3</span><span class="ch">\n</span><span class="st">     - Best approach: Just output exactly 3 words that form a valid greeting.</span><span class="ch">\n</span><span class="st">   - Options: </span><span class="ch">\n</span><span class="st">     - </span><span class="ch">\"</span><span class="st">Hello there friend</span><span class="ch">\"\n</span><span class="st">     - </span><span class="ch">\"</span><span class="st">Hi there buddy</span><span class="ch">\"\n</span><span class="st">     - </span><span class="ch">\"</span><span class="st">Greetings welcome friend</span><span class="ch">\"\n</span><span class="st">     - </span><span class="ch">\"</span><span class="st">Hello! Have fun</span><span class="ch">\"</span><span class="st"> - no, weird.</span><span class="ch">\n</span><span class="st">     - </span><span class="ch">\"</span><span class="st">Hi how's it going</span><span class="ch">\"</span><span class="st"> - 4 words.</span><span class="ch">\n</span><span class="st">     - </span><span class="ch">\"</span><span class="st">Hey there pal</span><span class="ch">\"</span><span class="st"> - 3 words.</span><span class="ch">\n</span><span class="st">     - </span><span class="ch">\"</span><span class="st">Welcome! Come in</span><span class="ch">\"</span><span class="st"> - 3 words.</span><span class="ch">\n</span><span class="st">   - I'll just do </span><span class="ch">\"</span><span class="st">Hello there friend</span><span class="ch">\"</span><span class="st"> or </span><span class="ch">\"</span><span class="st">Hi there buddy</span><span class="ch">\"</span><span class="st">.</span><span class="ch">\n</span><span class="st">   - Check word count: </span><span class="ch">\"</span><span class="st">Hello</span><span class="ch">\"</span><span class="st"> (1) </span><span class="ch">\"</span><span class="st">there</span><span class="ch">\"</span><span class="st"> (2) </span><span class="ch">\"</span><span class="st">friend</span><span class="ch">\"</span><span class="st"> (3). Perfect.</span><span class="ch">\n</span><span class="st">   - I'll output exactly that. No extra text. Just the 3 words.</span><span class="ch">\n</span><span class="st">   - Final: </span><span class="ch">\"</span><span class="st">Hello there friend</span><span class="ch">\"</span><span class="st">. I'll go with that.</span><span class="ch">\n</span><span class="st">   - Output: </span><span class="ch">\"</span><span class="st">Hello there friend</span><span class="ch">\"</span><span class="st"> ✅</span><span class="ch">\n</span><span class="st">   - Let's double-check: 3 words, greets the user. Perfect.</span><span class="ch">\n</span><span class="st">   - I'll output exactly that. ✅"</span></span>
+<span id="cb4-15"><a aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb4-16"><a aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb4-17"><a aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb4-18"><a aria-hidden="true" tabindex="-1"></a>    <span class="dt">"usage"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb4-19"><a aria-hidden="true" tabindex="-1"></a>        <span class="dt">"prompt_tokens"</span><span class="fu">:</span> <span class="dv">23</span><span class="fu">,</span></span>
+<span id="cb4-20"><a aria-hidden="true" tabindex="-1"></a>        <span class="dt">"completion_tokens"</span><span class="fu">:</span> <span class="dv">718</span><span class="fu">,</span></span>
+<span id="cb4-21"><a aria-hidden="true" tabindex="-1"></a>        <span class="dt">"total_tokens"</span><span class="fu">:</span> <span class="dv">741</span><span class="fu">,</span></span>
+<span id="cb4-22"><a aria-hidden="true" tabindex="-1"></a>        <span class="dt">"cost"</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb4-23"><a aria-hidden="true" tabindex="-1"></a>        <span class="dt">"completion_tokens_details"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb4-24"><a aria-hidden="true" tabindex="-1"></a>            <span class="dt">"reasoning_tokens"</span><span class="fu">:</span> <span class="dv">713</span><span class="fu">,</span></span>
+<span id="cb4-25"><a aria-hidden="true" tabindex="-1"></a>            <span class="dt">"image_tokens"</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb4-26"><a aria-hidden="true" tabindex="-1"></a>            <span class="dt">"audio_tokens"</span><span class="fu">:</span> <span class="dv">0</span></span>
+<span id="cb4-27"><a aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb4-28"><a aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb4-29"><a aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="what-actually-comes-back-1" class="slide level2">
 <h2>What actually comes back</h2>
