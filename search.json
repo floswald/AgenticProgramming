@@ -1890,7 +1890,7 @@
     "href": "00-prework.html",
     "title": "S0 — Before Session 1: Accounts & Install",
     "section": "",
-    "text": "Session 1 is in-person and short. If we spend it watching 20 people sign up for accounts, we lose the lesson. Do everything on this page before Session 1. Bring your laptop with all of it working — we will spot-check at the start of Session 1 and troubleshoot only what’s still broken.\nBudget 30–45 minutes. If something doesn’t work, don’t spend hours on it — note where you got stuck and bring that to Session 1.\nDeadline: finish this at least 2 days before Session 1, so there’s time to fix anything that doesn’t work. You’ll get a reminder beforehand asking you to confirm you’re set up.\n\n\n\n\n\n\nTipObjectives\n\n\n\n\nHave a working terminal (shell) on your machine.\nHave git installed.\nHave an API key for an LLM provider (free tier is fine).\nHave opencode installed and successfully talking to that provider.\n© Florian Oswald, 2026",
+    "text": "Session 1 is in-person and short. If we spend it watching 20 people sign up for accounts, we lose the lesson. Do everything on this page before Session 1. Bring your laptop with all of it working — we will spot-check at the start of Session 1 and troubleshoot only what’s still broken.\nBudget 30–45 minutes. If something doesn’t work, don’t spend hours on it — note where you got stuck and bring that to Session 1.\nDeadline: finish this at least 2 days before Session 1, so there’s time to fix anything that doesn’t work. You’ll get a reminder beforehand asking you to confirm you’re set up.\n\n\n\n\n\n\nTipObjectives\n\n\n\n\nHave a working terminal (shell) on your machine.\nHave git installed.\nHave an API key for an LLM provider (free tier is fine).\nHave opencode installed and successfully talking to that provider.\nHave a Python virtual environment with the libraries the R/Quarto notebooks need.\n© Florian Oswald, 2026",
     "crumbs": [
       "Home",
       "Sessions:",
@@ -1902,7 +1902,7 @@
     "href": "00-prework.html#why-this-page-exists",
     "title": "S0 — Before Session 1: Accounts & Install",
     "section": "",
-    "text": "Session 1 is in-person and short. If we spend it watching 20 people sign up for accounts, we lose the lesson. Do everything on this page before Session 1. Bring your laptop with all of it working — we will spot-check at the start of Session 1 and troubleshoot only what’s still broken.\nBudget 30–45 minutes. If something doesn’t work, don’t spend hours on it — note where you got stuck and bring that to Session 1.\nDeadline: finish this at least 2 days before Session 1, so there’s time to fix anything that doesn’t work. You’ll get a reminder beforehand asking you to confirm you’re set up.\n\n\n\n\n\n\nTipObjectives\n\n\n\n\nHave a working terminal (shell) on your machine.\nHave git installed.\nHave an API key for an LLM provider (free tier is fine).\nHave opencode installed and successfully talking to that provider.",
+    "text": "Session 1 is in-person and short. If we spend it watching 20 people sign up for accounts, we lose the lesson. Do everything on this page before Session 1. Bring your laptop with all of it working — we will spot-check at the start of Session 1 and troubleshoot only what’s still broken.\nBudget 30–45 minutes. If something doesn’t work, don’t spend hours on it — note where you got stuck and bring that to Session 1.\nDeadline: finish this at least 2 days before Session 1, so there’s time to fix anything that doesn’t work. You’ll get a reminder beforehand asking you to confirm you’re set up.\n\n\n\n\n\n\nTipObjectives\n\n\n\n\nHave a working terminal (shell) on your machine.\nHave git installed.\nHave an API key for an LLM provider (free tier is fine).\nHave opencode installed and successfully talking to that provider.\nHave a Python virtual environment with the libraries the R/Quarto notebooks need.",
     "crumbs": [
       "Home",
       "Sessions:",
@@ -1970,11 +1970,23 @@
     ]
   },
   {
-    "objectID": "00-prework.html#smoke-test",
-    "href": "00-prework.html#smoke-test",
+    "objectID": "00-prework.html#smoke-test-opencode",
+    "href": "00-prework.html#smoke-test-opencode",
     "title": "S0 — Before Session 1: Accounts & Install",
-    "section": "6. Smoke test",
-    "text": "6. Smoke test\nIn an empty folder:\nmkdir opencode-test && cd opencode-test\nopencode\nAt the prompt, type:\nsay hello and tell me what model you are\nIf you get a sensible reply, you’re done. Exit with Ctrl+D or /exit.",
+    "section": "6. Smoke test (OpenCode)",
+    "text": "6. Smoke test (OpenCode)\nIn an empty folder:\nmkdir opencode-test && cd opencode-test\nopencode\nAt the prompt, type:\nsay hello and tell me what model you are\nIf you get a sensible reply, you’re done. Exit with Ctrl+D or /exit.",
+    "crumbs": [
+      "Home",
+      "Sessions:",
+      "S0. Accounts & Install"
+    ]
+  },
+  {
+    "objectID": "00-prework.html#set-up-python-for-the-rquarto-notebooks",
+    "href": "00-prework.html#set-up-python-for-the-rquarto-notebooks",
+    "title": "S0 — Before Session 1: Accounts & Install",
+    "section": "7. Set up Python (for the R/Quarto notebooks)",
+    "text": "7. Set up Python (for the R/Quarto notebooks)\nSome sessions mix R and Python in the same .qmd file via reticulate — the Python chunks need a real interpreter with a few libraries installed. This route is identical on WSL2 Ubuntu, Linux, and macOS: a plain Python virtual environment, no conda required.\nIf python3 --version fails, install it first: macOS — brew install python3; WSL2/Linux — sudo apt update && sudo apt install python3 python3-venv -y.\npython3 -m venv ~/.venvs/agentic-programming\nsource ~/.venvs/agentic-programming/bin/activate\npip install --upgrade pip\npip install numpy pandas \"ibis-framework[duckdb]\"\ndeactivate\nCheck it:\n~/.venvs/agentic-programming/bin/python -c \"import numpy, pandas, ibis; print('ok')\"",
     "crumbs": [
       "Home",
       "Sessions:",
@@ -1986,7 +1998,7 @@
     "href": "00-prework.html#checklist",
     "title": "S0 — Before Session 1: Accounts & Install",
     "section": "Checklist",
-    "text": "Checklist\nWork through this list yourself before Session 1 — there’s nothing to submit, but you should be able to tick off every item honestly. We will spot-check at the start of Session 1, and you’ll get a reminder before then if you haven’t confirmed you’re done.\n\nTerminal opens (macOS Terminal or WSL2 Ubuntu)\ngit --version works\nAPI key obtained from OpenRouter or Gemini, saved somewhere safe\nopencode --version works\nopencode auth login completed\nSmoke test in step 6 returned a real answer\n\n(These boxes don’t save state on this page — treat this as a checklist to go through yourself, not a form.)",
+    "text": "Checklist\nWork through this list yourself before Session 1 — there’s nothing to submit, but you should be able to tick off every item honestly. We will spot-check at the start of Session 1, and you’ll get a reminder before then if you haven’t confirmed you’re done.\n\nTerminal opens (macOS Terminal or WSL2 Ubuntu)\ngit --version works\nAPI key obtained from OpenRouter or Gemini, saved somewhere safe\nopencode --version works\nopencode auth login completed\nSmoke test in step 6 returned a real answer\nPython venv created, libraries installed, check in step 7 printed ok\n\n(These boxes don’t save state on this page — treat this as a checklist to go through yourself, not a form.)",
     "crumbs": [
       "Home",
       "Sessions:",

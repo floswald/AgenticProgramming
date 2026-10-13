@@ -275,7 +275,8 @@ gtag('config', 'G-TQGG8QBSRH', { 'anonymize_ip': true});
   <li><a href="#get-a-free-llm-api-key" id="toc-get-a-free-llm-api-key" class="nav-link" data-scroll-target="#get-a-free-llm-api-key">3. Get a free LLM API key</a></li>
   <li><a href="#install-opencode" id="toc-install-opencode" class="nav-link" data-scroll-target="#install-opencode">4. Install OpenCode</a></li>
   <li><a href="#connect-opencode-to-your-provider" id="toc-connect-opencode-to-your-provider" class="nav-link" data-scroll-target="#connect-opencode-to-your-provider">5. Connect OpenCode to your provider</a></li>
-  <li><a href="#smoke-test" id="toc-smoke-test" class="nav-link" data-scroll-target="#smoke-test">6. Smoke test</a></li>
+  <li><a href="#smoke-test-opencode" id="toc-smoke-test-opencode" class="nav-link" data-scroll-target="#smoke-test-opencode">6. Smoke test (OpenCode)</a></li>
+  <li><a href="#set-up-python-for-the-rquarto-notebooks" id="toc-set-up-python-for-the-rquarto-notebooks" class="nav-link" data-scroll-target="#set-up-python-for-the-rquarto-notebooks">7. Set up Python (for the R/Quarto notebooks)</a></li>
   <li><a href="#checklist" id="toc-checklist" class="nav-link" data-scroll-target="#checklist">Checklist</a></li>
   <li><a href="#stuck" id="toc-stuck" class="nav-link" data-scroll-target="#stuck">Stuck?</a></li>
   </ul>
@@ -335,6 +336,7 @@ gtag('config', 'G-TQGG8QBSRH', { 'anonymize_ip': true});
 <li>Have <code>git</code> installed.</li>
 <li>Have an API key for an LLM provider (free tier is fine).</li>
 <li>Have <code>opencode</code> installed and successfully talking to that provider.</li>
+<li>Have a Python virtual environment with the libraries the R/Quarto notebooks need.</li>
 </ul>
 </div>
 </div>
@@ -400,14 +402,26 @@ gtag('config', 'G-TQGG8QBSRH', { 'anonymize_ip': true});
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">opencode</span> auth login</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Pick your provider (OpenRouter or Gemini) and paste the API key from step 3 when asked. OpenCode stores it locally, not in your project files.</p>
 </section>
-<section id="smoke-test" class="level2">
-<h2 class="anchored" data-anchor-id="smoke-test">6. Smoke test</h2>
+<section id="smoke-test-opencode" class="level2">
+<h2 class="anchored" data-anchor-id="smoke-test-opencode">6. Smoke test (OpenCode)</h2>
 <p>In an empty folder:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> opencode-test <span class="kw">&amp;&amp;</span> <span class="bu">cd</span> opencode-test</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">opencode</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>At the prompt, type:</p>
 <pre><code>say hello and tell me what model you are</code></pre>
 <p>If you get a sensible reply, you’re done. Exit with <code>Ctrl+D</code> or <code>/exit</code>.</p>
+</section>
+<section id="set-up-python-for-the-rquarto-notebooks" class="level2">
+<h2 class="anchored" data-anchor-id="set-up-python-for-the-rquarto-notebooks">7. Set up Python (for the R/Quarto notebooks)</h2>
+<p>Some sessions mix R and Python in the same <code>.qmd</code> file via <code>reticulate</code> — the Python chunks need a real interpreter with a few libraries installed. This route is identical on WSL2 Ubuntu, Linux, and macOS: a plain Python virtual environment, no conda required.</p>
+<p>If <code>python3 --version</code> fails, install it first: <strong>macOS</strong> — <code>brew install python3</code>; <strong>WSL2/Linux</strong> — <code>sudo apt update &amp;&amp; sudo apt install python3 python3-venv -y</code>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> venv ~/.venvs/agentic-programming</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="bu">source</span> ~/.venvs/agentic-programming/bin/activate</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install <span class="at">--upgrade</span> pip</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install numpy pandas <span class="st">"ibis-framework[duckdb]"</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="ex">deactivate</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Check it:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">~/.venvs/agentic-programming/bin/python</span> <span class="at">-c</span> <span class="st">"import numpy, pandas, ibis; print('ok')"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="checklist" class="level2">
 <h2 class="anchored" data-anchor-id="checklist">Checklist</h2>
@@ -419,6 +433,7 @@ gtag('config', 'G-TQGG8QBSRH', { 'anonymize_ip': true});
 <li><label><input type="checkbox"><code>opencode --version</code> works</label></li>
 <li><label><input type="checkbox"><code>opencode auth login</code> completed</label></li>
 <li><label><input type="checkbox">Smoke test in step 6 returned a real answer</label></li>
+<li><label><input type="checkbox">Python venv created, libraries installed, check in step 7 printed <code>ok</code></label></li>
 </ul>
 <p>(These boxes don’t save state on this page — treat this as a checklist to go through yourself, not a form.)</p>
 </section>
