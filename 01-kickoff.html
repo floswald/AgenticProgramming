@@ -219,7 +219,7 @@ Florian Oswald
 </div>
 </div>
 
-  <p class="date">6 October, 2026</p>
+  <p class="date">13 October, 2026</p>
 </section>
 <section id="before-we-start" class="slide level2">
 <h2>Before we start</h2>
@@ -305,6 +305,93 @@ Florian Oswald
 </div>
 </div>
 </div>
+</section>
+<section id="curl-asking-a-server-for-replies" class="slide level2">
+<h2><code>curl</code> : asking a server for replies</h2>
+<ul>
+<li><code>curl</code> sends an HTTP request from your terminal to a URL and prints the response.</li>
+<li>Pieces of the command:
+<ul>
+<li><code>https://openrouter.ai/api/v1/chat/completions</code> — the endpoint we’re POSTing to.</li>
+<li><code>-H "Authorization: Bearer $OPENROUTER_API_KEY"</code> — a header proving who’s paying (your API key, read from an environment variable).</li>
+<li><code>-H "Content-Type: application/json"</code> — tells the server the body is JSON.</li>
+<li><code>-d '{...}'</code> — the request body</li>
+</ul></li>
+</ul>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Why this matters</strong></p>
+</div>
+<div class="callout-content">
+<p>A harness like OpenCode is, underneath, making calls shaped exactly like this one — just automated, looped, and wired to tools. <code>opencode run</code> is <em>not</em> this: it’s the harness, already doing more.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="a-bare-model-call---no-harness" class="slide level2">
+<h2>A bare model call - no harness</h2>
+<p>Pull OPENROUTER_API_KEY back out:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">OPENROUTER_API_KEY</span><span class="op">=</span><span class="va">$(</span><span class="ex">jq</span> <span class="at">-r</span> .openrouter.key ~/.local/share/opencode/auth.json<span class="va">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Now <code>curl</code> to openrouter:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> https://openrouter.ai/api/v1/chat/completions <span class="dt">\</span></span>
+<span id="cb2-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">-H</span> <span class="st">"Authorization: Bearer </span><span class="va">$OPENROUTER_API_KEY</span><span class="st">"</span> <span class="dt">\</span></span>
+<span id="cb2-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">-H</span> <span class="st">"Content-Type: application/json"</span> <span class="dt">\</span></span>
+<span id="cb2-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">-d</span> <span class="st">'{</span></span>
+<span id="cb2-5"><a aria-hidden="true" tabindex="-1"></a><span class="st">    "model": "google/gemma-4-31b-it:free",</span></span>
+<span id="cb2-6"><a aria-hidden="true" tabindex="-1"></a><span class="st">    "messages": [{"role": "user", "content": "Say hi in 3 words."}]</span></span>
+<span id="cb2-7"><a aria-hidden="true" tabindex="-1"></a><span class="st">  }'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="a-bare-model-call---no-harness-1" class="slide level2">
+<h2>A bare model call - no harness</h2>
+<ul>
+<li>It can’t read your disk, can’t run <code>ls</code>, can’t edit a file. It replies with text, and that’s the entire interaction.</li>
+<li>Everything from here — reading files, running commands, looping — is the harness’s job, not the model’s.</li>
+</ul>
+</section>
+<section id="try-another-model" class="slide level2">
+<h2>Try another model</h2>
+<p>Same request, just swap the <code>"model"</code> field — everything else is identical:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> https://openrouter.ai/api/v1/chat/completions <span class="dt">\</span></span>
+<span id="cb3-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">-H</span> <span class="st">"Authorization: Bearer </span><span class="va">$OPENROUTER_API_KEY</span><span class="st">"</span> <span class="dt">\</span></span>
+<span id="cb3-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">-H</span> <span class="st">"Content-Type: application/json"</span> <span class="dt">\</span></span>
+<span id="cb3-4"><a aria-hidden="true" tabindex="-1"></a>  <span class="at">-d</span> <span class="st">'{</span></span>
+<span id="cb3-5"><a aria-hidden="true" tabindex="-1"></a><span class="st">    "model": "nvidia/nemotron-3.5-lightning:free",</span></span>
+<span id="cb3-6"><a aria-hidden="true" tabindex="-1"></a><span class="st">    "messages": [{"role": "user", "content": "Say hi in 3 words."}]</span></span>
+<span id="cb3-7"><a aria-hidden="true" tabindex="-1"></a><span class="st">  }'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li>Gemma gave back something like <code>"content": "Hi there friend!"</code> — short, no extra fields.</li>
+<li>Nemotron gives back something very different.</li>
+</ul>
+</section>
+<section id="what-actually-comes-back" class="slide level2">
+<h2>What actually comes back</h2>
+<p>Raw JSON — no harness has prettified anything yet. Trimmed:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb4-1"><a aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb4-2"><a aria-hidden="true" tabindex="-1"></a>  <span class="dt">"model"</span><span class="fu">:</span> <span class="st">"nvidia/nemotron-3.5-lightning:free"</span><span class="fu">,</span></span>
+<span id="cb4-3"><a aria-hidden="true" tabindex="-1"></a>  <span class="dt">"choices"</span><span class="fu">:</span> <span class="ot">[</span><span class="fu">{</span></span>
+<span id="cb4-4"><a aria-hidden="true" tabindex="-1"></a>    <span class="dt">"message"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb4-5"><a aria-hidden="true" tabindex="-1"></a>      <span class="dt">"content"</span><span class="fu">:</span> <span class="st">"Hello there friend"</span><span class="fu">,</span></span>
+<span id="cb4-6"><a aria-hidden="true" tabindex="-1"></a>      <span class="dt">"reasoning"</span><span class="fu">:</span> <span class="st">"Here's a thinking process:</span><span class="ch">\n</span><span class="st">1. Analyze User Input... [718 tokens] ..."</span></span>
+<span id="cb4-7"><a aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb4-8"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb4-9"><a aria-hidden="true" tabindex="-1"></a>  <span class="dt">"usage"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb4-10"><a aria-hidden="true" tabindex="-1"></a>    <span class="dt">"prompt_tokens"</span><span class="fu">:</span> <span class="dv">23</span><span class="fu">,</span></span>
+<span id="cb4-11"><a aria-hidden="true" tabindex="-1"></a>    <span class="dt">"completion_tokens"</span><span class="fu">:</span> <span class="dv">718</span><span class="fu">,</span></span>
+<span id="cb4-12"><a aria-hidden="true" tabindex="-1"></a>    <span class="dt">"total_tokens"</span><span class="fu">:</span> <span class="dv">741</span></span>
+<span id="cb4-13"><a aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb4-14"><a aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="what-actually-comes-back-1" class="slide level2">
+<h2>What actually comes back</h2>
+<ul>
+<li>The answer you wanted — <code>"Hello there friend"</code> — is one field. <code>reasoning</code> is a <em>separate</em> field: the model talking to itself before answering.</li>
+<li>23 tokens in, <strong>718 tokens out</strong>, almost all of it scratch work you never asked for, to produce a 3-word reply.</li>
+<li>This is a <em>reasoning model</em>: it generates a hidden chain of thought before committing to an answer. More tokens, more latency, more cost — for better accuracy on hard problems. Whether that trade is worth it is S5.</li>
+</ul>
 </section>
 <section id="the-harness" class="slide level2">
 <h2>2. The harness</h2>
@@ -398,25 +485,25 @@ Florian Oswald
 </section>
 <section id="my-filesystem" class="slide level2">
 <h2>My filesystem</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> tree <span class="ex">-L</span> 1 /</span>
-<span id="cb1-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">/</span></span>
-<span id="cb1-3"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> Applications</span>
-<span id="cb1-4"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> bin</span>
-<span id="cb1-5"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> cores</span>
-<span id="cb1-6"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> dev</span>
-<span id="cb1-7"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> etc <span class="at">-</span><span class="op">&gt;</span> private/etc</span>
-<span id="cb1-8"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> home <span class="at">-</span><span class="op">&gt;</span> /System/Volumes/Data/home</span>
-<span id="cb1-9"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> Library</span>
-<span id="cb1-10"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> Network <span class="at">-</span><span class="op">&gt;</span> /System/Volumes/Data/Network</span>
-<span id="cb1-11"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> opt</span>
-<span id="cb1-12"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> private</span>
-<span id="cb1-13"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> sbin</span>
-<span id="cb1-14"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> System</span>
-<span id="cb1-15"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> tmp <span class="at">-</span><span class="op">&gt;</span> private/tmp</span>
-<span id="cb1-16"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> Users</span>
-<span id="cb1-17"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> usr</span>
-<span id="cb1-18"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> var <span class="at">-</span><span class="op">&gt;</span> private/var</span>
-<span id="cb1-19"><a aria-hidden="true" tabindex="-1"></a><span class="ex">└──</span> Volumes</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> tree <span class="ex">-L</span> 1 /</span>
+<span id="cb5-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">/</span></span>
+<span id="cb5-3"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> Applications</span>
+<span id="cb5-4"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> bin</span>
+<span id="cb5-5"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> cores</span>
+<span id="cb5-6"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> dev</span>
+<span id="cb5-7"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> etc <span class="at">-</span><span class="op">&gt;</span> private/etc</span>
+<span id="cb5-8"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> home <span class="at">-</span><span class="op">&gt;</span> /System/Volumes/Data/home</span>
+<span id="cb5-9"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> Library</span>
+<span id="cb5-10"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> Network <span class="at">-</span><span class="op">&gt;</span> /System/Volumes/Data/Network</span>
+<span id="cb5-11"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> opt</span>
+<span id="cb5-12"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> private</span>
+<span id="cb5-13"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> sbin</span>
+<span id="cb5-14"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> System</span>
+<span id="cb5-15"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> tmp <span class="at">-</span><span class="op">&gt;</span> private/tmp</span>
+<span id="cb5-16"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> Users</span>
+<span id="cb5-17"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> usr</span>
+<span id="cb5-18"><a aria-hidden="true" tabindex="-1"></a><span class="ex">├──</span> var <span class="at">-</span><span class="op">&gt;</span> private/var</span>
+<span id="cb5-19"><a aria-hidden="true" tabindex="-1"></a><span class="ex">└──</span> Volumes</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
 <li>Mac: <code>brew install tree</code></li>
 <li>WSL2/Linux: <code>sudo apt install tree</code></li>
@@ -424,20 +511,20 @@ Florian Oswald
 </section>
 <section id="where-am-i-whats-here" class="slide level2">
 <h2>Where am I, what’s here</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> pwd          <span class="co"># print working directory — where am I?</span></span>
-<span id="cb2-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ls           <span class="co"># list what's in the current directory</span></span>
-<span id="cb2-3"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ls <span class="at">-l</span>        <span class="co"># long form: sizes, dates</span></span>
-<span id="cb2-4"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ls <span class="at">-a</span>        <span class="co"># show hidden files too (dotfiles)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> pwd          <span class="co"># print working directory — where am I?</span></span>
+<span id="cb6-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ls           <span class="co"># list what's in the current directory</span></span>
+<span id="cb6-3"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ls <span class="at">-l</span>        <span class="co"># long form: sizes, dates</span></span>
+<span id="cb6-4"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ls <span class="at">-a</span>        <span class="co"># show hidden files too (dotfiles)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
 <li><code>pwd</code> and <code>ls</code> are your two most-used commands. Use them constantly, especially right before you let an agent touch anything.</li>
 </ul>
 </section>
 <section id="moving-around" class="slide level2">
 <h2>Moving around</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd some-directory     <span class="co"># go into a subdirectory</span></span>
-<span id="cb3-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ..                 <span class="co"># go up one level</span></span>
-<span id="cb3-3"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~                  <span class="co"># go home</span></span>
-<span id="cb3-4"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd <span class="at">-</span>                  <span class="co"># go back to wherever you just were</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd some-directory     <span class="co"># go into a subdirectory</span></span>
+<span id="cb7-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ..                 <span class="co"># go up one level</span></span>
+<span id="cb7-3"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd ~                  <span class="co"># go home</span></span>
+<span id="cb7-4"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cd <span class="at">-</span>                  <span class="co"># go back to wherever you just were</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-note callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
@@ -454,13 +541,13 @@ Florian Oswald
 </section>
 <section id="making-and-removing-things" class="slide level2">
 <h2>Making and removing things</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> mkdir my-project          <span class="co"># make a directory</span></span>
-<span id="cb4-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> mkdir <span class="at">-p</span> a/b/c             <span class="co"># make nested directories at once</span></span>
-<span id="cb4-3"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> touch script.py            <span class="co"># create an empty file</span></span>
-<span id="cb4-4"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> mv old-name.py new-name.py <span class="co"># rename (or move) a file</span></span>
-<span id="cb4-5"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cp script.py backup.py     <span class="co"># copy a file</span></span>
-<span id="cb4-6"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rm backup.py               <span class="co"># delete — no trash bin, this is permanent</span></span>
-<span id="cb4-7"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> nano script.py             <span class="co"># edit the file's contents (Ctrl+X to exit, saving)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> mkdir my-project          <span class="co"># make a directory</span></span>
+<span id="cb8-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> mkdir <span class="at">-p</span> a/b/c             <span class="co"># make nested directories at once</span></span>
+<span id="cb8-3"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> touch script.py            <span class="co"># create an empty file</span></span>
+<span id="cb8-4"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> mv old-name.py new-name.py <span class="co"># rename (or move) a file</span></span>
+<span id="cb8-5"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cp script.py backup.py     <span class="co"># copy a file</span></span>
+<span id="cb8-6"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> rm backup.py               <span class="co"># delete — no trash bin, this is permanent</span></span>
+<span id="cb8-7"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> nano script.py             <span class="co"># edit the file's contents (Ctrl+X to exit, saving)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-note callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
@@ -490,10 +577,10 @@ Florian Oswald
 </section>
 <section id="looking-inside-files" class="slide level2">
 <h2>Looking inside files</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat script.py       <span class="co"># print the whole file to screen</span></span>
-<span id="cb5-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> head <span class="at">-n</span> 5 file.csv  <span class="co"># first 5 lines</span></span>
-<span id="cb5-3"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> tail <span class="at">-n</span> 5 file.csv  <span class="co"># last 5 lines</span></span>
-<span id="cb5-4"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> less file.csv       <span class="co"># scroll interactively (q to quit)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat script.py       <span class="co"># print the whole file to screen</span></span>
+<span id="cb9-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> head <span class="at">-n</span> 5 file.csv  <span class="co"># first 5 lines</span></span>
+<span id="cb9-3"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> tail <span class="at">-n</span> 5 file.csv  <span class="co"># last 5 lines</span></span>
+<span id="cb9-4"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> less file.csv       <span class="co"># scroll interactively (q to quit)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="how-does-an-agent-search-your-code" class="slide level2">
 <h2>How does an agent “search” your code?</h2>
@@ -505,24 +592,24 @@ Florian Oswald
 </section>
 <section id="try-it-make-a-file-then-search-it" class="slide level2">
 <h2>Try it: make a file, then search it</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat <span class="op">&gt;</span> notes.txt <span class="op">&lt;&lt; 'EOF'</span></span>
-<span id="cb6-2"><a aria-hidden="true" tabindex="-1"></a><span class="st">TODO: write greet() in hello.py</span></span>
-<span id="cb6-3"><a aria-hidden="true" tabindex="-1"></a><span class="st">TODO: add a test for greet()</span></span>
-<span id="cb6-4"><a aria-hidden="true" tabindex="-1"></a><span class="st">done: initial commit</span></span>
-<span id="cb6-5"><a aria-hidden="true" tabindex="-1"></a><span class="st">GREETING logic lives in hello.py</span></span>
-<span id="cb6-6"><a aria-hidden="true" tabindex="-1"></a><span class="op">EOF</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat <span class="op">&gt;</span> notes.txt <span class="op">&lt;&lt; 'EOF'</span></span>
+<span id="cb10-2"><a aria-hidden="true" tabindex="-1"></a><span class="st">TODO: write greet() in hello.py</span></span>
+<span id="cb10-3"><a aria-hidden="true" tabindex="-1"></a><span class="st">TODO: add a test for greet()</span></span>
+<span id="cb10-4"><a aria-hidden="true" tabindex="-1"></a><span class="st">done: initial commit</span></span>
+<span id="cb10-5"><a aria-hidden="true" tabindex="-1"></a><span class="st">GREETING logic lives in hello.py</span></span>
+<span id="cb10-6"><a aria-hidden="true" tabindex="-1"></a><span class="op">EOF</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Now, before looking ahead — guess what each of these prints, then run it:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> grep <span class="st">"TODO"</span> notes.txt</span>
-<span id="cb7-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> grep <span class="at">-i</span> <span class="st">"greeting"</span> notes.txt</span>
-<span id="cb7-3"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> grep <span class="at">-n</span> <span class="st">"done"</span> notes.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> grep <span class="st">"TODO"</span> notes.txt</span>
+<span id="cb11-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> grep <span class="at">-i</span> <span class="st">"greeting"</span> notes.txt</span>
+<span id="cb11-3"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> grep <span class="at">-n</span> <span class="st">"done"</span> notes.txt</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="grep-searching-inside-files" class="slide level2">
 <h2><code>grep</code>: searching inside files</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb8-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> grep <span class="st">"greet"</span> hello.py            <span class="co"># lines in hello.py containing "greet"</span></span>
-<span id="cb8-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> grep <span class="at">-i</span> <span class="st">"greet"</span> hello.py         <span class="co"># case-insensitive</span></span>
-<span id="cb8-3"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> grep <span class="at">-n</span> <span class="st">"greet"</span> hello.py         <span class="co"># show line numbers</span></span>
-<span id="cb8-4"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> grep <span class="at">-r</span> <span class="st">"TODO"</span> .                 <span class="co"># recursive: search every file under .</span></span>
-<span id="cb8-5"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> grep <span class="at">-rl</span> <span class="st">"TODO"</span> .                <span class="co"># recursive, just filenames (not lines)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> grep <span class="st">"greet"</span> hello.py            <span class="co"># lines in hello.py containing "greet"</span></span>
+<span id="cb12-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> grep <span class="at">-i</span> <span class="st">"greet"</span> hello.py         <span class="co"># case-insensitive</span></span>
+<span id="cb12-3"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> grep <span class="at">-n</span> <span class="st">"greet"</span> hello.py         <span class="co"># show line numbers</span></span>
+<span id="cb12-4"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> grep <span class="at">-r</span> <span class="st">"TODO"</span> .                 <span class="co"># recursive: search every file under .</span></span>
+<span id="cb12-5"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> grep <span class="at">-rl</span> <span class="st">"TODO"</span> .                <span class="co"># recursive, just filenames (not lines)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-tip callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
@@ -539,9 +626,9 @@ Florian Oswald
 </section>
 <section id="combining-commands-redirection-and-pipes" class="slide level2">
 <h2>Combining commands: redirection and pipes</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ls <span class="op">&gt;</span> filelist.txt      <span class="co"># redirect output into a file (overwrite)</span></span>
-<span id="cb9-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ls <span class="op">&gt;&gt;</span> filelist.txt     <span class="co"># append instead of overwrite</span></span>
-<span id="cb9-3"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ls <span class="at">-l</span> <span class="kw">|</span> <span class="fu">head</span> <span class="at">-n</span> 3      <span class="co"># pipe: feed one command's output into the next</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ls <span class="op">&gt;</span> filelist.txt      <span class="co"># redirect output into a file (overwrite)</span></span>
+<span id="cb13-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ls <span class="op">&gt;&gt;</span> filelist.txt     <span class="co"># append instead of overwrite</span></span>
+<span id="cb13-3"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> ls <span class="at">-l</span> <span class="kw">|</span> <span class="fu">head</span> <span class="at">-n</span> 3      <span class="co"># pipe: feed one command's output into the next</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-tip callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
@@ -585,8 +672,8 @@ Florian Oswald
 </section>
 <section id="step-1-make-a-repo" class="slide level2">
 <h2>Step 1 — make a repo</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> mkdir s1-kickoff <span class="kw">&amp;&amp;</span> <span class="bu">cd</span> s1-kickoff</span>
-<span id="cb10-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git init</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> mkdir s1-kickoff <span class="kw">&amp;&amp;</span> <span class="bu">cd</span> s1-kickoff</span>
+<span id="cb14-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git init</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <ul>
 <li><code>git init</code> turns the current folder into a git repository — a <code>.git/</code> folder now tracks history here.</li>
 <li>We are not doing a git deep-dive today (that’s S3) — just enough to commit something.</li>
@@ -601,8 +688,8 @@ Florian Oswald
 </div>
 <div class="callout-content">
 <p>Git refuses to commit until it knows who you are. If <code>git commit</code> later complains “Please tell me who you are,” run this once (only needed the first time ever):</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git config <span class="at">--global</span> user.name <span class="st">"Your Name"</span></span>
-<span id="cb11-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git config <span class="at">--global</span> user.email <span class="st">"you@example.com"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git config <span class="at">--global</span> user.name <span class="st">"Your Name"</span></span>
+<span id="cb15-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git config <span class="at">--global</span> user.email <span class="st">"you@example.com"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -610,17 +697,17 @@ Florian Oswald
 <section id="step-2-write-a-trivial-script-commit-it" class="slide level2">
 <h2>Step 2 — write a trivial script, commit it</h2>
 <p>Pick one language — today, use whichever you’re most comfortable reading, Python is a reasonable default.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat <span class="op">&gt;</span> hello.py <span class="op">&lt;&lt; 'EOF'</span></span>
-<span id="cb12-2"><a aria-hidden="true" tabindex="-1"></a><span class="st">print("hello from s1-kickoff")</span></span>
-<span id="cb12-3"><a aria-hidden="true" tabindex="-1"></a><span class="op">EOF</span></span>
-<span id="cb12-4"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> python3 hello.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat <span class="op">&gt;</span> hello.py <span class="op">&lt;&lt; 'EOF'</span></span>
+<span id="cb16-2"><a aria-hidden="true" tabindex="-1"></a><span class="st">print("hello from s1-kickoff")</span></span>
+<span id="cb16-3"><a aria-hidden="true" tabindex="-1"></a><span class="op">EOF</span></span>
+<span id="cb16-4"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> python3 hello.py</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Then commit it:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git add hello.py</span>
-<span id="cb13-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git commit <span class="at">-m</span> <span class="st">"initial commit: trivial hello script"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git add hello.py</span>
+<span id="cb17-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git commit <span class="at">-m</span> <span class="st">"initial commit: trivial hello script"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="step-3-one-full-opencode-session" class="slide level2">
 <h2>Step 3 — one full OpenCode session</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> opencode</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> opencode</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Give it a small, checkable task, for example:</p>
 <pre><code>add a function `greet(name)` to hello.py that prints
 "hello, &lt;name&gt;, from s1-kickoff" and call it once with your own name</code></pre>
@@ -629,7 +716,7 @@ Florian Oswald
 <section id="step-4-review-before-you-trust-it" class="slide level2">
 <h2>Step 4 — review before you trust it</h2>
 <p>Before committing what the agent produced:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb16-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git diff</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git diff</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-tip callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
@@ -648,8 +735,8 @@ Florian Oswald
 </div>
 </div>
 <p>If it looks right:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb17-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git add hello.py</span>
-<span id="cb17-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git commit <span class="at">-m</span> <span class="st">"agent: add greet() via opencode, reviewed"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git add hello.py</span>
+<span id="cb21-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git commit <span class="at">-m</span> <span class="st">"agent: add greet() via opencode, reviewed"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>If it doesn’t look right, tell the agent what’s wrong and iterate — that back-and-forth <em>is</em> the skill this course is teaching.</p>
 </section>
 <section id="checklist-youre-done-when" class="slide level2">
@@ -678,7 +765,7 @@ Florian Oswald
 </section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
-<p><img src="./images/ScPo-logo.png" class="slide-logo"></p>
+<p><img src="./images/unito-red.png" class="slide-logo"></p>
 <div class="footer footer-default">
 <p><a href="https://floswald.github.io/AgenticProgramming/">Agentic Programming</a></p>
 </div>

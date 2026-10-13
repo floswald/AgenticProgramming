@@ -1550,6 +1550,78 @@
     ]
   },
   {
+    "objectID": "01-kickoff.html#curl-asking-a-server-for-replies",
+    "href": "01-kickoff.html#curl-asking-a-server-for-replies",
+    "title": "S1 — Kickoff",
+    "section": "curl : asking a server for replies",
+    "text": "curl : asking a server for replies\n\ncurl sends an HTTP request from your terminal to a URL and prints the response.\nPieces of the command:\n\nhttps://openrouter.ai/api/v1/chat/completions — the endpoint we’re POSTing to.\n-H \"Authorization: Bearer $OPENROUTER_API_KEY\" — a header proving who’s paying (your API key, read from an environment variable).\n-H \"Content-Type: application/json\" — tells the server the body is JSON.\n-d '{...}' — the request body\n\n\n\n\n\n\n\n\nWhy this matters\n\n\nA harness like OpenCode is, underneath, making calls shaped exactly like this one — just automated, looped, and wired to tools. opencode run is not this: it’s the harness, already doing more.",
+    "crumbs": [
+      "Home",
+      "Sessions:",
+      "S1. Kickoff"
+    ]
+  },
+  {
+    "objectID": "01-kickoff.html#a-bare-model-call---no-harness",
+    "href": "01-kickoff.html#a-bare-model-call---no-harness",
+    "title": "S1 — Kickoff",
+    "section": "A bare model call - no harness",
+    "text": "A bare model call - no harness\nPull OPENROUTER_API_KEY back out:\nexport OPENROUTER_API_KEY=$(jq -r .openrouter.key ~/.local/share/opencode/auth.json)\nNow curl to openrouter:\ncurl https://openrouter.ai/api/v1/chat/completions \\\n  -H \"Authorization: Bearer $OPENROUTER_API_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"model\": \"google/gemma-4-31b-it:free\",\n    \"messages\": [{\"role\": \"user\", \"content\": \"Say hi in 3 words.\"}]\n  }'",
+    "crumbs": [
+      "Home",
+      "Sessions:",
+      "S1. Kickoff"
+    ]
+  },
+  {
+    "objectID": "01-kickoff.html#a-bare-model-call---no-harness-1",
+    "href": "01-kickoff.html#a-bare-model-call---no-harness-1",
+    "title": "S1 — Kickoff",
+    "section": "A bare model call - no harness",
+    "text": "A bare model call - no harness\n\nIt can’t read your disk, can’t run ls, can’t edit a file. It replies with text, and that’s the entire interaction.\nEverything from here — reading files, running commands, looping — is the harness’s job, not the model’s.",
+    "crumbs": [
+      "Home",
+      "Sessions:",
+      "S1. Kickoff"
+    ]
+  },
+  {
+    "objectID": "01-kickoff.html#try-another-model",
+    "href": "01-kickoff.html#try-another-model",
+    "title": "S1 — Kickoff",
+    "section": "Try another model",
+    "text": "Try another model\nSame request, just swap the \"model\" field — everything else is identical:\ncurl https://openrouter.ai/api/v1/chat/completions \\\n  -H \"Authorization: Bearer $OPENROUTER_API_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"model\": \"nvidia/nemotron-3.5-lightning:free\",\n    \"messages\": [{\"role\": \"user\", \"content\": \"Say hi in 3 words.\"}]\n  }'\n\nGemma gave back something like \"content\": \"Hi there friend!\" — short, no extra fields.\nNemotron gives back something very different.",
+    "crumbs": [
+      "Home",
+      "Sessions:",
+      "S1. Kickoff"
+    ]
+  },
+  {
+    "objectID": "01-kickoff.html#what-actually-comes-back",
+    "href": "01-kickoff.html#what-actually-comes-back",
+    "title": "S1 — Kickoff",
+    "section": "What actually comes back",
+    "text": "What actually comes back\nRaw JSON — no harness has prettified anything yet. Trimmed:\n{\n  \"model\": \"nvidia/nemotron-3.5-lightning:free\",\n  \"choices\": [{\n    \"message\": {\n      \"content\": \"Hello there friend\",\n      \"reasoning\": \"Here's a thinking process:\\n1. Analyze User Input... [718 tokens] ...\"\n    }\n  }],\n  \"usage\": {\n    \"prompt_tokens\": 23,\n    \"completion_tokens\": 718,\n    \"total_tokens\": 741\n  }\n}",
+    "crumbs": [
+      "Home",
+      "Sessions:",
+      "S1. Kickoff"
+    ]
+  },
+  {
+    "objectID": "01-kickoff.html#what-actually-comes-back-1",
+    "href": "01-kickoff.html#what-actually-comes-back-1",
+    "title": "S1 — Kickoff",
+    "section": "What actually comes back",
+    "text": "What actually comes back\n\nThe answer you wanted — \"Hello there friend\" — is one field. reasoning is a separate field: the model talking to itself before answering.\n23 tokens in, 718 tokens out, almost all of it scratch work you never asked for, to produce a 3-word reply.\nThis is a reasoning model: it generates a hidden chain of thought before committing to an answer. More tokens, more latency, more cost — for better accuracy on hard problems. Whether that trade is worth it is S5.",
+    "crumbs": [
+      "Home",
+      "Sessions:",
+      "S1. Kickoff"
+    ]
+  },
+  {
     "objectID": "01-kickoff.html#the-harness",
     "href": "01-kickoff.html#the-harness",
     "title": "S1 — Kickoff",
