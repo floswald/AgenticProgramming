@@ -1854,7 +1854,19 @@
     "href": "01-kickoff.html#step-3-one-full-opencode-session",
     "title": "S1 — Kickoff",
     "section": "Step 3 — one full OpenCode session",
-    "text": "Step 3 — one full OpenCode session\n$ opencode\nGive it a small, checkable task, for example:\nadd a function `greet(name)` to hello.py that prints\n\"hello, &lt;name&gt;, from s1-kickoff\" and call it once with your own name\nLet it work. Do not accept blindly.",
+    "text": "Step 3 — one full OpenCode session\n$ opencode\nWhich model to use?\nWe are quite limited. Here are all the free models we have:\nopencode models | grep \":free\"\n\nopenrouter/cohere/north-mini-code:free\nopenrouter/dots-studio/dots-3-note-preview:free\nopenrouter/google/gemma-4-26b-a4b-it:free\nopenrouter/google/gemma-4-31b-it:free\nopenrouter/liquid/lfm-2.5-2.6b:free\nopenrouter/nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free\nopenrouter/nvidia/nemotron-3-super-120b-a12b:free\nopenrouter/nvidia/nemotron-3-ultra-550b-a55b:free\nopenrouter/nvidia/nemotron-3.5-content-safety:free\nopenrouter/nvidia/nemotron-3.5-lightning:free\nopenrouter/nvidia/nemotron-3.5-super-vl:free\nopenrouter/poolside/laguna-s-2.1:free\nopenrouter/poolside/laguna-xs-2.1:free\nopenrouter/thinkingmachines/inkling-small:free\nopenrouter/thinkingmachines/inkling:free\nopenrouter/xingchen-agi/xing4.0-29b-a4b:free\nI was successful with thinkingmachines/inkling-small:free",
+    "crumbs": [
+      "Home",
+      "Sessions:",
+      "S1. Kickoff"
+    ]
+  },
+  {
+    "objectID": "01-kickoff.html#step-3-one-full-opencode-session-1",
+    "href": "01-kickoff.html#step-3-one-full-opencode-session-1",
+    "title": "S1 — Kickoff",
+    "section": "Step 3 — one full OpenCode session",
+    "text": "Step 3 — one full OpenCode session\n\nask it to investigate the current directory.\nask it to run the python script for you\nGive it a small, checkable task, for example:\n\nadd a function `greet(name)` to hello.py that prints\n\"hello, &lt;name&gt;, from s1-kickoff\" and call it once with your own name\n\nAsk it to call the function with your name (model needs to ask your name!)",
     "crumbs": [
       "Home",
       "Sessions:",

@@ -219,7 +219,7 @@ Florian Oswald
 </div>
 </div>
 
-  <p class="date">13 October, 2026</p>
+  <p class="date">20 October, 2026</p>
 </section>
 <section id="before-we-start" class="slide level2">
 <h2>Before we start</h2>
@@ -712,15 +712,45 @@ Florian Oswald
 <section id="step-3-one-full-opencode-session" class="slide level2">
 <h2>Step 3 — one full OpenCode session</h2>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb18-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> opencode</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Give it a small, checkable task, for example:</p>
+<p>Which model to use?</p>
+<p>We are quite limited. Here are all the free models we have:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">opencode</span> models <span class="kw">|</span> <span class="fu">grep</span> <span class="st">":free"</span></span>
+<span id="cb19-2"><a aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a aria-hidden="true" tabindex="-1"></a><span class="ex">openrouter/cohere/north-mini-code:free</span></span>
+<span id="cb19-4"><a aria-hidden="true" tabindex="-1"></a><span class="ex">openrouter/dots-studio/dots-3-note-preview:free</span></span>
+<span id="cb19-5"><a aria-hidden="true" tabindex="-1"></a><span class="ex">openrouter/google/gemma-4-26b-a4b-it:free</span></span>
+<span id="cb19-6"><a aria-hidden="true" tabindex="-1"></a><span class="ex">openrouter/google/gemma-4-31b-it:free</span></span>
+<span id="cb19-7"><a aria-hidden="true" tabindex="-1"></a><span class="ex">openrouter/liquid/lfm-2.5-2.6b:free</span></span>
+<span id="cb19-8"><a aria-hidden="true" tabindex="-1"></a><span class="ex">openrouter/nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free</span></span>
+<span id="cb19-9"><a aria-hidden="true" tabindex="-1"></a><span class="ex">openrouter/nvidia/nemotron-3-super-120b-a12b:free</span></span>
+<span id="cb19-10"><a aria-hidden="true" tabindex="-1"></a><span class="ex">openrouter/nvidia/nemotron-3-ultra-550b-a55b:free</span></span>
+<span id="cb19-11"><a aria-hidden="true" tabindex="-1"></a><span class="ex">openrouter/nvidia/nemotron-3.5-content-safety:free</span></span>
+<span id="cb19-12"><a aria-hidden="true" tabindex="-1"></a><span class="ex">openrouter/nvidia/nemotron-3.5-lightning:free</span></span>
+<span id="cb19-13"><a aria-hidden="true" tabindex="-1"></a><span class="ex">openrouter/nvidia/nemotron-3.5-super-vl:free</span></span>
+<span id="cb19-14"><a aria-hidden="true" tabindex="-1"></a><span class="ex">openrouter/poolside/laguna-s-2.1:free</span></span>
+<span id="cb19-15"><a aria-hidden="true" tabindex="-1"></a><span class="ex">openrouter/poolside/laguna-xs-2.1:free</span></span>
+<span id="cb19-16"><a aria-hidden="true" tabindex="-1"></a><span class="ex">openrouter/thinkingmachines/inkling-small:free</span></span>
+<span id="cb19-17"><a aria-hidden="true" tabindex="-1"></a><span class="ex">openrouter/thinkingmachines/inkling:free</span></span>
+<span id="cb19-18"><a aria-hidden="true" tabindex="-1"></a><span class="ex">openrouter/xingchen-agi/xing4.0-29b-a4b:free</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>I was successful with <code>thinkingmachines/inkling-small:free</code></p>
+</section>
+<section id="step-3-one-full-opencode-session-1" class="slide level2">
+<h2>Step 3 — one full OpenCode session</h2>
+<ol type="1">
+<li>ask it to investigate the current directory.</li>
+<li>ask it to run the python script for you</li>
+<li>Give it a small, checkable task, for example:</li>
+</ol>
 <pre><code>add a function `greet(name)` to hello.py that prints
 "hello, &lt;name&gt;, from s1-kickoff" and call it once with your own name</code></pre>
-<p>Let it work. <strong>Do not accept blindly.</strong></p>
+<ol start="4" type="1">
+<li>Ask it to call the function with your name (model needs to ask your name!)</li>
+</ol>
 </section>
 <section id="step-4-review-before-you-trust-it" class="slide level2">
 <h2>Step 4 — review before you trust it</h2>
 <p>Before committing what the agent produced:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb20-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git diff</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git diff</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-tip callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
@@ -739,8 +769,8 @@ Florian Oswald
 </div>
 </div>
 <p>If it looks right:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb21-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git add hello.py</span>
-<span id="cb21-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git commit <span class="at">-m</span> <span class="st">"agent: add greet() via opencode, reviewed"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb22-1"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git add hello.py</span>
+<span id="cb22-2"><a aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> git commit <span class="at">-m</span> <span class="st">"agent: add greet() via opencode, reviewed"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>If it doesn’t look right, tell the agent what’s wrong and iterate — that back-and-forth <em>is</em> the skill this course is teaching.</p>
 </section>
 <section id="checklist-youre-done-when" class="slide level2">
