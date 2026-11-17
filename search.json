@@ -3103,7 +3103,7 @@
     "href": "s6-duckdb.html#where-we-are",
     "title": "Data Wrangling: DuckDB",
     "section": "Where we are",
-    "text": "Where we are\n\nS4: how an LLM actually works (tokens in, tokens out, no ground truth inside).\nS5: how an agent wraps that model with tools, context, and a harness.\nToday the tool is a database, and the task is data wrangling: getting from raw files to trustworthy numbers.\n\n\n\n\n\n\n\nToday’s habit, again\n\n\nThe agent will happily write a query that runs without error and returns a plausible number. Running without error is not the same as being right.",
+    "text": "Where we are\n\nS4: how an LLM actually works (tokens in, tokens out, no ground truth inside).\nS5: how an agent wraps that model with tools, context, and a harness.\nToday the tool is a database, and the task is data wrangling: getting from raw files to trustworthy numbers.",
     "crumbs": [
       "Home",
       "Sessions:",
